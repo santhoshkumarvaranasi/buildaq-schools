@@ -3,7 +3,7 @@
 	"version": 1,
 	"newProjectRoot": "projects",
 	"projects": {
-		"schools-clean": {
+		"buildaq-schools": {
 			"projectType": "application",
 			"schematics": {
 				"@schematics/angular:component": {
@@ -19,10 +19,10 @@
 					"options": {},
 					"configurations": {
 						"production": {
-							"target": "schools-clean:esbuild:production"
+							"target": "buildaq-schools:esbuild:production"
 						},
 						"development": {
-							"target": "schools-clean:esbuild:development",
+							"target": "buildaq-schools:esbuild:development",
 							"dev": true
 						}
 					},
@@ -31,7 +31,7 @@
 				"serve": {
 					"builder": "@angular-architects/native-federation:build",
 					"options": {
-						"target": "schools-clean:serve-original:development",
+						"target": "buildaq-schools:serve-original:development",
 						"rebuildDelay": 0,
 						"dev": true,
 						"port": 0
@@ -63,7 +63,7 @@
 				"esbuild": {
 					"builder": "@angular/build:application",
 					"options": {
-						"outputPath": "dist/schools-clean",
+						"outputPath": "dist/buildaq-schools",
 						"index": "src/index.html",
 						"browser": "src/main.ts",
 						"polyfills": [
@@ -110,10 +110,10 @@
 					"builder": "@angular/build:dev-server",
 					"configurations": {
 						"production": {
-							"buildTarget": "schools-clean:esbuild:production"
+							"buildTarget": "buildaq-schools:esbuild:production"
 						},
 						"development": {
-							"buildTarget": "schools-clean:esbuild:development"
+							"buildTarget": "buildaq-schools:esbuild:development"
 						}
 					},
 					"defaultConfiguration": "development",

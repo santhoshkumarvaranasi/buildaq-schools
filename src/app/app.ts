@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App implements OnInit {
-  protected readonly title = signal('schools-clean');
+  protected readonly title = signal('buildaq-schools');
 
   constructor(private route: ActivatedRoute) {}
 
