@@ -1,0 +1,355 @@
+<div class="teachers-container">
+  <div class="teachers-header">
+    <h2>👨‍🏫 Teacher Management</h2>
+    <button class="btn btn-primary add-teacher-btn" (click)="addNewTeacher()">
+      ➕ Add New Teacher
+    </button>
+  </div>
+
+  <div class="filters-section">
+    <!-- Mobile Filter Toggle -->
+    <div class="mobile-filter-toggle" (click)="toggleMobileFilters()">
+      <span>🔍 Filters & Search</span>
+      <span class="filter-icon" [class.rotated]="showMobileFilters">▼</span>
+    </div>
+
+    <div class="filter-row" [class.mobile-expanded]="showMobileFilters">
+      <div class="search-box">
+        <div class="search-wrapper">
+          <input 
+            type="text" 
+            placeholder="🔍 Search teachers..." 
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()"
+            class="form-input search-input">
+          <button *ngIf="searchTerm" class="clear-search-btn" (click)="clearSearch()">✕</button>
+        </div>
+      </div>
+      
+      <div class="mobile-filter-row">
+        <div class="filter-group">
+          <label class="filter-label">Department</label>
+          <select [(ngModel)]="selectedDepartment" (change)="filterTeachers()" class="form-select">
+            <option value="">All Departments</option>
+            <option *ngFor="let dept of departments" [value]="dept">{{dept}}</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Status</label>
+          <select [(ngModel)]="selectedStatus" (change)="filterTeachers()" class="form-select">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="on-leave">On Leave</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="filter-actions">
+        <button class="btn btn-secondary clear-filters" (click)="clearFilters()">
+          🗑️ Clear Filters
+        </button>
+        
+        <div class="sort-options">
+          <label class="filter-label">Sort By</label>
+          <select [(ngModel)]="sortField" (change)="sortTeachers()" class="form-select">
+            <option value="lastName">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+            <option value="department">Department</option>
+            <option value="experience">Experience</option>
+            <option value="hireDate">Hire Date</option>
+            <option value="salary">Salary</option>
+            <option value="status">Status</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+      <div class="stat-item">
+        <span class="stat-number">{{filteredTeachers.length}}</span>
+        <span class="stat-label">Showing</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{getActiveCount()}}</span>
+        <span class="stat-label">Active</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{getDepartmentCount()}}</span>
+        <span class="stat-label">Departments</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{getAverageExperience()}}</span>
+        <span class="stat-label">Avg. Exp.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="teachers-table-container">
+    <!-- View Controls -->
+    <div class="view-controls">
+      <div class="teachers-count">
+        <p>Showing {{filteredTeachers.length}} of {{teachers.length}} teachers</p>
+      </div>
+      
+      <div class="view-toggle-buttons">
+        <button 
+          class="view-toggle-btn"
+          [class.active]="viewMode === 'table'"
+          (click)="setViewMode('table')"
+          title="Table View">
+          📊
+        </button>
+        <button 
+          class="view-toggle-btn"
+          [class.active]="viewMode === 'cards'"
+          (click)="setViewMode('cards')"
+          title="Card View">
+          🃏
+        </button>
+      </div>
+    </div>
+    
+    <!-- Enhanced Desktop/Tablet Table View -->
+    <div class="table-wrapper" [class.hidden]="viewMode === 'cards'">
+      <div class="table-scroll-container">
+        <table class="teachers-table">
+          <thead>
+            <tr>
+              <th class="sortable" (click)="sortByField('id')">
+                ID 
+                <span class="sort-indicator" [class.active]="currentSort.field === 'id'">
+                  {{currentSort.field === 'id' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th class="sortable" (click)="sortByField('lastName')">
+                Name
+                <span class="sort-indicator" [class.active]="currentSort.field === 'lastName'">
+                  {{currentSort.field === 'lastName' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th>Email</th>
+              <th class="sortable" (click)="sortByField('department')">
+                Department
+                <span class="sort-indicator" [class.active]="currentSort.field === 'department'">
+                  {{currentSort.field === 'department' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th>Subjects</th>
+              <th class="sortable" (click)="sortByField('experience')">
+                Experience
+                <span class="sort-indicator" [class.active]="currentSort.field === 'experience'">
+                  {{currentSort.field === 'experience' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th class="sortable" (click)="sortByField('salary')">
+                Salary
+                <span class="sort-indicator" [class.active]="currentSort.field === 'salary'">
+                  {{currentSort.field === 'salary' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th class="sortable" (click)="sortByField('status')">
+                Status
+                <span class="sort-indicator" [class.active]="currentSort.field === 'status'">
+                  {{currentSort.field === 'status' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let teacher of filteredTeachers; trackBy: trackByTeacherId" 
+                class="teacher-row"
+                [class.highlighted]="isTeacherSelected(teacher)"
+                (click)="selectTeacher(teacher)">
+              <td class="teacher-id">#{{teacher.id}}</td>
+              <td class="teacher-name">
+                <div class="name-wrapper">
+                  <strong>{{teacher.firstName}} {{teacher.lastName}}</strong>
+                  <small class="teacher-qualification">{{teacher.qualification}}</small>
+                </div>
+              </td>
+              <td class="teacher-email">{{teacher.email}}</td>
+              <td class="department-cell">
+                <span class="department-badge">{{teacher.department}}</span>
+              </td>
+              <td class="subjects-cell">
+                <div class="subjects-list">
+                  <span *ngFor="let subject of teacher.subjects" class="subject-tag">
+                    {{subject.code}}
+                  </span>
+                </div>
+              </td>
+              <td class="experience-cell">{{teacher.experience}} years</td>
+              <td class="salary-cell">{{formatSalary(teacher.salary)}}</td>
+              <td class="status-cell">
+                <span class="status-badge" [ngClass]="getStatusClass(teacher.status)">
+                  <span class="status-icon">{{getStatusIcon(teacher.status)}}</span>
+                  {{teacher.status | titlecase}}
+                </span>
+              </td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <button class="btn-action btn-view" 
+                          (click)="viewTeacher(teacher); $event.stopPropagation()" 
+                          title="View Details">
+                    👁️
+                  </button>
+                  <button class="btn-action btn-edit" 
+                          (click)="editTeacher(teacher); $event.stopPropagation()" 
+                          title="Edit Teacher">
+                    ✏️
+                  </button>
+                  <button class="btn-action btn-schedule" 
+                          (click)="viewSchedule(teacher); $event.stopPropagation()" 
+                          title="View Schedule">
+                    📅
+                  </button>
+                  <button class="btn-action btn-more" 
+                          (click)="showMoreActions(teacher); $event.stopPropagation()" 
+                          title="More Actions">
+                    ⋯
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Horizontal Scroll Indicator -->
+      <div class="scroll-indicator" *ngIf="showScrollIndicator">
+        <span class="scroll-text">← Scroll horizontally to see more →</span>
+      </div>
+    </div>
+
+    <!-- Enhanced Mobile Card View -->
+    <div class="mobile-cards" [class.visible]="viewMode === 'cards'">
+      <div *ngFor="let teacher of filteredTeachers; trackBy: trackByTeacherId" 
+           class="teacher-card"
+           [class.selected]="isTeacherSelected(teacher)"
+           (click)="selectTeacher(teacher)">
+        
+        <!-- Card Header -->
+        <div class="teacher-card-header">
+          <div class="teacher-info">
+            <h3 class="teacher-card-name">{{teacher.firstName}} {{teacher.lastName}}</h3>
+            <span class="teacher-card-id">#{{teacher.id}}</span>
+          </div>
+          <div class="teacher-card-status">
+            <span class="status-badge" [ngClass]="getStatusClass(teacher.status)">
+              <span class="status-icon">{{getStatusIcon(teacher.status)}}</span>
+              {{teacher.status | titlecase}}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Card Body -->
+        <div class="teacher-card-body">
+          <div class="card-row">
+            <div class="teacher-card-field">
+              <span class="teacher-card-label">🏫 Department</span>
+              <span class="teacher-card-value">
+                <span class="department-badge">{{teacher.department}}</span>
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-row">
+            <div class="teacher-card-field">
+              <span class="teacher-card-label">📚 Subjects</span>
+              <span class="teacher-card-value">
+                <div class="subjects-list-mobile">
+                  <span *ngFor="let subject of teacher.subjects" class="subject-tag-mobile">
+                    {{subject.code}}
+                  </span>
+                </div>
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-row">
+            <div class="teacher-card-field">
+              <span class="teacher-card-label">🎓 Qualification</span>
+              <span class="teacher-card-value">{{teacher.qualification}}</span>
+            </div>
+          </div>
+          
+          <div class="card-row">
+            <div class="teacher-card-field">
+              <span class="teacher-card-label">⏱️ Experience</span>
+              <span class="teacher-card-value">{{teacher.experience}} years</span>
+            </div>
+          </div>
+          
+          <div class="card-row">
+            <div class="teacher-card-field">
+              <span class="teacher-card-label">💰 Salary</span>
+              <span class="teacher-card-value">{{formatSalary(teacher.salary)}}</span>
+            </div>
+          </div>
+          
+          <div class="card-row">
+            <div class="teacher-card-field full-width">
+              <span class="teacher-card-label">📧 Email</span>
+              <a href="mailto:{{teacher.email}}" class="teacher-card-email">{{teacher.email}}</a>
+            </div>
+          </div>
+          
+          <div class="card-row">
+            <div class="teacher-card-field">
+              <span class="teacher-card-label">📞 Phone</span>
+              <a href="tel:{{teacher.phone}}" class="teacher-card-phone">{{teacher.phone}}</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Card Actions -->
+        <div class="teacher-card-actions">
+          <button class="card-action-btn primary" 
+                  (click)="viewTeacher(teacher); $event.stopPropagation()" 
+                  title="View Details">
+            <span class="btn-icon">👁️</span>
+            <span class="btn-text">View</span>
+          </button>
+          <button class="card-action-btn secondary" 
+                  (click)="callTeacher(teacher); $event.stopPropagation()" 
+                  title="Call Teacher">
+            <span class="btn-icon">📞</span>
+            <span class="btn-text">Call</span>
+          </button>
+          <button class="card-action-btn tertiary" 
+                  (click)="viewSchedule(teacher); $event.stopPropagation()" 
+                  title="Schedule">
+            <span class="btn-icon">📅</span>
+            <span class="btn-text">Schedule</span>
+          </button>
+          <button class="card-action-btn quaternary" 
+                  (click)="assignSubject(teacher); $event.stopPropagation()" 
+                  title="Assign Subject">
+            <span class="btn-icon">📚</span>
+            <span class="btn-text">Assign</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Load More Button for Performance -->
+      <div class="load-more-section" *ngIf="filteredTeachers.length > displayLimit">
+        <button class="btn btn-outline load-more-btn" (click)="loadMoreTeachers()">
+          <span class="btn-icon">⬇️</span>
+          Load More Teachers ({{filteredTeachers.length - displayLimit}} remaining)
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="filteredTeachers.length === 0" class="no-teachers">
+      <div class="empty-state">
+        <h3>👨‍🏫 No Teachers Found</h3>
+        <p>No teachers match your current search criteria.</p>
+        <button class="btn btn-primary" (click)="clearFilters()">Clear Filters</button>
+      </div>
+    </div>
+  </div>
+</div>

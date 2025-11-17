@@ -1,0 +1,295 @@
+<div class="students-container">
+  <div class="students-header">
+    <h2>👨‍🎓 Student Management</h2>
+    <button class="btn btn-primary add-student-btn" (click)="addNewStudent()">
+      ➕ Add New Student
+    </button>
+  </div>
+
+  <div class="filters-section">
+    <!-- Mobile Filter Toggle -->
+    <div class="mobile-filter-toggle" (click)="toggleMobileFilters()">
+      <span>🔍 Filters & Search</span>
+      <span class="filter-icon" [class.rotated]="showMobileFilters">▼</span>
+    </div>
+
+    <div class="filter-row" [class.mobile-expanded]="showMobileFilters">
+      <div class="search-box">
+        <div class="search-wrapper">
+          <input 
+            type="text" 
+            placeholder="🔍 Search students..." 
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()"
+            class="form-input search-input">
+          <button *ngIf="searchTerm" class="clear-search-btn" (click)="clearSearch()">✕</button>
+        </div>
+      </div>
+      
+      <div class="mobile-filter-row">
+        <div class="filter-group">
+          <label class="filter-label">Grade</label>
+          <select [(ngModel)]="selectedGrade" (change)="filterStudents()" class="form-select">
+            <option value="">All Grades</option>
+            <option value="9th">9th Grade</option>
+            <option value="10th">10th Grade</option>
+            <option value="11th">11th Grade</option>
+            <option value="12th">12th Grade</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Status</label>
+          <select [(ngModel)]="selectedStatus" (change)="filterStudents()" class="form-select">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="transferred">Transferred</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="filter-actions">
+        <button class="btn btn-secondary clear-filters" (click)="clearFilters()">
+          🗑️ Clear Filters
+        </button>
+        
+        <div class="sort-options">
+          <label class="filter-label">Sort By</label>
+          <select [(ngModel)]="sortField" (change)="sortStudents()" class="form-select">
+            <option value="name">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+            <option value="grade">Grade</option>
+            <option value="enrollment">Enrollment Date</option>
+            <option value="status">Status</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="quick-stats">
+      <div class="stat-item">
+        <span class="stat-number">{{filteredStudents.length}}</span>
+        <span class="stat-label">Showing</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{students.length}}</span>
+        <span class="stat-label">Total</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{getActiveCount()}}</span>
+        <span class="stat-label">Active</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="students-table-container">
+    <!-- View Toggle -->
+    <div class="view-controls">
+      <div class="students-count">
+        <p>Showing {{filteredStudents.length}} of {{students.length}} students</p>
+      </div>
+      
+      <div class="view-toggle-buttons">
+        <button 
+          class="view-toggle-btn"
+          [class.active]="viewMode === 'table'"
+          (click)="setViewMode('table')"
+          title="Table View">
+          📊
+        </button>
+        <button 
+          class="view-toggle-btn"
+          [class.active]="viewMode === 'cards'"
+          (click)="setViewMode('cards')"
+          title="Card View">
+          🃏
+        </button>
+      </div>
+    </div>
+    
+    <!-- Enhanced Desktop/Tablet Table View -->
+    <div class="table-wrapper" [class.hidden]="viewMode === 'cards'">
+      <div class="table-scroll-container">
+        <table class="students-table">
+          <thead>
+            <tr>
+              <th class="sortable" (click)="sortByField('id')">
+                ID 
+                <span class="sort-indicator" [class.active]="currentSort.field === 'id'">
+                  {{currentSort.field === 'id' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th class="sortable" (click)="sortByField('name')">
+                Name
+                <span class="sort-indicator" [class.active]="currentSort.field === 'name'">
+                  {{currentSort.field === 'name' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th>Email</th>
+              <th class="sortable" (click)="sortByField('grade')">
+                Grade
+                <span class="sort-indicator" [class.active]="currentSort.field === 'grade'">
+                  {{currentSort.field === 'grade' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th>Class</th>
+              <th class="sortable" (click)="sortByField('enrollment')">
+                Enrollment
+                <span class="sort-indicator" [class.active]="currentSort.field === 'enrollment'">
+                  {{currentSort.field === 'enrollment' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th class="sortable" (click)="sortByField('status')">
+                Status
+                <span class="sort-indicator" [class.active]="currentSort.field === 'status'">
+                  {{currentSort.field === 'status' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                </span>
+              </th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of filteredStudents; trackBy: trackByStudentId" 
+                class="student-row"
+                [class.highlighted]="isStudentSelected(student)"
+                (click)="selectStudent(student)">
+              <td class="student-id">#{{student.id}}</td>
+              <td class="student-name">
+                <div class="name-wrapper">
+                  <strong>{{student.firstName}} {{student.lastName}}</strong>
+                  <small class="student-email-small">{{student.email}}</small>
+                </div>
+              </td>
+              <td class="student-email">{{student.email}}</td>
+              <td class="grade-cell">
+                <span class="grade-badge">{{student.grade}}</span>
+              </td>
+              <td class="class-cell">{{student.class}}</td>
+              <td class="enrollment-cell">{{student.enrollmentDate | date:'MM/dd/yyyy'}}</td>
+              <td class="status-cell">
+                <span class="status-badge" [ngClass]="getStatusClass(student.status)">
+                  <span class="status-icon">{{getStatusIcon(student.status)}}</span>
+                  {{student.status | titlecase}}
+                </span>
+              </td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <button class="btn-action btn-view" 
+                          (click)="viewStudent(student); $event.stopPropagation()" 
+                          title="View Details">
+                    👁️
+                  </button>
+                  <button class="btn-action btn-edit" 
+                          (click)="editStudent(student); $event.stopPropagation()" 
+                          title="Edit Student">
+                    ✏️
+                  </button>
+                  <button class="btn-action btn-more" 
+                          (click)="showMoreActions(student); $event.stopPropagation()" 
+                          title="More Actions">
+                    ⋯
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Horizontal Scroll Indicator -->
+      <div class="scroll-indicator" *ngIf="showScrollIndicator">
+        <span class="scroll-text">← Scroll horizontally to see more →</span>
+      </div>
+    </div>
+
+    <!-- Enhanced Mobile Card View -->
+    <div class="mobile-cards" [class.visible]="viewMode === 'cards'">
+      <div *ngFor="let student of filteredStudents; trackBy: trackByStudentId" 
+           class="student-card"
+           [class.selected]="isStudentSelected(student)"
+           (click)="selectStudent(student)">
+        
+        <!-- Card Header -->
+        <div class="student-card-header">
+          <div class="student-info">
+            <h3 class="student-card-name">{{student.firstName}} {{student.lastName}}</h3>
+            <span class="student-card-id">#{{student.id}}</span>
+          </div>
+          <div class="student-card-status">
+            <span class="status-badge" [ngClass]="getStatusClass(student.status)">
+              <span class="status-icon">{{getStatusIcon(student.status)}}</span>
+              {{student.status | titlecase}}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Card Body -->
+        <div class="student-card-body">
+          <div class="card-row">
+            <div class="student-card-field">
+              <span class="student-card-label">🎓 Grade & Class</span>
+              <span class="student-card-value">
+                <span class="grade-badge">{{student.grade}}</span>
+                <span class="class-text">{{student.class}}</span>
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-row">
+            <div class="student-card-field full-width">
+              <span class="student-card-label">📧 Email</span>
+              <a href="mailto:{{student.email}}" class="student-card-email">{{student.email}}</a>
+            </div>
+          </div>
+          
+          <div class="card-row">
+            <div class="student-card-field">
+              <span class="student-card-label">📅 Enrollment</span>
+              <span class="student-card-value">{{student.enrollmentDate | date:'MMM dd, yyyy'}}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Card Actions -->
+        <div class="student-card-actions">
+          <button class="card-action-btn primary" 
+                  (click)="viewStudent(student); $event.stopPropagation()" 
+                  title="View Details">
+            <span class="btn-icon">👁️</span>
+            <span class="btn-text">View</span>
+          </button>
+          <button class="card-action-btn secondary" 
+                  (click)="editStudent(student); $event.stopPropagation()" 
+                  title="Edit Student">
+            <span class="btn-icon">✏️</span>
+            <span class="btn-text">Edit</span>
+          </button>
+          <button class="card-action-btn tertiary" 
+                  (click)="showMoreActions(student); $event.stopPropagation()" 
+                  title="More Actions">
+            <span class="btn-icon">⋯</span>
+            <span class="btn-text">More</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Load More Button for Performance -->
+      <div class="load-more-section" *ngIf="filteredStudents.length > displayLimit">
+        <button class="btn btn-outline load-more-btn" (click)="loadMoreStudents()">
+          <span class="btn-icon">⬇️</span>
+          Load More Students ({{filteredStudents.length - displayLimit}} remaining)
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="filteredStudents.length === 0" class="no-students">
+      <div class="empty-state">
+        <h3>📚 No Students Found</h3>
+        <p>No students match your current search criteria.</p>
+        <button class="btn btn-primary" (click)="clearFilters()">Clear Filters</button>
+      </div>
+    </div>
+  </div>
+</div>
