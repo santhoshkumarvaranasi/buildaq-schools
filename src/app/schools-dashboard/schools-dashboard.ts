@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { TenantService, Tenant } from '../core/services/tenant.service';
 
 @Component({
   selector: 'app-schools-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink],
   templateUrl: './schools-dashboard.html',
   styleUrl: './schools-dashboard.scss'
 })
 export class SchoolsDashboardComponent implements OnInit {
   tenant: Tenant | null = null;
+  isShell = window.location.pathname.startsWith('/schools');
 
   constructor(private tenantService: TenantService) {}
 
@@ -19,5 +20,9 @@ export class SchoolsDashboardComponent implements OnInit {
     this.tenantService.currentTenant$.subscribe(tenant => {
       this.tenant = tenant;
     });
+  }
+
+  getLink(path: string) {
+    return this.isShell ? `/schools/${path}` : `/${path}`;
   }
 }
