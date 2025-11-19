@@ -12,9 +12,8 @@ function proxyToDotnet(req, res) {
     hostname: host,
     port: port,
     method: req.method,
-    // Normalize path: frontend and backend use /api/v1/* but the .NET API
-    // controllers are mounted at /api/* (no v1). Strip a leading /api/v1 -> /api
-    path: String(req.originalUrl).replace(/^\/api\/v1(\/|$)/, '/api$1'),
+    // Forward the original path as-is so .NET routes under /api/v1/* are reachable.
+    path: String(req.originalUrl),
     headers: Object.assign({}, req.headers, { host: `${host}:${port}` }),
     timeout: 15000,
   };

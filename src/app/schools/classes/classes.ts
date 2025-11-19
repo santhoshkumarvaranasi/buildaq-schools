@@ -72,7 +72,7 @@ export class ClassesComponent implements OnInit {
   }
 
   fetchClasses(): void {
-    const url = `${environment.apiUrl.replace(/\/$/, '')}/v1/classes`;
+    const url = `${environment.apiUrl.replace(/\/$/, '')}/v1/classes/summary`;
     this.http.get<Class[]>(url).subscribe({
       next: data => {
         // Defensive: some responses (304 Not Modified) can arrive with no body
@@ -98,7 +98,7 @@ export class ClassesComponent implements OnInit {
   }
 
   fetchEnrollments(): void {
-    const url = `${environment.apiUrl.replace(/\/$/, '')}/v1/enrollments`;
+    const url = `${environment.apiUrl.replace(/\/$/, '')}/v1/enrollments/summary`;
     this.http.get<Enrollment[]>(url).subscribe({
       next: data => {
         if (!Array.isArray(data)) {

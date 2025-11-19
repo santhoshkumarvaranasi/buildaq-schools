@@ -7,6 +7,7 @@ namespace BuildAQ.SchoolsApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class EnrollmentsController : ControllerBase
     {
         private readonly BuildAQ.SchoolsApi.Data.SchoolsDbContext _context;
@@ -20,6 +21,25 @@ namespace BuildAQ.SchoolsApi.Controllers
         {
             var items = await _context.Enrollments.ToListAsync();
             return Ok(items);
+        }
+
+        [HttpGet("summary")]
+        public async Task<IActionResult> GetSummary()
+        {
+            var summary = await _context.Enrollments
+                .Include(e => e.Student)
+                .Include(e => e.Status)
+                .Select(e => new
+                {
+                    id = e.Id,
+                    studentId = e.Student != null ? (int?)e.Student.Id : e.StudentId,
+                    studentName = e.Student != null ? (e.Student.FirstName + " " + e.Student.LastName).Trim() : null,
+                    classId = e.ClassId,
+                    status = e.Status != null ? e.Status.Name : null
+                })
+                .ToListAsync();
+
+            return Ok(summary);
         }
 
         [HttpGet("{id}")]

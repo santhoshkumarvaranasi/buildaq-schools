@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { proxyToDotnet } = require('../lib/proxyToDotnet');
 
 /**
  * @swagger
@@ -12,10 +13,14 @@ const router = express.Router();
  *         description: List of teachers
  */
 router.get('/', (req, res) => {
-  res.json({
-    message: 'Teachers endpoint',
-    teachers: []
-  });
+  // Proxy to .NET API in development (or forward to .NET when available)
+  if ((process.env.NODE_ENV || 'development') === 'development') return proxyToDotnet(req, res);
+  res.json({ message: 'Teachers endpoint', teachers: [] });
+});
+
+router.get('/summary', (req, res) => {
+  if ((process.env.NODE_ENV || 'development') === 'development') return proxyToDotnet(req, res);
+  res.json([]);
 });
 
 /**
@@ -29,10 +34,8 @@ router.get('/', (req, res) => {
  *         description: Teacher created successfully
  */
 router.post('/', (req, res) => {
-  res.status(201).json({
-    message: 'Teacher created',
-    teacher: req.body
-  });
+  if ((process.env.NODE_ENV || 'development') === 'development') return proxyToDotnet(req, res);
+  res.status(201).json({ message: 'Teacher created', teacher: req.body });
 });
 
 /**
@@ -52,10 +55,8 @@ router.post('/', (req, res) => {
  *         description: Teacher details
  */
 router.get('/:id', (req, res) => {
-  res.json({
-    message: 'Teacher details',
-    teacherId: req.params.id
-  });
+  if ((process.env.NODE_ENV || 'development') === 'development') return proxyToDotnet(req, res);
+  res.json({ message: 'Teacher details', teacherId: req.params.id });
 });
 
 module.exports = router;

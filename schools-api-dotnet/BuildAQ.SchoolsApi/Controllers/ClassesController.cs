@@ -7,6 +7,7 @@ namespace BuildAQ.SchoolsApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class ClassesController : ControllerBase
     {
         private readonly BuildAQ.SchoolsApi.Data.SchoolsDbContext _context;
@@ -18,8 +19,58 @@ namespace BuildAQ.SchoolsApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var items = await _context.Classes.ToListAsync();
+            var items = await _context.Classes
+                .Include(c => c.Teacher)
+                .Include(c => c.Department)
+                .Include(c => c.Sections)
+                .Include(c => c.AcademicYear)
+                .Include(c => c.Enrollments).ThenInclude(e => e.Status)
+                .Select(c => new
+                {
+                    id = c.Id,
+                    name = c.Name,
+                    code = c.Code,
+                    department = c.Department != null ? c.Department.Name : null,
+                    teacherName = c.Teacher != null ? (c.Teacher.FirstName + " " + c.Teacher.LastName).Trim() : null,
+                    maxStudents = (int?)c.Sections.Sum(s => (int?)s.Capacity) ?? null,
+                    enrolledStudents = c.Enrollments.Count(e => e.Status != null && e.Status.Name == "enrolled"),
+                    semester = c.AcademicYear != null ? c.AcademicYear.Name : null,
+                    status = c.IsActive ? "active" : "inactive",
+                    year = c.AcademicYear != null ? (int?)c.AcademicYear.StartDate.Year : null,
+                    credits = 0,
+                    schedule = new object[] { },
+                    prerequisites = new string[] { }
+                })
+                .ToListAsync();
+
             return Ok(items);
+        }
+
+        [HttpGet("summary")]
+        public async Task<IActionResult> GetSummary()
+        {
+            var summary = await _context.Classes
+                .Include(c => c.Teacher)
+                .Include(c => c.Department)
+                .Include(c => c.Sections)
+                .Include(c => c.AcademicYear)
+                .Include(c => c.Enrollments).ThenInclude(e => e.Status)
+                .Select(c => new
+                {
+                    id = c.Id,
+                    name = c.Name,
+                    code = c.Code,
+                    department = c.Department != null ? c.Department.Name : null,
+                    teacherName = c.Teacher != null ? (c.Teacher.FirstName + " " + c.Teacher.LastName).Trim() : null,
+                    maxStudents = (int?)c.Sections.Sum(s => (int?)s.Capacity) ?? null,
+                    enrolledStudents = c.Enrollments.Count(e => e.Status != null && e.Status.Name == "enrolled"),
+                    semester = c.AcademicYear != null ? c.AcademicYear.Name : null,
+                    status = c.IsActive ? "active" : "inactive",
+                    year = c.AcademicYear != null ? (int?)c.AcademicYear.StartDate.Year : null
+                })
+                .ToListAsync();
+
+            return Ok(summary);
         }
 
         [HttpGet("{id}")]

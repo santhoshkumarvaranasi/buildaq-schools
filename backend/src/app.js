@@ -174,12 +174,13 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tenants', tenantRoutes);
 
 // Protected API routes
-// In development, allow optional authentication for classes so the frontend
-// can call the endpoint during local dev without a token. Production still
+// In development, allow optional authentication for classes and teachers so the frontend
+// can call the endpoints during local dev without a token. Production still
 // requires authentication.
 const classesAuth = process.env.NODE_ENV === 'development' ? optionalAuth : authMiddleware;
+const teachersAuth = process.env.NODE_ENV === 'development' ? optionalAuth : authMiddleware;
 app.use('/api/v1/students', authMiddleware, studentRoutes);
-app.use('/api/v1/teachers', authMiddleware, teacherRoutes);
+app.use('/api/v1/teachers', teachersAuth, teacherRoutes);
 app.use('/api/v1/classes', classesAuth, classRoutes);
 // Enrollments: allow optional auth in development for easier local testing
 const enrollmentsAuth = process.env.NODE_ENV === 'development' ? optionalAuth : authMiddleware;

@@ -1,5 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System.Text.RegularExpressions;
 using BuildAQ.SchoolsApi.Models;
 
 // Map Id property to id column for all entities
@@ -43,6 +45,28 @@ namespace BuildAQ.SchoolsApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // Ensure properties use snake_case column names to match existing PostgreSQL schema.
+            // Map 'Id' -> 'id' and generally convert PascalCase property names to snake_case column names.
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var prop in entityType.GetProperties())
+                {
+                    // If the property already has an explicit column name from [Column], respect it.
+                    var currentName = prop.GetColumnName(StoreObjectIdentifier.Table(entityType.GetTableName(), entityType.GetSchema()));
+                    if (!string.IsNullOrEmpty(currentName)) continue;
+
+                    var clrName = prop.Name;
+                    if (string.Equals(clrName, "Id", StringComparison.OrdinalIgnoreCase))
+                    {
+                        prop.SetColumnName("id");
+                        continue;
+                    }
+
+                    // convert PascalCase to snake_case
+                    var snake = Regex.Replace(clrName, "([a-z0-9])([A-Z])", "$1_$2").ToLowerInvariant();
+                    prop.SetColumnName(snake);
+                }
+            }
             // Define composite primary key for RolePermission
             modelBuilder.Entity<RolePermission>()
                 .HasKey(rp => new { rp.RoleId, rp.PermissionId, rp.TenantId });
@@ -74,7 +98,33 @@ namespace BuildAQ.SchoolsApi.Data
             modelBuilder.Entity<TopicTest>().ToTable("topic_tests");
             modelBuilder.Entity<TopicTestResult>().ToTable("topic_test_results");
             modelBuilder.Entity<User>().ToTable("users");
-            modelBuilder.Entity<UserStatus>().ToTable("user_status");
+            // Configure explicit many-to-many via the join entity UserRole to avoid EF creating an implicit join table
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Roles)
+                .WithMany(r => r.Users)
+                .UsingEntity<UserRole>(
+                    j => j
+                        .HasOne(ur => ur.Role)
+                        .WithMany()
+                        .HasForeignKey(ur => ur.RoleId),
+                    j => j
+                        .HasOne(ur => ur.User)
+                        .WithMany()
+                        .HasForeignKey(ur => ur.UserId),
+                    j =>
+                    {
+                        j.ToTable("user_roles");
+                        j.HasKey(ur => new { ur.UserId, ur.RoleId });
+                        j.Property(ur => ur.UserId).HasColumnName("user_id");
+                        j.Property(ur => ur.RoleId).HasColumnName("role_id");
+                    }
+                );
+            modelBuilder.Entity<UserStatus>(b =>
+            {
+                b.ToTable("user_status");
+                b.Property(u => u.Id).HasColumnName("id");
+                b.Property(u => u.Name).HasColumnName("name");
+            });
             modelBuilder.Entity<UserRole>().ToTable("user_roles");
             modelBuilder.Entity<UserRole>()
                 .HasKey(ur => new { ur.UserId, ur.RoleId });
