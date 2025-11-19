@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { proxyToDotnet } = require('../lib/proxyToDotnet');
 
 /**
  * @swagger
@@ -12,10 +13,13 @@ const router = express.Router();
  *         description: List of classes
  */
 router.get('/', (req, res) => {
-  res.json({
-    message: 'Classes endpoint',
-    classes: []
-  });
+  // In development we prefer to proxy to the real .NET API when available.
+  if ((process.env.NODE_ENV || 'development') === 'development') {
+    return proxyToDotnet(req, res);
+  }
+
+  // Return an array of classes (empty by default for mock/dev)
+  res.json([]);
 });
 
 /**
@@ -29,6 +33,10 @@ router.get('/', (req, res) => {
  *         description: Class created successfully
  */
 router.post('/', (req, res) => {
+  if ((process.env.NODE_ENV || 'development') === 'development') {
+    return proxyToDotnet(req, res);
+  }
+
   res.status(201).json({
     message: 'Class created',
     class: req.body
@@ -52,6 +60,10 @@ router.post('/', (req, res) => {
  *         description: Class details
  */
 router.get('/:id', (req, res) => {
+  if ((process.env.NODE_ENV || 'development') === 'development') {
+    return proxyToDotnet(req, res);
+  }
+
   res.json({
     message: 'Class details',
     classId: req.params.id

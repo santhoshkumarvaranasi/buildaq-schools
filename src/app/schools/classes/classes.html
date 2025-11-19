@@ -180,6 +180,7 @@
                   {{currentSort.field === 'status' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
                 </span>
               </th>
+              <th>Attendance</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -226,7 +227,21 @@
                   {{class.status | titlecase}}
                 </span>
               </td>
+              <td>
+                <button class="btn btn-sm btn-info" (click)="showAttendance(class)">Attendance</button>
+              </td>
               <td class="actions-cell">
+<!-- Attendance Modal/Panel -->
+<div *ngIf="selectedAttendanceClass" class="attendance-modal" style="position:fixed;top:10vh;left:0;right:0;z-index:2000;background:#fff;padding:2rem 1rem 1rem 1rem;box-shadow:0 2px 16px rgba(0,0,0,0.2);max-width:600px;margin:0 auto;">
+  <app-attendance
+    [classId]="selectedAttendanceClass.id"
+    [className]="selectedAttendanceClass.name"
+    [date]="attendanceDate"
+  ></app-attendance>
+  <div style="text-align:right;margin-top:1rem;">
+    <button class="btn btn-secondary close-btn" (click)="closeAttendance()">Close</button>
+  </div>
+</div>
                 <div class="action-buttons">
                   <button class="btn-action btn-view" 
                           (click)="viewClass(class); $event.stopPropagation()" 
@@ -243,6 +258,30 @@
                           title="Manage Enrollment">
                     👥
                   </button>
+<!-- Enrollment Modal -->
+<div *ngIf="showEnrollmentModal && selectedEnrollmentClass" class="enrollment-modal" style="position:fixed;top:10vh;left:0;right:0;z-index:2000;background:#fff;padding:2rem 1rem 1rem 1rem;box-shadow:0 2px 16px rgba(0,0,0,0.2);max-width:600px;margin:0 auto;">
+  <h3>Manage Enrollment for {{ selectedEnrollmentClass.name }}</h3>
+  <div>
+    <strong>Enrolled Students:</strong>
+    <ul>
+      <li *ngFor="let e of getEnrolledStudents(selectedEnrollmentClass.id)">
+        {{ e.studentName }}
+        <button class="btn btn-sm btn-danger" (click)="removeStudentFromClass(e.id)">Remove</button>
+      </li>
+    </ul>
+  </div>
+  <div style="margin-top:1rem;">
+    <label>Add Student:</label>
+    <select [(ngModel)]="newEnrollmentStudentId">
+      <option [ngValue]="null">Select student...</option>
+      <option *ngFor="let s of allStudents" [ngValue]="s.studentId">{{ s.studentName }}</option>
+    </select>
+    <button class="btn btn-primary btn-sm" (click)="addStudentToClass()" [disabled]="!newEnrollmentStudentId">Add</button>
+  </div>
+  <div style="text-align:right;margin-top:1rem;">
+    <button class="btn btn-secondary close-btn" (click)="closeEnrollmentModal()">Close</button>
+  </div>
+</div>
                   <button class="btn-action btn-more" 
                           (click)="generateReport(class); $event.stopPropagation()" 
                           title="Generate Report">

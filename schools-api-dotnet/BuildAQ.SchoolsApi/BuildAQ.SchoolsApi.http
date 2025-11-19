@@ -1,0 +1,6 @@
+@BuildAQ.SchoolsApi_HostAddress = http://localhost:5137
+
+GET {{BuildAQ.SchoolsApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

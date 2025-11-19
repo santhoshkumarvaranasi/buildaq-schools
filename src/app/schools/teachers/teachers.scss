@@ -1,3 +1,4 @@
+@use 'sass:color';
 // Mobile-first responsive styling for Teachers management
 // Following design patterns from students.scss
 
@@ -635,18 +636,18 @@ $large-desktop-min: 1200px;
             }
             
             &.status-active {
-              background: lighten($success-color, 40%);
-              color: darken($success-color, 10%);
+              background: color.adjust($success-color, $lightness: 40%);
+              color: color.adjust($success-color, $lightness: -10%);
             }
             
             &.status-inactive {
-              background: lighten($text-light, 30%);
-              color: darken($text-light, 10%);
+              background: color.adjust($text-light, $lightness: 30%);
+              color: color.adjust($text-light, $lightness: -10%);
             }
             
             &.status-on-leave {
-              background: lighten($warning-color, 35%);
-              color: darken($warning-color, 10%);
+              background: color.adjust($warning-color, $lightness: 35%);
+              color: color.adjust($warning-color, $lightness: -10%);
             }
           }
         }
@@ -840,18 +841,18 @@ $large-desktop-min: 1200px;
       }
       
       &.status-active {
-        background: lighten($success-color, 40%);
-        color: darken($success-color, 10%);
+  background: color.adjust($success-color, $lightness: 40%);
+  color: color.adjust($success-color, $lightness: -10%);
       }
       
       &.status-inactive {
-        background: lighten($text-light, 30%);
-        color: darken($text-light, 10%);
+  background: color.adjust($text-light, $lightness: 30%);
+  color: color.adjust($text-light, $lightness: -10%);
       }
       
       &.status-on-leave {
-        background: lighten($warning-color, 35%);
-        color: darken($warning-color, 10%);
+  background: color.adjust($warning-color, $lightness: 35%);
+  color: color.adjust($warning-color, $lightness: -10%);
       }
     }
   }
@@ -1091,7 +1092,7 @@ $large-desktop-min: 1200px;
 // Dark mode support (optional)
 @media (prefers-color-scheme: dark) {
   .teachers-container {
-    background: darken($dark-color, 5%);
+  background: color.adjust($dark-color, $lightness: -5%);
     color: $text-white;
   }
   

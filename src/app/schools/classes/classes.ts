@@ -1,39 +1,25 @@
-import { Component, HostListener } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-export interface ClassSchedule {
-  day: string;
-  startTime: string;
-  endTime: string;
-  room: string;
-}
+import { HttpClient } from '@angular/common/http';
+import { AttendanceService } from '../attendance/attendance.service';
+import { environment } from '../../../environments/environment';
+import { AttendanceComponent } from '../attendance/attendance.component';
 
 export interface Class {
   id: number;
   name: string;
-  code: string;
-  description: string;
-  department: string;
-  teacherId: number;
-  teacherName: string;
-  credits: number;
-  maxStudents: number;
-  enrolledStudents: number;
-  semester: string;
-  year: number;
-  schedule: ClassSchedule[];
-  status: 'active' | 'cancelled' | 'completed' | 'draft';
-  startDate: Date;
-  endDate: Date;
+  code?: string;
+  department?: string;
+  teacherName?: string;
+  maxStudents?: number;
+  enrolledStudents?: number;
+  semester?: string;
+  status?: string;
+  year?: number;
+  credits?: number;
+  schedule?: Array<{ day: string; startTime?: string; endTime?: string; room?: string }>;
   prerequisites?: string[];
-  materials?: string[];
-  gradeDistribution: {
-    assignments: number;
-    midterm: number;
-    final: number;
-    participation: number;
-  };
 }
 
 export interface Enrollment {
@@ -41,527 +27,188 @@ export interface Enrollment {
   studentId: number;
   studentName: string;
   classId: number;
-  enrollmentDate: Date;
-  status: 'enrolled' | 'waitlisted' | 'dropped' | 'completed';
-  grade?: string;
-  attendance: number; // percentage
-}
-
-export interface SortConfig {
-  field: string;
-  direction: 'asc' | 'desc';
+  status: string;
 }
 
 @Component({
   selector: 'app-classes',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AttendanceComponent],
   templateUrl: './classes.html',
   styleUrls: ['./classes.scss']
 })
-export class ClassesComponent {
-  classes: Class[] = [
-    {
-      id: 1,
-      name: 'Advanced Mathematics',
-      code: 'MATH301',
-      description: 'Advanced topics in calculus and linear algebra',
-      department: 'Mathematics',
-      teacherId: 1,
-      teacherName: 'Sarah Johnson',
-      credits: 4,
-      maxStudents: 30,
-      enrolledStudents: 28,
-      semester: 'Fall',
-      year: 2025,
-      schedule: [
-        { day: 'Monday', startTime: '09:00', endTime: '10:30', room: 'MATH-101' },
-        { day: 'Wednesday', startTime: '09:00', endTime: '10:30', room: 'MATH-101' },
-        { day: 'Friday', startTime: '09:00', endTime: '10:30', room: 'MATH-101' }
-      ],
-      status: 'active',
-      startDate: new Date('2025-09-01'),
-      endDate: new Date('2025-12-15'),
-      prerequisites: ['MATH201', 'MATH202'],
-      materials: ['Textbook: Advanced Calculus', 'Scientific Calculator', 'Graphing Software License'],
-      gradeDistribution: {
-        assignments: 30,
-        midterm: 25,
-        final: 35,
-        participation: 10
-      }
-    },
-    {
-      id: 2,
-      name: 'Organic Chemistry',
-      code: 'CHEM301',
-      description: 'Study of carbon-containing compounds and their reactions',
-      department: 'Science',
-      teacherId: 2,
-      teacherName: 'Michael Chen',
-      credits: 5,
-      maxStudents: 24,
-      enrolledStudents: 22,
-      semester: 'Fall',
-      year: 2025,
-      schedule: [
-        { day: 'Tuesday', startTime: '10:00', endTime: '12:00', room: 'SCI-201' },
-        { day: 'Thursday', startTime: '10:00', endTime: '12:00', room: 'SCI-201' },
-        { day: 'Friday', startTime: '14:00', endTime: '17:00', room: 'LAB-A' }
-      ],
-      status: 'active',
-      startDate: new Date('2025-09-01'),
-      endDate: new Date('2025-12-15'),
-      prerequisites: ['CHEM201', 'CHEM202'],
-      materials: ['Lab Manual', 'Safety Goggles', 'Lab Coat', 'Molecular Model Kit'],
-      gradeDistribution: {
-        assignments: 25,
-        midterm: 20,
-        final: 35,
-        participation: 20
-      }
-    },
-    {
-      id: 3,
-      name: 'Contemporary Literature',
-      code: 'ENG301',
-      description: 'Modern and postmodern literature analysis',
-      department: 'English',
-      teacherId: 3,
-      teacherName: 'Emily Davis',
-      credits: 3,
-      maxStudents: 25,
-      enrolledStudents: 20,
-      semester: 'Fall',
-      year: 2025,
-      schedule: [
-        { day: 'Monday', startTime: '14:00', endTime: '15:30', room: 'ENG-102' },
-        { day: 'Wednesday', startTime: '14:00', endTime: '15:30', room: 'ENG-102' }
-      ],
-      status: 'active',
-      startDate: new Date('2025-09-01'),
-      endDate: new Date('2025-12-15'),
-      prerequisites: ['ENG201'],
-      materials: ['Course Reader', 'Selected Novels (5)', 'MLA Style Guide'],
-      gradeDistribution: {
-        assignments: 40,
-        midterm: 20,
-        final: 25,
-        participation: 15
-      }
-    },
-    {
-      id: 4,
-      name: 'World History Seminar',
-      code: 'HIST401',
-      description: 'Advanced seminar on global historical perspectives',
-      department: 'History',
-      teacherId: 4,
-      teacherName: 'Robert Williams',
-      credits: 3,
-      maxStudents: 20,
-      enrolledStudents: 18,
-      semester: 'Fall',
-      year: 2025,
-      schedule: [
-        { day: 'Tuesday', startTime: '15:30', endTime: '17:00', room: 'HIST-201' },
-        { day: 'Thursday', startTime: '15:30', endTime: '17:00', room: 'HIST-201' }
-      ],
-      status: 'active',
-      startDate: new Date('2025-09-01'),
-      endDate: new Date('2025-12-15'),
-      prerequisites: ['HIST301'],
-      materials: ['Primary Source Reader', 'Research Database Access'],
-      gradeDistribution: {
-        assignments: 50,
-        midterm: 15,
-        final: 25,
-        participation: 10
-      }
-    },
-    {
-      id: 5,
-      name: 'Digital Art Studio',
-      code: 'ART301',
-      description: 'Advanced digital art techniques and portfolio development',
-      department: 'Art',
-      teacherId: 5,
-      teacherName: 'Lisa Anderson',
-      credits: 3,
-      maxStudents: 16,
-      enrolledStudents: 12,
-      semester: 'Fall',
-      year: 2025,
-      schedule: [
-        { day: 'Monday', startTime: '10:00', endTime: '13:00', room: 'ART-STUDIO' },
-        { day: 'Wednesday', startTime: '10:00', endTime: '13:00', room: 'ART-STUDIO' }
-      ],
-      status: 'active',
-      startDate: new Date('2025-09-01'),
-      endDate: new Date('2025-12-15'),
-      prerequisites: ['ART201'],
-      materials: ['Adobe Creative Suite License', 'Graphics Tablet', 'Portfolio Binder'],
-      gradeDistribution: {
-        assignments: 60,
-        midterm: 15,
-        final: 20,
-        participation: 5
-      }
-    },
-    {
-      id: 6,
-      name: 'Introduction to Philosophy',
-      code: 'PHIL101',
-      description: 'Fundamental concepts in Western and Eastern philosophy',
-      department: 'Philosophy',
-      teacherId: 7,
-      teacherName: 'Dr. James Peterson',
-      credits: 3,
-      maxStudents: 35,
-      enrolledStudents: 32,
-      semester: 'Fall',
-      year: 2025,
-      schedule: [
-        { day: 'Tuesday', startTime: '11:00', endTime: '12:30', room: 'PHIL-101' },
-        { day: 'Thursday', startTime: '11:00', endTime: '12:30', room: 'PHIL-101' }
-      ],
-      status: 'active',
-      startDate: new Date('2025-09-01'),
-      endDate: new Date('2025-12-15'),
-      prerequisites: [],
-      materials: ['Philosophy Reader', 'Notebook for Reflections'],
-      gradeDistribution: {
-        assignments: 35,
-        midterm: 25,
-        final: 30,
-        participation: 10
-      }
-    }
-  ];
+export class ClassesComponent implements OnInit {
+  classes: Class[] = [];
+  enrollments: Enrollment[] = [];
 
-  // Sample enrollments data
-  enrollments: Enrollment[] = [
-    {
-      id: 1,
-      studentId: 1,
-      studentName: 'John Smith',
-      classId: 1,
-      enrollmentDate: new Date('2025-08-15'),
-      status: 'enrolled',
-      attendance: 95
-    },
-    {
-      id: 2,
-      studentId: 2,
-      studentName: 'Jane Doe',
-      classId: 1,
-      enrollmentDate: new Date('2025-08-16'),
-      status: 'enrolled',
-      attendance: 92
-    },
-    {
-      id: 3,
-      studentId: 3,
-      studentName: 'Mike Johnson',
-      classId: 2,
-      enrollmentDate: new Date('2025-08-17'),
-      status: 'enrolled',
-      attendance: 88
-    }
-  ];
-
-  // Filter and search properties
-  filteredClasses: Class[] = [...this.classes];
-  searchTerm: string = '';
-  selectedDepartment: string = '';
-  selectedSemester: string = '';
-  selectedStatus: string = '';
-  
-  // Mobile-specific properties
-  showMobileFilters: boolean = false;
-  viewMode: 'table' | 'cards' = 'table';
+  filteredClasses: Class[] = [];
   selectedClass: Class | null = null;
-  
-  // Sorting properties
+  showEnrollmentModal = false;
+  searchTerm = '';
+  selectedDepartment = '';
+  selectedSemester = '';
+  selectedStatus = '';
+  viewMode: 'table' | 'cards' = 'table';
+  displayLimit = 20;
+  // Template-driven properties required by classes.html
   sortField: string = 'name';
-  currentSort: SortConfig = { field: 'name', direction: 'asc' };
-  
-  // Performance properties
-  displayLimit: number = 20;
-  showScrollIndicator: boolean = false;
+  currentSort: { field: string; direction: 'asc' | 'desc' } = { field: 'name', direction: 'asc' };
+  newEnrollmentStudentId: number | null = null;
+  allStudents: { studentId: number; studentName: string }[] = [];
+  selectedEnrollmentClass: Class | null = null;
+  selectedAttendanceClass: Class | null = null;
+  attendanceDate: string = new Date().toISOString();
+  showScrollIndicator = false;
+  // Additional template members
+  showMobileFilters = false;
+  departments: string[] = [];
+  semesters: string[] = [];
 
-  // Filter options
-  departments = [
-    'Mathematics',
-    'Science', 
-    'English',
-    'History',
-    'Art',
-    'Philosophy',
-    'Computer Science',
-    'Foreign Languages'
-  ];
+  constructor(private attendanceService: AttendanceService, private http: HttpClient) {}
 
-  semesters = ['Fall', 'Spring', 'Summer'];
-  years = [2024, 2025, 2026];
-
-  constructor() {
-    this.detectViewMode();
+  ngOnInit(): void {
+    this.fetchClasses();
+    this.fetchEnrollments();
   }
 
-  ngOnInit() {
-    this.filterClasses();
-    this.checkScrollIndicator();
+  fetchClasses(): void {
+    const url = `${environment.apiUrl.replace(/\/$/, '')}/v1/classes`;
+    this.http.get<Class[]>(url).subscribe({
+      next: data => {
+        // Defensive: some responses (304 Not Modified) can arrive with no body
+        // or some legacy endpoints may return an object wrapper. Normalize to array.
+        if (!Array.isArray(data)) {
+          console.warn('Unexpected /classes response — expected array, got:', data);
+          // Support older response shape { classes: [] }
+          const maybe = (data as any) || {};
+          if (Array.isArray(maybe.classes)) {
+            this.classes = maybe.classes as Class[];
+          } else {
+            this.classes = [];
+          }
+        } else {
+          this.classes = data as Class[];
+        }
+        this.departments = Array.from(new Set(this.classes.map(x => x.department).filter(Boolean) as string[])).sort();
+        this.semesters = Array.from(new Set(this.classes.map(x => x.semester).filter(Boolean) as string[])).sort();
+        this.applyFilters();
+      },
+      error: err => console.error('Error fetching classes', err)
+    });
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    this.detectViewMode();
-    this.checkScrollIndicator();
+  fetchEnrollments(): void {
+    const url = `${environment.apiUrl.replace(/\/$/, '')}/v1/enrollments`;
+    this.http.get<Enrollment[]>(url).subscribe({
+      next: data => {
+        if (!Array.isArray(data)) {
+          console.warn('Unexpected /enrollments response — expected array, got:', data);
+          const maybe = (data as any) || {};
+          this.enrollments = Array.isArray(maybe.enrollments) ? maybe.enrollments as Enrollment[] : [];
+        } else {
+          this.enrollments = data as Enrollment[];
+        }
+      },
+      error: err => console.error('Error fetching enrollments', err)
+    });
   }
 
-  // Scroll indicator methods
-  checkScrollIndicator() {
-    setTimeout(() => {
-      const tableContainer = document.querySelector('.table-scroll-container');
-      if (tableContainer) {
-        this.showScrollIndicator = tableContainer.scrollWidth > tableContainer.clientWidth;
-      }
-    }, 100);
-  }
-
-  // Mobile filter methods
-  toggleMobileFilters() {
-    this.showMobileFilters = !this.showMobileFilters;
-  }
-
-  clearSearch() {
-    this.searchTerm = '';
-    this.filterClasses();
-  }
-
-  // View mode methods
-  detectViewMode() {
-    this.viewMode = window.innerWidth < 768 ? 'cards' : 'table';
-  }
-
-  setViewMode(mode: 'table' | 'cards') {
-    this.viewMode = mode;
-  }
-
-  // Class selection methods
-  selectClass(classItem: Class) {
-    this.selectedClass = this.selectedClass?.id === classItem.id ? null : classItem;
-  }
-
-  isClassSelected(classItem: Class): boolean {
-    return this.selectedClass?.id === classItem.id;
-  }
-
-  trackByClassId(index: number, classItem: Class): number {
-    return classItem.id;
-  }
-
-  // Sorting methods
-  sortByField(field: string) {
-    if (this.currentSort.field === field) {
-      this.currentSort.direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.currentSort = { field, direction: 'asc' };
+  applyFilters(): void {
+    let out = [...this.classes];
+    const term = this.searchTerm?.trim().toLowerCase();
+    if (term) {
+      out = out.filter(c => (c.name || '').toLowerCase().includes(term) || (c.code || '').toLowerCase().includes(term));
     }
-    this.sortClasses();
-  }
-
-  sortClasses() {
-    this.filteredClasses.sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
-
-      switch (this.currentSort.field) {
-        case 'id':
-          aValue = a.id;
-          bValue = b.id;
-          break;
-        case 'name':
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
-          break;
-        case 'code':
-          aValue = a.code.toLowerCase();
-          bValue = b.code.toLowerCase();
-          break;
-        case 'department':
-          aValue = a.department.toLowerCase();
-          bValue = b.department.toLowerCase();
-          break;
-        case 'teacher':
-          aValue = a.teacherName.toLowerCase();
-          bValue = b.teacherName.toLowerCase();
-          break;
-        case 'credits':
-          aValue = a.credits;
-          bValue = b.credits;
-          break;
-        case 'enrollment':
-          aValue = a.enrolledStudents;
-          bValue = b.enrolledStudents;
-          break;
-        case 'capacity':
-          aValue = a.enrolledStudents / a.maxStudents;
-          bValue = b.enrolledStudents / b.maxStudents;
-          break;
-        case 'status':
-          aValue = a.status;
-          bValue = b.status;
-          break;
-        default:
-          return 0;
-      }
-
-      if (aValue < bValue) {
-        return this.currentSort.direction === 'asc' ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return this.currentSort.direction === 'asc' ? 1 : -1;
-      }
+    if (this.selectedDepartment) out = out.filter(c => c.department === this.selectedDepartment);
+    if (this.selectedSemester) out = out.filter(c => c.semester === this.selectedSemester);
+    if (this.selectedStatus) out = out.filter(c => c.status === this.selectedStatus);
+    // Apply simple sort
+    const f = this.currentSort.field || this.sortField;
+    const dir = this.currentSort.direction === 'desc' ? -1 : 1;
+    out.sort((a: any, b: any) => {
+      const va = (a && a[f]) || '';
+      const vb = (b && b[f]) || '';
+      if (va < vb) return -1 * dir;
+      if (va > vb) return 1 * dir;
       return 0;
     });
+    this.filteredClasses = out;
   }
 
-  // Filter and search methods
-  onSearch() {
-    this.filterClasses();
+  /* Newly added template helper methods */
+  exportClassList(): void {
+    const rows = [ ['ID','Code','Name','Department','Semester','Year','Credits','Status'] ];
+    this.classes.forEach(c => rows.push([String(c.id), c.code||'', c.name||'', c.department||'', c.semester||'', String(c.year||''), String(c.credits||''), c.status||'']));
+    const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'classes.csv'; a.click(); URL.revokeObjectURL(url);
   }
 
-  filterClasses() {
-    this.filteredClasses = this.classes.filter(classItem => {
-      const matchesSearch = !this.searchTerm || 
-        classItem.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        classItem.code.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        classItem.description.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        classItem.department.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        classItem.teacherName.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
-      const matchesDepartment = !this.selectedDepartment || classItem.department === this.selectedDepartment;
-      const matchesSemester = !this.selectedSemester || classItem.semester === this.selectedSemester;
-      const matchesStatus = !this.selectedStatus || classItem.status === this.selectedStatus;
+  toggleMobileFilters(): void { this.showMobileFilters = !this.showMobileFilters; }
+  filterClasses(): void { this.applyFilters(); }
+  sortClasses(): void { this.sortByField(this.sortField); }
+  getActiveCount(): number { return this.classes.filter(c => c.status === 'active').length; }
+  getTotalEnrollments(): number { return this.enrollments.filter(e => e.status === 'enrolled').length; }
+  getAverageCapacity(): number { if (!this.classes.length) return 0; const vals = this.classes.map(c => this.getCapacityPercentage(c)); const avg = Math.round(vals.reduce((s,n) => s + n, 0)/vals.length); return avg; }
+  getDepartmentCount(): number { return this.departments.length; }
+  getEnrollmentStatus(c: Class): string { if (!c.maxStudents) return 'unknown'; const perc = this.getCapacityPercentage(c); if (perc >= 100) return 'full'; if (perc >= 90) return 'nearly-full'; return 'open'; }
+  formatPrerequisites(pr: string[] | undefined): string { if (!pr || pr.length===0) return 'None'; return pr.join(', '); }
+  viewSchedule(_: Class): void { /* stub - could open schedule modal */ }
+  duplicateClass(src: Class): void { const copy: Class = { ...src, id: Date.now() }; this.classes.push(copy); this.applyFilters(); }
 
-      return matchesSearch && matchesDepartment && matchesSemester && matchesStatus;
+  openEnrollmentModal(c: Class): void { this.selectedClass = c; this.showEnrollmentModal = true; }
+  closeEnrollmentModal(): void { this.selectedClass = null; this.showEnrollmentModal = false; }
+  getEnrolledForClass(classId: number): Enrollment[] { return this.enrollments.filter(e => e.classId === classId && e.status === 'enrolled'); }
+
+  ensureAttendanceRecordsForClass(classId: number): void {
+    const enrolled = this.getEnrolledForClass(classId);
+    const date = new Date();
+    const dateStr = date.toISOString();
+    enrolled.forEach(s => {
+      const existing = this.attendanceService.getRecordsForClass(classId, dateStr).find((r: any) => r.studentId === s.studentId);
+      if (!existing) {
+        this.attendanceService.addRecord({
+          id: Date.now(),
+          studentId: s.studentId,
+          studentName: s.studentName,
+          classId,
+          className: this.classes.find(c => c.id === classId)?.name || '',
+          date: dateStr,
+          status: 'present',
+          notes: ''
+        } as any);
+      }
     });
-
-    // Apply current sorting
-    this.sortClasses();
   }
 
-  clearFilters() {
-    this.searchTerm = '';
-    this.selectedDepartment = '';
-    this.selectedSemester = '';
-    this.selectedStatus = '';
-    this.filterClasses();
-  }
+  onSearch(term?: string): void { if (term !== undefined) this.searchTerm = term; this.applyFilters(); }
+  clearSearch(): void { this.searchTerm = ''; this.applyFilters(); }
 
-  // Status and display methods
-  getStatusClass(status: string): string {
-    switch (status) {
-      case 'active': return 'status-active';
-      case 'cancelled': return 'status-cancelled';
-      case 'completed': return 'status-completed';
-      case 'draft': return 'status-draft';
-      default: return '';
-    }
-  }
+  checkScrollIndicator(): void { /* noop */ }
 
-  getStatusIcon(status: string): string {
-    switch (status) {
-      case 'active': return '✅';
-      case 'cancelled': return '❌';
-      case 'completed': return '🎓';
-      case 'draft': return '📝';
-      default: return '❓';
-    }
-  }
+  /* Template helper implementations (lightweight stubs) */
+  setViewMode(mode: 'table' | 'cards') { this.viewMode = mode; }
+  sortByField(field: string) { if (this.currentSort.field === field) { this.currentSort.direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc'; } else { this.currentSort.field = field; this.currentSort.direction = 'asc'; } this.applyFilters(); }
+  trackByClassId(_: number, item: Class) { return item.id; }
+  isClassSelected(item: Class) { return !!this.selectedClass && this.selectedClass.id === item.id; }
+  selectClass(item: Class) { this.selectedClass = item; }
+  getCapacityPercentage(item: Class) { if (!item.maxStudents) return 0; return Math.round(((item.enrolledStudents || 0) / item.maxStudents) * 100); }
+  getCapacityClass(item: Class) { const p = this.getCapacityPercentage(item); if (p >= 90) return 'capacity-high'; if (p >= 60) return 'capacity-medium'; return 'capacity-low'; }
+  getStatusClass(status?: string) { switch (status) { case 'active': return 'status-active'; case 'cancelled': return 'status-cancelled'; case 'completed': return 'status-completed'; default: return ''; } }
+  getStatusIcon(status?: string) { switch (status) { case 'active': return '✅'; case 'cancelled': return '❌'; case 'completed': return '🏁'; default: return ''; } }
 
-  getCapacityPercentage(classItem: Class): number {
-    return Math.round((classItem.enrolledStudents / classItem.maxStudents) * 100);
-  }
-
-  getCapacityClass(classItem: Class): string {
-    const percentage = this.getCapacityPercentage(classItem);
-    if (percentage >= 90) return 'capacity-full';
-    if (percentage >= 75) return 'capacity-high';
-    if (percentage >= 50) return 'capacity-medium';
-    return 'capacity-low';
-  }
-
-  getActiveCount(): number {
-    return this.classes.filter(classItem => classItem.status === 'active').length;
-  }
-
-  getTotalEnrollments(): number {
-    return this.classes.reduce((sum, classItem) => sum + classItem.enrolledStudents, 0);
-  }
-
-  getAverageCapacity(): number {
-    const total = this.classes.reduce((sum, classItem) => sum + this.getCapacityPercentage(classItem), 0);
-    return Math.round(total / this.classes.length);
-  }
-
-  getDepartmentCount(): number {
-    return new Set(this.classes.map(classItem => classItem.department)).size;
-  }
-
-  // Utility methods
-  formatSchedule(schedule: ClassSchedule[]): string {
-    return schedule.map(s => `${s.day} ${s.startTime}-${s.endTime}`).join(', ');
-  }
-
-  formatPrerequisites(prerequisites?: string[]): string {
-    return prerequisites ? prerequisites.join(', ') : 'None';
-  }
-
-  getEnrollmentStatus(classItem: Class): string {
-    const percentage = this.getCapacityPercentage(classItem);
-    if (percentage >= 100) return 'Full';
-    if (percentage >= 90) return 'Almost Full';
-    return 'Open';
-  }
-
-  // Performance methods
-  loadMoreClasses() {
-    this.displayLimit += 20;
-  }
-
-  // Action methods
-  editClass(classItem: Class) {
-    console.log('Edit class:', classItem);
-  }
-
-  viewClass(classItem: Class) {
-    console.log('View class:', classItem);
-  }
-
-  addClass() {
-    console.log('Add new class');
-  }
-
-  manageEnrollment(classItem: Class) {
-    console.log('Manage enrollment for class:', classItem);
-  }
-
-  viewSchedule(classItem: Class) {
-    console.log('View schedule for class:', classItem);
-  }
-
-  duplicateClass(classItem: Class) {
-    console.log('Duplicate class:', classItem);
-  }
-
-  exportClassList() {
-    console.log('Export class list');
-  }
-
-  generateReport(classItem: Class) {
-    console.log('Generate report for class:', classItem);
-  }
+  // Enrollment UI methods
+  showAttendance(item: Class) { this.selectedAttendanceClass = item; this.ensureAttendanceRecordsForClass(item.id); }
+  closeAttendance() { this.selectedAttendanceClass = null; }
+  viewClass(_: Class) { /* stub - navigate to details */ }
+  editClass(_: Class) { /* stub - open editor */ }
+  manageEnrollment(item: Class) { this.selectedEnrollmentClass = item; this.showEnrollmentModal = true; }
+  getEnrolledStudents(classId: number) { return this.enrollments.filter(e => e.classId === classId && e.status === 'enrolled'); }
+  removeStudentFromClass(enrollmentId: number) { const idx = this.enrollments.findIndex(e => e.id === enrollmentId); if (idx > -1) this.enrollments[idx].status = 'dropped'; }
+  addStudentToClass() { if (!this.selectedEnrollmentClass || !this.newEnrollmentStudentId) return; const s = this.allStudents.find(x => x.studentId === this.newEnrollmentStudentId); if (!s) return; this.enrollments.push({ id: Date.now(), studentId: s.studentId, studentName: s.studentName, classId: this.selectedEnrollmentClass.id, status: 'enrolled' }); this.newEnrollmentStudentId = null; }
+  generateReport(_: Class) { /* stub */ }
+  loadMoreClasses() { this.displayLimit += 20; }
+  clearFilters() { this.selectedDepartment = ''; this.selectedSemester = ''; this.selectedStatus = ''; this.searchTerm = ''; this.applyFilters(); }
+  addClass() { /* stub */ }
 }

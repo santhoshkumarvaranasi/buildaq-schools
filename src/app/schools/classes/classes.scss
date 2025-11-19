@@ -1,3 +1,4 @@
+@use 'sass:color';
 // Mobile-first responsive styling for Classes management
 // Following design patterns from students and teachers components
 
@@ -660,8 +661,8 @@ $large-desktop-min: 1200px;
             gap: 4px;
             
             .schedule-item {
-              background: lighten($primary-color, 45%);
-              color: darken($primary-color, 10%);
+              background: color.adjust($primary-color, $lightness: 45%);
+              color: color.adjust($primary-color, $lightness: -10%);
               padding: 2px 6px;
               border-radius: 8px;
               font-size: 10px;
@@ -686,23 +687,23 @@ $large-desktop-min: 1200px;
             }
             
             &.status-active {
-              background: lighten($success-color, 40%);
-              color: darken($success-color, 10%);
+              background: color.adjust($success-color, $lightness: 40%);
+              color: color.adjust($success-color, $lightness: -10%);
             }
             
             &.status-cancelled {
-              background: lighten($danger-color, 35%);
-              color: darken($danger-color, 10%);
+              background: color.adjust($danger-color, $lightness: 35%);
+              color: color.adjust($danger-color, $lightness: -10%);
             }
             
             &.status-completed {
-              background: lighten($info-color, 35%);
-              color: darken($info-color, 10%);
+              background: color.adjust($info-color, $lightness: 35%);
+              color: color.adjust($info-color, $lightness: -10%);
             }
             
             &.status-draft {
-              background: lighten($text-light, 30%);
-              color: darken($text-light, 10%);
+              background: color.adjust($text-light, $lightness: 30%);
+              color: color.adjust($text-light, $lightness: -10%);
             }
           }
         }
@@ -844,23 +845,23 @@ $large-desktop-min: 1200px;
       }
       
       &.status-active {
-        background: lighten($success-color, 40%);
-        color: darken($success-color, 10%);
+  background: color.adjust($success-color, $lightness: 40%);
+  color: color.adjust($success-color, $lightness: -10%);
       }
       
       &.status-cancelled {
-        background: lighten($danger-color, 35%);
-        color: darken($danger-color, 10%);
+  background: color.adjust($danger-color, $lightness: 35%);
+  color: color.adjust($danger-color, $lightness: -10%);
       }
       
       &.status-completed {
-        background: lighten($info-color, 35%);
-        color: darken($info-color, 10%);
+  background: color.adjust($info-color, $lightness: 35%);
+  color: color.adjust($info-color, $lightness: -10%);
       }
       
       &.status-draft {
-        background: lighten($text-light, 30%);
-        color: darken($text-light, 10%);
+  background: color.adjust($text-light, $lightness: 30%);
+  color: color.adjust($text-light, $lightness: -10%);
       }
     }
   }
@@ -961,7 +962,7 @@ $large-desktop-min: 1200px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: lighten($primary-color, 45%);
+            background: color.adjust($primary-color, $lightness: 45%);
             padding: 6px 12px;
             border-radius: 6px;
             margin-bottom: 4px;
@@ -972,13 +973,13 @@ $large-desktop-min: 1200px;
             
             .schedule-day {
               font-weight: 600;
-              color: darken($primary-color, 10%);
+              color: color.adjust($primary-color, $lightness: -10%);
               font-size: 12px;
             }
             
             .schedule-time {
               font-size: 11px;
-              color: darken($primary-color, 5%);
+              color: color.adjust($primary-color, $lightness: -5%);
             }
             
             .schedule-room {
@@ -1163,7 +1164,7 @@ $large-desktop-min: 1200px;
 // Dark mode support (optional)
 @media (prefers-color-scheme: dark) {
   .classes-container {
-    background: darken($dark-color, 5%);
+  background: color.adjust($dark-color, $lightness: -5%);
     color: $text-white;
   }
   

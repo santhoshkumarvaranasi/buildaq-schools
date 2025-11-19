@@ -13,15 +13,18 @@ const classRoutes = require('./routes/classes');
 const authRoutes = require('./routes/auth');
 const healthRoutes = require('./routes/health');
 const tenantRoutes = require('./routes/tenants');
+const enrollmentsRoutes = require('./routes/enrollments');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
-const { authMiddleware } = require('./middleware/auth');
+const { authMiddleware, optionalAuth } = require('./middleware/auth');
 
 // Import database connection
 const database = require('./config/database');
 
 const app = express();
+// Disable ETag to avoid conditional 304 Not Modified responses during local dev
+app.disable('etag');
 const PORT = process.env.PORT || 3000;
 
 // Trust proxy for rate limiting (important for deployed environments)
@@ -41,8 +44,30 @@ app.use(helmet({
 }));
 
 // CORS configuration
+// Parse and normalize comma-separated origins from multiple possible env vars.
+// Support `CORS_ORIGIN`, `ALLOWED_ORIGINS`, or `DEV_ALLOWED_ORIGINS` (script may set one of these).
+const rawCors = (process.env.CORS_ORIGIN || process.env.ALLOWED_ORIGINS || process.env.DEV_ALLOWED_ORIGINS || '');
+const allowedOrigins = rawCors.split(',').map(s => s.trim()).filter(Boolean);
+if (allowedOrigins.length === 0) {
+  // default for development when nothing provided
+  allowedOrigins.push('http://localhost:4200');
+}
+// Deduplicate
+const uniqAllowed = [...new Set(allowedOrigins)];
+console.log('🔐 CORS allowed origins:', uniqAllowed.join(', '));
+
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:4200'],
+  origin: function (origin, callback) {
+    // If no origin (e.g., server-to-server or same-origin), allow
+    if (!origin) return callback(null, true);
+    // Allow wildcard
+    if (uniqAllowed.indexOf('*') !== -1) return callback(null, true);
+    // Exact match required for security; trim incoming origin just in case
+    const trimmed = String(origin).trim();
+    if (uniqAllowed.indexOf(trimmed) !== -1) return callback(null, true);
+    // Not allowed - signal CORS module to not set allow header (do not throw)
+    return callback(null, false);
+  },
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -128,6 +153,18 @@ if (process.env.ENABLE_SWAGGER_DOCS === 'true') {
 }
 
 // Health check route (no authentication required)
+// Make API responses non-cacheable in dev to avoid 304 responses which return
+// no body and can confuse XHR clients during iterative development.
+app.use('/api/', (req, res, next) => {
+  // Only set no-store for local/dev environment
+  if ((process.env.NODE_ENV || 'development') === 'development') {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+  next();
+});
+
 app.use('/api/health', healthRoutes);
 
 // Authentication routes
@@ -137,9 +174,16 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tenants', tenantRoutes);
 
 // Protected API routes
+// In development, allow optional authentication for classes so the frontend
+// can call the endpoint during local dev without a token. Production still
+// requires authentication.
+const classesAuth = process.env.NODE_ENV === 'development' ? optionalAuth : authMiddleware;
 app.use('/api/v1/students', authMiddleware, studentRoutes);
 app.use('/api/v1/teachers', authMiddleware, teacherRoutes);
-app.use('/api/v1/classes', authMiddleware, classRoutes);
+app.use('/api/v1/classes', classesAuth, classRoutes);
+// Enrollments: allow optional auth in development for easier local testing
+const enrollmentsAuth = process.env.NODE_ENV === 'development' ? optionalAuth : authMiddleware;
+app.use('/api/v1/enrollments', enrollmentsAuth, enrollmentsRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {

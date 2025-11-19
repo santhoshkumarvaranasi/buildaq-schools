@@ -1,3 +1,58 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Build output
+dist/
+build/
+
+# Logs
+logs/
+*.log
+scripts/logs/
+scripts/wrappers/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+.classpath
+.project
+.settings/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# .NET build artifacts
+bin/
+obj/
+*.dll
+*.pdb
+*.exe
+*.runtimeconfig.json
+*.deps.json
+
+# Rider / ReSharper
+.idea/
+*.ReSharper*/
+
+# Temporary
+*.tmp
+*.temp
+
+# Environment files (uncomment to ignore local secrets)
+# .env
+# backend/.env
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
 # Compiled output
@@ -49,3 +104,4 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+schools-api-dotnet/BuildAQ.SchoolsApi/appsettings.json
