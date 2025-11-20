@@ -16,6 +16,16 @@ module.exports = withNativeFederation({
     pinToShared: false
   }),
 
+  // Explicitly ensure common Angular libs and rxjs are shared as singletons
+  // This helps avoid duplicate Angular runtimes when a host and remote use different bundles
+  sharedExplicit: {
+    '@angular/core': { singleton: true, strictVersion: false, requiredVersion: 'auto' },
+    '@angular/common': { singleton: true, strictVersion: false, requiredVersion: 'auto' },
+    '@angular/router': { singleton: true, strictVersion: false, requiredVersion: 'auto' },
+    'rxjs': { singleton: true, strictVersion: false, requiredVersion: 'auto' },
+    'tslib': { singleton: true, strictVersion: false, requiredVersion: 'auto' }
+  },
+
   skip: [
     'rxjs/ajax',
     'rxjs/fetch',

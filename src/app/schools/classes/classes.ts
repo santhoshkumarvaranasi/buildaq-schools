@@ -1,8 +1,9 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AttendanceService } from '../attendance/attendance.service';
+import { ChangeDetectorRef } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AttendanceComponent } from '../attendance/attendance.component';
 
@@ -37,7 +38,7 @@ export interface Enrollment {
   templateUrl: './classes.html',
   styleUrls: ['./classes.scss']
 })
-export class ClassesComponent implements OnInit {
+export class ClassesComponent implements OnInit, AfterViewInit {
   classes: Class[] = [];
   enrollments: Enrollment[] = [];
 
@@ -64,7 +65,13 @@ export class ClassesComponent implements OnInit {
   departments: string[] = [];
   semesters: string[] = [];
 
-  constructor(private attendanceService: AttendanceService, private http: HttpClient) {}
+  constructor(private attendanceService: AttendanceService, private http: HttpClient, private cdr: ChangeDetectorRef, private zone: NgZone) {
+    try { console.log('ClassesComponent constructor'); } catch (e) {}
+  }
+
+  ngAfterViewInit(): void {
+    try { console.log('ClassesComponent ngAfterViewInit'); } catch (e) {}
+  }
 
   ngOnInit(): void {
     this.fetchClasses();
@@ -73,6 +80,7 @@ export class ClassesComponent implements OnInit {
 
   fetchClasses(): void {
     const url = `${environment.apiUrl.replace(/\/$/, '')}/v1/classes/summary`;
+    try { console.log('Fetching classes from', url); } catch (e) {}
     this.http.get<Class[]>(url).subscribe({
       next: data => {
         // Defensive: some responses (304 Not Modified) can arrive with no body
@@ -89,9 +97,42 @@ export class ClassesComponent implements OnInit {
         } else {
           this.classes = data as Class[];
         }
-        this.departments = Array.from(new Set(this.classes.map(x => x.department).filter(Boolean) as string[])).sort();
-        this.semesters = Array.from(new Set(this.classes.map(x => x.semester).filter(Boolean) as string[])).sort();
-        this.applyFilters();
+        // Update arrays inside Angular zone to ensure change detection fires
+        try {
+          this.zone.run(() => {
+            this.departments = Array.from(new Set(this.classes.map(x => x.department).filter(Boolean) as string[])).sort();
+            this.semesters = Array.from(new Set(this.classes.map(x => x.semester).filter(Boolean) as string[])).sort();
+            this.applyFilters();
+          });
+        } catch (e) {
+          this.departments = Array.from(new Set(this.classes.map(x => x.department).filter(Boolean) as string[])).sort();
+          this.semesters = Array.from(new Set(this.classes.map(x => x.semester).filter(Boolean) as string[])).sort();
+          this.applyFilters();
+        }
+        // Debug log to inspect values during dev
+        try {
+          // eslint-disable-next-line no-console
+          console.log('Classes fetched:', { count: this.classes.length, departments: this.departments.slice(0,50), semesters: this.semesters.slice(0,50), filtered: this.filteredClasses.length });
+        } catch (e) {}
+        // Ensure template updates reliably (run detectChanges in next macrotask)
+        try { setTimeout(() => { try { this.cdr.detectChanges(); } catch (e) {} }, 0); } catch (e) { try { this.cdr.detectChanges(); } catch (e) {} }
+        // If departments list is unexpectedly small, try fetching departments directly from API
+        try {
+          if (!this.departments || this.departments.length <= 1) {
+            const depUrl = `${environment.apiUrl.replace(/\/$/, '')}/v1/departments`;
+            // eslint-disable-next-line no-console
+            console.log('Departments list small, fetching from', depUrl);
+            this.http.get<string[]>(depUrl).subscribe({
+              next: ddata => {
+                if (Array.isArray(ddata) && ddata.length) {
+                  this.departments = Array.from(new Set(ddata.filter(Boolean))).sort();
+                  try { setTimeout(() => { try { this.cdr.detectChanges(); } catch (e) {} }, 0); } catch (e) { try { this.cdr.detectChanges(); } catch (e) {} }
+                }
+              },
+              error: err => { /* best-effort */ }
+            });
+          }
+        } catch (e) {}
       },
       error: err => console.error('Error fetching classes', err)
     });
@@ -108,6 +149,14 @@ export class ClassesComponent implements OnInit {
         } else {
           this.enrollments = data as Enrollment[];
         }
+        try {
+          // eslint-disable-next-line no-console
+          console.log('Enrollments fetched:', { count: this.enrollments.length });
+          this.zone.run(() => {
+            // ensure change detection
+          });
+        } catch (e) {}
+        try { setTimeout(() => { try { this.cdr.detectChanges(); } catch (e) {} }, 0); } catch (e) { try { this.cdr.detectChanges(); } catch (e) {} }
       },
       error: err => console.error('Error fetching enrollments', err)
     });

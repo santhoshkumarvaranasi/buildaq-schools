@@ -65,6 +65,17 @@ const corsOptions = {
     // Exact match required for security; trim incoming origin just in case
     const trimmed = String(origin).trim();
     if (uniqAllowed.indexOf(trimmed) !== -1) return callback(null, true);
+    // Support wildcard subdomain entries like `*.buildaq.com` in the allowed list
+    const originHost = (() => {
+      try { return new URL(trimmed).hostname; } catch (e) { return trimmed; }
+    })();
+    for (const allowed of uniqAllowed) {
+      if (allowed.indexOf('*') !== -1) {
+        // convert '*.domain.com' -> check endsWith 'domain.com'
+        const tail = allowed.replace('*.', '');
+        if (originHost.endsWith(tail)) return callback(null, true);
+      }
+    }
     // Not allowed - signal CORS module to not set allow header (do not throw)
     return callback(null, false);
   },

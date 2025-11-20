@@ -14,9 +14,30 @@ function proxyToDotnet(req, res) {
     method: req.method,
     // Forward the original path as-is so .NET routes under /api/v1/* are reachable.
     path: String(req.originalUrl),
+    // copy headers but ensure host: header points to target API host:port
     headers: Object.assign({}, req.headers, { host: `${host}:${port}` }),
     timeout: 15000,
   };
+
+  // Ensure tenant header is present for tenant-scoped APIs.
+  try {
+    // If upstream already set X-Tenant-ID, keep it. Otherwise infer from hostname (subdomain)
+    const existingTenant = req.headers['x-tenant-id'] || req.headers['x-tenant-id'.toLowerCase()];
+    if (!existingTenant) {
+      // hostname may be like 'tenant.buildaq.com' or 'tenant.localhost' (dev)
+      const hostHeader = req.hostname || req.headers.host || '';
+      const parts = String(hostHeader).split(':')[0].split('.');
+      if (parts.length > 2) {
+        // take left-most as tenant
+        options.headers['x-tenant-id'] = parts[0];
+      } else if (parts.length === 2 && parts[0] !== 'www' && parts[0] !== 'localhost') {
+        // two-part host might be 'tenant.local' or 'tenant.buildaq'
+        options.headers['x-tenant-id'] = parts[0];
+      }
+    }
+  } catch (e) {
+    // best-effort only
+  }
 
   const proxyReq = http.request(options, (proxyRes) => {
     // Forward status and headers

@@ -13,6 +13,14 @@ router.get('/', (req, res) => {
   res.json([]);
 });
 
+// Summary endpoint (proxied to .NET API in development)
+router.get('/summary', (req, res) => {
+  if ((process.env.NODE_ENV || 'development') === 'development') {
+    return proxyToDotnet(req, res);
+  }
+  res.json({ enrollments: [] });
+});
+
 router.post('/', (req, res) => {
   if ((process.env.NODE_ENV || 'development') === 'development') {
     return proxyToDotnet(req, res);

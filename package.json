@@ -6,7 +6,9 @@
     "start": "ng serve --port 4201",
     "start:local": "ng run buildaq-schools:serve-original:development --port 4201",
     "start:dev": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\start-dev.ps1",
+    "start:mf": "node scripts/dev-static-server.js",
     "build": "ng build",
+    "postbuild": "node scripts/gen-remote-metadata.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -33,6 +35,7 @@
     "@angular/platform-browser": "^20.3.0",
     "@angular/router": "^20.3.0",
     "@softarc/native-federation-node": "^3.3.4",
+    "express": "^4.18.2",
     "es-module-shims": "^1.5.12",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
