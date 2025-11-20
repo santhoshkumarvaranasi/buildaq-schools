@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -64,7 +64,7 @@ export class TeachersComponent implements OnInit {
   // Department options (populated from API)
   departments: string[] = [];
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private zone: NgZone, private cdr: ChangeDetectorRef) {
     this.detectViewMode();
   }
 
@@ -110,8 +110,18 @@ export class TeachersComponent implements OnInit {
         });
 
         // populate departments dropdown from unique departments found
-        this.departments = Array.from(deptSet).sort();
-        this.filterTeachers();
+        try {
+          this.zone.run(() => {
+            this.departments = Array.from(deptSet).sort();
+            this.filterTeachers();
+          });
+        } catch (e) {
+          this.departments = Array.from(deptSet).sort();
+          this.filterTeachers();
+        }
+
+        // Ensure template updates reliably
+        try { setTimeout(() => { try { this.cdr.detectChanges(); } catch (e) {} }, 0); } catch (e) { try { this.cdr.detectChanges(); } catch (e) {} }
       },
       error: (err) => {
         console.error('Failed to load teachers summary', err);

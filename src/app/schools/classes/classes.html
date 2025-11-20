@@ -1,6 +1,18 @@
 <div class="classes-container">
   <div class="classes-header">
     <h2>📚 Classes Management</h2>
+    <div class="header-search">
+      <div class="search-wrapper">
+        <input
+          type="text"
+          placeholder="🔍 Search classes..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          class="form-input header-search-input">
+        <button *ngIf="searchTerm" class="clear-search-btn" (click)="clearSearch()">✕</button>
+      </div>
+    </div>
+
     <div class="header-actions">
       <button class="btn btn-secondary export-btn" (click)="exportClassList()">
         📊 Export
@@ -19,18 +31,6 @@
     </div>
 
     <div class="filter-row" [class.mobile-expanded]="showMobileFilters">
-      <div class="search-box">
-        <div class="search-wrapper">
-          <input 
-            type="text" 
-            placeholder="🔍 Search classes..." 
-            [(ngModel)]="searchTerm"
-            (input)="onSearch()"
-            class="form-input search-input">
-          <button *ngIf="searchTerm" class="clear-search-btn" (click)="clearSearch()">✕</button>
-        </div>
-      </div>
-      
       <div class="mobile-filter-row">
         <div class="filter-group">
           <label class="filter-label">Department</label>

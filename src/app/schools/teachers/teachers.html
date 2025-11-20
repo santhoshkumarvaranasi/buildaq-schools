@@ -1,6 +1,18 @@
 <div class="teachers-container">
   <div class="teachers-header">
     <h2>👨‍🏫 Teacher Management</h2>
+    <div class="header-search">
+      <div class="search-wrapper">
+        <input
+          type="text"
+          placeholder="🔍 Search teachers..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          class="form-input header-search-input">
+        <button *ngIf="searchTerm" class="clear-search-btn" (click)="clearSearch()">✕</button>
+      </div>
+    </div>
+
     <button class="btn btn-primary add-teacher-btn" (click)="addNewTeacher()">
       ➕ Add New Teacher
     </button>
@@ -14,18 +26,6 @@
     </div>
 
     <div class="filter-row" [class.mobile-expanded]="showMobileFilters">
-      <div class="search-box">
-        <div class="search-wrapper">
-          <input 
-            type="text" 
-            placeholder="🔍 Search teachers..." 
-            [(ngModel)]="searchTerm"
-            (input)="onSearch()"
-            class="form-input search-input">
-          <button *ngIf="searchTerm" class="clear-search-btn" (click)="clearSearch()">✕</button>
-        </div>
-      </div>
-      
       <div class="mobile-filter-row">
         <div class="filter-group">
           <label class="filter-label">Department</label>
