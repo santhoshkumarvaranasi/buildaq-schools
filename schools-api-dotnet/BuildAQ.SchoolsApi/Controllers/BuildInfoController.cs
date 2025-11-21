@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BuildAQ.SchoolsApi.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+
     [ApiController]
     [Route("api/[controller]")]
+    [AllowAnonymous]
     public class BuildInfoController : ControllerBase
     {
         [HttpGet]

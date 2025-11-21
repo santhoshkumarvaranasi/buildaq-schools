@@ -12,6 +12,7 @@ const teacherRoutes = require('./routes/teachers');
 const classRoutes = require('./routes/classes');
 const authRoutes = require('./routes/auth');
 const healthRoutes = require('./routes/health');
+const remotesRoute = require('./routes/remotes');
 const tenantRoutes = require('./routes/tenants');
 const enrollmentsRoutes = require('./routes/enrollments');
 
@@ -176,6 +177,7 @@ app.use('/api/', (req, res, next) => {
   next();
 });
 
+// Serve remotes registry for module federation (mounted at /assets/remotes.json)
 app.use('/api/health', healthRoutes);
 
 // Authentication routes
@@ -183,6 +185,10 @@ app.use('/api/auth', authRoutes);
 
 // Tenant provisioning routes (public)
 app.use('/api/tenants', tenantRoutes);
+
+// Serve remotes registry for module federation (mounted at /assets/remotes.json)
+// This allows the frontend shell to fetch a dev-friendly mapping of remotes.
+app.use('/assets', remotesRoute);
 
 // Protected API routes
 // In development, allow optional authentication for classes and teachers so the frontend

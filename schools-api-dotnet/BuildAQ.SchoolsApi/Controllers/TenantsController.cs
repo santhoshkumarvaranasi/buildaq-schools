@@ -3,8 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BuildAQ.SchoolsApi.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+
     [ApiController]
     [Route("api/[controller]")]
+    [AllowAnonymous]
     public class TenantsController : ControllerBase
     {
         private readonly Data.SchoolsDbContext _context;

@@ -62,21 +62,67 @@ app.get('/remoteEntry.json', (req, res) => {
 
 // Serve a runtime remoteEntry.js that proxies to the actual expose container file.
 app.get('/remoteEntry.js', (req, res) => {
+  // Always return the manifest JSON for /remoteEntry.js to satisfy native-federation
+  // loaders that attempt to parse the URL as JSON first. This avoids SyntaxError
+  // when the dev shim (JS) is not valid JSON.
   const manifestPath = path.join(distDir, 'remoteEntry.json');
-  if (!fs.existsSync(manifestPath)) return res.status(404).send('not found');
+  if (fs.existsSync(manifestPath)) {
+    try {
+      res.setHeader('Content-Type', 'application/json');
+      console.log('[mf-static] returning manifest JSON for /remoteEntry.js');
+      return res.send(fs.readFileSync(manifestPath, 'utf8'));
+    } catch (e) {
+      console.warn('[mf-static] failed to return manifest JSON', e && e.message);
+    }
+  }
+  return res.status(404).send('not found');
+});
+
+// Intercept requests for JS files and map manifest outFileName candidates to the
+// actual hashed files in `dist` when necessary. This handles the case where the
+// manifest lists an outFileName that doesn't match the generated hashed filename.
+// Use a RegExp route to avoid path-to-regexp parameter parsing errors with '/*'.
+app.get(/.*\.js$/, (req, res, next) => {
   try {
+    const requested = path.basename(req.path);
+    const candidatePath = path.join(distDir, requested);
+    if (fs.existsSync(candidatePath)) {
+      return res.sendFile(candidatePath);
+    }
+
+    // If the exact file isn't present, try to match from manifest
+    const manifestPath = path.join(distDir, 'remoteEntry.json');
+    if (!fs.existsSync(manifestPath)) return next();
     const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-    // prefer the first expose entry (./SchoolsModule)
-    const expose = (manifest.exposes && manifest.exposes[0]) || null;
-    if (!expose || !expose.outFileName) return res.status(500).send('invalid manifest');
-    const containerPath = path.join(distDir, expose.outFileName);
-    if (!fs.existsSync(containerPath)) return res.status(404).send('container not found');
-    // Serve the container file directly as the remoteEntry implementation
-    res.setHeader('Content-Type', 'application/javascript');
-    res.send(fs.readFileSync(containerPath, 'utf8'));
-  } catch (err) {
-    console.error('Error serving remoteEntry.js', err);
-    res.status(500).send('error');
+    const files = fs.readdirSync(distDir).filter(f => f.endsWith('.js'));
+
+    // Try to find a manifest entry whose outFileName base matches the requested name
+    const match = (manifest.exposes || []).map(e => e.outFileName).find(o => {
+      if (!o) return false;
+      const base = o.split('-')[0];
+      return requested.startsWith(base) || requested === o;
+    });
+    if (match) {
+      // find actual file in dist that starts with base
+      const base = match.split('-')[0];
+      const found = files.find(f => f.startsWith(base));
+      if (found) {
+        console.warn('[mf-static] remapping requested', requested, '->', found);
+        return res.sendFile(path.join(distDir, found));
+      }
+    }
+
+    // As a last resort, try heuristics (SchoolsModule, Component tokens)
+    const heur = files.find(f => /SchoolsModule|Component|remote-/i.test(f));
+    if (heur) {
+      console.warn('[mf-static] remapping requested', requested, '->', heur);
+      return res.sendFile(path.join(distDir, heur));
+    }
+
+    return next();
+  } catch (e) {
+    console.error('[mf-static] error remapping js request', e && e.message);
+    return next();
   }
 });
 
@@ -84,24 +130,19 @@ app.get('/remoteEntry.js', (req, res) => {
 app.use(express.static(distDir, { index: false }));
 
 // Fallback to index.html for SPA navigation
-app.get('*', (req, res) => {
+// Use app.use to avoid path-to-regexp parameter parsing issues with a bare '*' route
+app.use((req, res) => {
   const index = path.join(distDir, 'index.html');
   if (fs.existsSync(index)) {
     // Inject es-module-shims and importmap.json reference if not present (helpful for dev server)
     try {
       let html = fs.readFileSync(index, 'utf8');
-      // Always inject shim + inline importmap to avoid race conditions where the built index
-      // may not include an importmap (builds can overwrite dist). Inline the importmap.json
-      // so resolution works even if the separate file isn't requested in time.
       let shimScript = '<script src="https://ga.jspm.io/npm:es-module-shims@1.5.12/dist/es-module-shims.js"></script>'; 
-      // Try to inline importmap.json if present
       const importmapPath = path.join(distDir, 'importmap.json');
       let importmapTag = '';
       if (fs.existsSync(importmapPath)) {
         try {
           let im = fs.readFileSync(importmapPath, 'utf8');
-          // Ensure import map values are valid URLs/relative paths. Browsers ignore bare
-          // specifier values (like "_angular_core....js"). Prefix with './' when needed.
           try {
             const imJson = JSON.parse(im);
             if (imJson && imJson.imports) {
@@ -123,11 +164,7 @@ app.get('*', (req, res) => {
       } else {
         importmapTag = '<script type="importmap" src="/importmap.json"></script>';
       }
-      // Replace any modulepreload links with preload as=script to avoid native module execution
       html = html.replace(/rel=\"modulepreload\"/gi, 'rel="preload" as="script"');
-      // Insert shim + importmap at the top of the <head> so they load before
-      // any module scripts or modulepreload links. This avoids a race where
-      // module code executes before es-module-shims has parsed the importmap.
       if (!/es-module-shims/.test(html)) {
         html = html.replace(/<head[^>]*>/i, (m) => m + '\n' + shimScript + '\n' + importmapTag);
       } else if (!/type="importmap"/i.test(html)) {

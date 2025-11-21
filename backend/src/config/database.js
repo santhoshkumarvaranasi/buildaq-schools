@@ -34,13 +34,23 @@ class Database {
         };
       
       case 'postgresql':
-        return {
+        // Support SSL options via environment variables (DB_SSL or PGSSLMODE)
+        const enableSsl = (process.env.DB_SSL === 'true') || (process.env.PGSSLMODE === 'require') || false;
+        const sslReject = process.env.DB_SSL_REJECT !== 'false';
+        const pgConfig = {
           host: process.env.DB_HOST || 'localhost',
           port: process.env.DB_PORT || 5432,
           user: process.env.DB_USER || 'postgres',
           password: process.env.DB_PASSWORD || '',
           database: process.env.DB_NAME || 'schooldb',
         };
+        if (enableSsl) {
+          // The `pg` client accepts `ssl` as an object or boolean. Provide an object
+          // that allows disabling certificate verification when needed (useful for
+          // some managed DBs or local cert setups). Default is to verify certificates.
+          pgConfig.ssl = { rejectUnauthorized: sslReject };
+        }
+        return pgConfig;
       
       case 'sqlite':
         return {
@@ -173,10 +183,15 @@ class Database {
           // MongoDB uses different query methods
           throw new Error('Use MongoDB models for queries');
         
-        case 'mysql':
-        case 'postgresql':
-          const [rows] = await this.connection.execute(sql, params);
-          return rows;
+          case 'mysql':
+            // mysql2/promise returns [rows, fields]
+            const [mysqlRows] = await this.connection.execute(sql, params);
+            return mysqlRows;
+
+          case 'postgresql':
+            // pg Client returns { rows }
+            const pgResult = await this.connection.query(sql, params);
+            return pgResult.rows;
         
         case 'sqlite':
           return await this.connection.all(sql, params);

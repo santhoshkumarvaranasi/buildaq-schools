@@ -2,6 +2,9 @@
 using BuildAQ.SchoolsApi.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +33,28 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<SchoolsDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Configure JWT authentication (reads secret from environment variable JWT_SECRET)
+var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? "dev-secret-change-me";
+var keyBytes = Encoding.UTF8.GetBytes(jwtSecret);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
+    };
+});
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,6 +64,10 @@ app.UseSwaggerUI();
 
 // Enable CORS
 app.UseCors("AllowSpecific");
+
+// Enable authentication / authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 app.UseHttpsRedirection();
