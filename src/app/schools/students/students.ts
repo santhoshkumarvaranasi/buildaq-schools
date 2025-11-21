@@ -1,6 +1,8 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SchoolsService, RemoteStudent } from '../schools.service';
+import { TenantService } from '../../core/services/tenant.service';
 
 export interface Student {
   id: number;
@@ -26,88 +28,7 @@ export interface SortConfig {
   styleUrl: './students.scss',
 })
 export class StudentsComponent implements OnInit {
-  students: Student[] = [
-    {
-      id: 1,
-      firstName: 'Emma',
-      lastName: 'Johnson',
-      email: 'emma.johnson@school.edu',
-      grade: '10th',
-      class: '10A',
-      enrollmentDate: new Date('2023-09-01'),
-      status: 'active'
-    },
-    {
-      id: 2,
-      firstName: 'Liam',
-      lastName: 'Smith',
-      email: 'liam.smith@school.edu',
-      grade: '11th',
-      class: '11B',
-      enrollmentDate: new Date('2022-09-01'),
-      status: 'active'
-    },
-    {
-      id: 3,
-      firstName: 'Olivia',
-      lastName: 'Brown',
-      email: 'olivia.brown@school.edu',
-      grade: '9th',
-      class: '9C',
-      enrollmentDate: new Date('2024-09-01'),
-      status: 'active'
-    },
-    {
-      id: 4,
-      firstName: 'Noah',
-      lastName: 'Davis',
-      email: 'noah.davis@school.edu',
-      grade: '12th',
-      class: '12A',
-      enrollmentDate: new Date('2021-09-01'),
-      status: 'active'
-    },
-    {
-      id: 5,
-      firstName: 'Ava',
-      lastName: 'Wilson',
-      email: 'ava.wilson@school.edu',
-      grade: '10th',
-      class: '10B',
-      enrollmentDate: new Date('2023-09-01'),
-      status: 'transferred'
-    },
-    {
-      id: 6,
-      firstName: 'Ethan',
-      lastName: 'Martinez',
-      email: 'ethan.martinez@school.edu',
-      grade: '9th',
-      class: '9A',
-      enrollmentDate: new Date('2024-09-01'),
-      status: 'active'
-    },
-    {
-      id: 7,
-      firstName: 'Sophia',
-      lastName: 'Garcia',
-      email: 'sophia.garcia@school.edu',
-      grade: '11th',
-      class: '11A',
-      enrollmentDate: new Date('2022-09-01'),
-      status: 'inactive'
-    },
-    {
-      id: 8,
-      firstName: 'Mason',
-      lastName: 'Rodriguez',
-      email: 'mason.rodriguez@school.edu',
-      grade: '12th',
-      class: '12B',
-      enrollmentDate: new Date('2021-09-01'),
-      status: 'active'
-    }
-  ];
+  students: Student[] = [];
 
   // Filter and search properties
   filteredStudents: Student[] = [...this.students];
@@ -128,13 +49,37 @@ export class StudentsComponent implements OnInit {
   displayLimit: number = 20;
   showScrollIndicator: boolean = false;
 
-  constructor() {
+  constructor(private schoolsService: SchoolsService, private tenantService: TenantService) {
     this.detectViewMode();
   }
 
   ngOnInit() {
-    this.filterStudents();
+    this.loadStudents();
     this.checkScrollIndicator();
+  }
+
+  // Load students from API
+  async loadStudents() {
+    try {
+      const remote = (await this.schoolsService.getStudents().toPromise()) || [];
+      // Map remote shape to local Student model
+      this.students = remote.map((s: RemoteStudent) => ({
+        id: s.id,
+        firstName: s.firstName,
+        lastName: s.lastName,
+        email: s.email,
+        grade: s.grade,
+        class: s.class,
+        enrollmentDate: new Date(s.enrollmentDate),
+        status: s.status
+      }));
+      this.filterStudents();
+    } catch (e) {
+      console.error('Error loading students', e);
+      // Fallback to existing empty list
+      this.students = [];
+      this.filterStudents();
+    }
   }
 
   @HostListener('window:resize')
