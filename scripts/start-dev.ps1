@@ -8,6 +8,16 @@ $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $logDir = Join-Path $scriptRoot 'logs'
 New-Item -Path $logDir -ItemType Directory -Force | Out-Null
 
+# Repo root and micro-frontend output path (single source of truth)
+$repoRoot = Join-Path $scriptRoot '..'
+$mfOutputRel = 'dist/buildaq-schools/browser'
+$mfOutputAbs = Join-Path $repoRoot $mfOutputRel
+# Files pattern used by BrowserSync. Use forward-slash glob so browser-sync parses it reliably.
+$mfFilesGlob = "$mfOutputRel/**/*"
+# Normalize an absolute (forward-slash) variant for CLI tools that parse globs better with forward slashes
+$mfOutputAbsUnix = $mfOutputAbs -replace '\\','/'
+$mfFilesGlobAbs = "$mfOutputAbsUnix/**/*"
+
 $services = @(
     @{ name='backend'; cwd=Join-Path $scriptRoot '..\backend'; command='npm run dev'; ports=@(3000); log='backend.log' },
     @{ name='frontend'; cwd=Join-Path $scriptRoot '..'; command='ng serve buildaq-schools'; ports=@(4201); log='frontend.log' },
@@ -36,31 +46,30 @@ if ($env:USE_MF_STATIC -and $env:USE_MF_STATIC.ToString().ToLower() -eq 'true') 
             # Prefer the npm script `start:mf-watch` which encapsulates build-watch + BrowserSync.
             # If the script is not defined in package.json, fall back to an npx concurrently command.
             $pkgPath = Join-Path $scriptRoot '..\package.json'
-            $mfCommand = 'npm run start:mf-watch'
-            if (Test-Path $pkgPath) {
-                try {
-                    $pkg = Get-Content $pkgPath -Raw | ConvertFrom-Json
-                    if (-not ($pkg.scripts -and $pkg.scripts.'start:mf-watch')) {
-                        $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
-                        $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201 --cors'
-                        $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
-                    }
-                    } catch {
-                        $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
-                        $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201 --cors'
-                        $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
-                }
+            # By default use an explicit concurrently command with absolute paths to avoid cwd-relative nesting issues.
+            # Set environment variable USE_PKG_MF_SCRIPT=true to prefer the repository npm script `start:mf-watch` instead.
+            $usePkgMf = $false
+            if ($env:USE_PKG_MF_SCRIPT -and $env:USE_PKG_MF_SCRIPT.ToString().ToLower() -eq 'true') { $usePkgMf = $true }
+            if (Test-Path $pkgPath -and $usePkgMf) {
+                try { $pkg = Get-Content $pkgPath -Raw | ConvertFrom-Json } catch { $pkg = $null }
+            }
+            # Build explicit commands (absolute output paths) — safer on Windows when processes have varying CWDs
+            $ngWatch = "npx ng build --watch --configuration development --output-path=`"$mfOutputAbsUnix`""
+            $bsCmd = "npx browser-sync start --server `"$mfOutputAbsUnix`" --files `"$mfFilesGlobAbs`" --no-ui --no-notify --port 4201 --cors"
+            if ($usePkgMf -and $pkg -and ($pkg.scripts -and $pkg.scripts.'start:mf-watch')) {
+                $mfCommand = 'npm run start:mf-watch'
             } else {
-                $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
-                $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201'
                 $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
             }
 
-            $mfWatch = @{ name='mf-watch'; cwd=Join-Path $scriptRoot '..'; command=$mfCommand; ports=@(4201); log='mf-watch.log' }
+
+            $mfNg = @{ name='mf-ng-watch'; cwd=Join-Path $scriptRoot '..'; command=$ngWatch; ports=@(4201); log='mf-ng-watch.log' }
+            $mfBs = @{ name='mf-browsersync'; cwd=Join-Path $scriptRoot '..'; command=$bsCmd; ports=@(4201); log='mf-browsersync.log' }
 
             $new = @()
             if ($before) { $new += $before }
-            $new += $mfWatch
+            $new += $mfNg
+            $new += $mfBs
             if ($after) { $new += $after }
 
             # Reassign services to the new array
@@ -191,7 +200,8 @@ function Start-ServiceWindow($svc) {
     $log = Join-Path $logDir $svc.log
     $escapedPath = $cwd -replace "'", "''"
 
-    if ($svc.name -in @('backend','schools-api-dotnet','shell')) {
+    # Services that use a persistent wrapper script (launched via -File) to avoid complex command-line quoting
+    if ($svc.name -in @('backend','schools-api-dotnet','shell','mf-ng-watch','mf-browsersync','mf-static')) {
         $escapedCors = $corsList -replace "'", "''"
         # Determine allow-dev-fallback default
         $allowDev = $env:ALLOW_DEV_FALLBACK
@@ -319,26 +329,28 @@ function Start-All {
                         try {
                             $pkg = Get-Content $pkgPath -Raw | ConvertFrom-Json
                             if (-not ($pkg.scripts -and $pkg.scripts.'start:mf-watch')) {
-                                $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
-                                $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201'
+                                $ngWatch = "npx ng build --watch --configuration development --output-path=`"$mfOutputAbsUnix`""
+                                $bsCmd = "npx browser-sync start --server `"$mfOutputAbsUnix`" --files `"$mfFilesGlobAbs`" --no-ui --no-notify --port 4201"
                                 $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
                             }
                         } catch {
-                            $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
-                            $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201'
+                            $ngWatch = "npx ng build --watch --configuration development --output-path=""$mfOutputAbs"""
+                            $bsCmd = "npx browser-sync start --server `"$mfOutputAbsUnix`" --files `"$mfFilesGlobAbs`" --no-ui --no-notify --port 4201"
                             $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
                         }
                     } else {
-                        $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
-                        $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201 --cors'
+                        $ngWatch = "npx ng build --watch --configuration development --output-path=`"$mfOutputAbsUnix`""
+                        $bsCmd = "npx browser-sync start --server `"$mfOutputAbsUnix`" --files `"$mfFilesGlobAbs`" --no-ui --no-notify --port 4201 --cors"
                         $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
                     }
 
-                    $mfWatch = @{ name='mf-watch'; cwd=Join-Path $scriptRoot '..'; command=$mfCommand; ports=@(4201); log='mf-watch.log' }
+                    $mfNg = @{ name='mf-ng-watch'; cwd=Join-Path $scriptRoot '..'; command=$ngWatch; ports=@(4201); log='mf-ng-watch.log' }
+                    $mfBs = @{ name='mf-browsersync'; cwd=Join-Path $scriptRoot '..'; command=$bsCmd; ports=@(4201); log='mf-browsersync.log' }
 
                     $new = @()
                     if ($before) { $new += $before }
-                    $new += $mfWatch
+                    $new += $mfNg
+                    $new += $mfBs
                     if ($after) { $new += $after }
 
                     $services = $new
@@ -463,7 +475,7 @@ function Start-All {
                 } else {
                     Write-Host "Frontend did not respond on attempt $attempt"
                 }
-            } elseif ($svc.name -eq 'mf-watch' -or $svc.name -eq 'mf-browsersync' -or $svc.name -eq 'mf-static') {
+            } elseif ($svc.name -eq 'mf-ng-watch' -or $svc.name -eq 'mf-browsersync' -or $svc.name -eq 'mf-static') {
                 # For the static MF server (BrowserSync or npm script variant), ensure the federation manifest or container is available
                     if (Wait-For-Url 'http://localhost:4201/remoteEntry.json' 20) {
                     Write-Host 'MF static server is up (remoteEntry.json available)'
