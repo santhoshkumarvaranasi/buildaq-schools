@@ -6,6 +6,7 @@ import { AttendanceService } from '../attendance/attendance.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AttendanceComponent } from '../attendance/attendance.component';
+import { ApiService } from '../../core/services/api.service';
 
 export interface Class {
   id: number;
@@ -65,7 +66,7 @@ export class ClassesComponent implements OnInit, AfterViewInit {
   departments: string[] = [];
   semesters: string[] = [];
 
-  constructor(private attendanceService: AttendanceService, private http: HttpClient, private cdr: ChangeDetectorRef, private zone: NgZone) {
+  constructor(private attendanceService: AttendanceService, private http: HttpClient, private api: ApiService, private cdr: ChangeDetectorRef, private zone: NgZone) {
     try { console.log('ClassesComponent constructor'); } catch (e) {}
   }
 
@@ -79,24 +80,21 @@ export class ClassesComponent implements OnInit, AfterViewInit {
   }
 
   fetchClasses(): void {
-    const url = `${environment.apiUrl.replace(/\/$/, '')}/v1/classes/summary`;
-    try { console.log('Fetching classes from', url); } catch (e) {}
-    this.http.get<Class[]>(url).subscribe({
-      next: data => {
-        // Defensive: some responses (304 Not Modified) can arrive with no body
-        // or some legacy endpoints may return an object wrapper. Normalize to array.
-        if (!Array.isArray(data)) {
-          console.warn('Unexpected /classes response — expected array, got:', data);
-          // Support older response shape { classes: [] }
-          const maybe = (data as any) || {};
-          if (Array.isArray(maybe.classes)) {
-            this.classes = maybe.classes as Class[];
+    try { console.log('Fetching classes via ApiService'); } catch (e) {}
+      this.api.get<any>('classes/summary').subscribe({
+        next: resp => {
+          // Normalize multiple response shapes: raw array, ApiResponse { data: [] }, or legacy { classes: [] }
+          let data: any[] = [];
+          if (Array.isArray(resp)) {
+            data = resp;
+          } else if (resp && Array.isArray(resp.data)) {
+            data = resp.data;
+          } else if (resp && Array.isArray(resp.classes)) {
+            data = resp.classes;
           } else {
-            this.classes = [];
+            console.warn('Unexpected /classes response — expected array, got:', resp);
           }
-        } else {
-          this.classes = data as Class[];
-        }
+          this.classes = Array.isArray(data) ? (data as Class[]) : [];
         // Update arrays inside Angular zone to ensure change detection fires
         try {
           this.zone.run(() => {
@@ -119,11 +117,10 @@ export class ClassesComponent implements OnInit, AfterViewInit {
         // If departments list is unexpectedly small, try fetching departments directly from API
         try {
           if (!this.departments || this.departments.length <= 1) {
-            const depUrl = `${environment.apiUrl.replace(/\/$/, '')}/v1/departments`;
-            // eslint-disable-next-line no-console
-            console.log('Departments list small, fetching from', depUrl);
-            this.http.get<string[]>(depUrl).subscribe({
-              next: ddata => {
+            try { console.log('Departments list small, fetching via ApiService'); } catch (e) {}
+            this.api.get<string[]>('departments').subscribe({
+              next: dresp => {
+                const ddata = dresp?.data;
                 if (Array.isArray(ddata) && ddata.length) {
                   this.departments = Array.from(new Set(ddata.filter(Boolean))).sort();
                   try { setTimeout(() => { try { this.cdr.detectChanges(); } catch (e) {} }, 0); } catch (e) { try { this.cdr.detectChanges(); } catch (e) {} }
@@ -139,8 +136,7 @@ export class ClassesComponent implements OnInit, AfterViewInit {
   }
 
   fetchEnrollments(): void {
-    const url = `${environment.apiUrl.replace(/\/$/, '')}/v1/enrollments/summary`;
-    this.http.get<Enrollment[]>(url).subscribe({
+    this.api.get<Enrollment[]>('enrollments/summary').subscribe({
       next: data => {
         if (!Array.isArray(data)) {
           console.warn('Unexpected /enrollments response — expected array, got:', data);

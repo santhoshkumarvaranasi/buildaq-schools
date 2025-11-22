@@ -166,6 +166,32 @@ function Start-ServiceWindow($svc) {
         $dbUser = $env:DB_USER -replace "'", "''"
         $dbPassword = $env:DB_PASSWORD -replace "'", "''"
         $dbName = $env:DB_NAME -replace "'", "''"
+        # JWT secret (propagate into wrappers so child services use same signing key in dev)
+        $jwtSecret = $env:JWT_SECRET
+        if (-not $jwtSecret -or $jwtSecret -eq '') {
+            # Attempt to read backend/.env for a configured JWT_SECRET
+            try {
+                $envPath = Join-Path $scriptRoot '..\backend\.env'
+                if (Test-Path $envPath) {
+                    $lines = Get-Content $envPath -ErrorAction Stop
+                    foreach ($ln in $lines) {
+                        if ($ln -match '^\s*JWT_SECRET\s*=\s*(.+)\s*$') {
+                            $val = $Matches[1].Trim()
+                            # strip surrounding quotes if present
+                            if ($val.StartsWith("'") -and $val.EndsWith("'")) { $val = $val.Substring(1, $val.Length-2) }
+                            if ($val.StartsWith('"') -and $val.EndsWith('"')) { $val = $val.Substring(1, $val.Length-2) }
+                            $jwtSecret = $val
+                            break
+                        }
+                    }
+                }
+            } catch {
+                # ignore file read errors
+            }
+        }
+        # Final fallback default for local dev (insecure — override via env in real dev)
+        if (-not $jwtSecret -or $jwtSecret -eq '') { $jwtSecret = 'dev-secret-change-me' }
+        $jwtSecret = $jwtSecret -replace "'", "''"
 
         $wrapper = @"
 Set-Location -LiteralPath '$escapedPath'
@@ -178,6 +204,7 @@ Set-Location -LiteralPath '$escapedPath'
 `$env:DB_USER = '$dbUser'
     `$env:DB_PASSWORD = '$dbPassword'
 `$env:DB_NAME = '$dbName'
+` $env:JWT_SECRET = '$jwtSecret'
 Write-Host 'ALLOW_DEV_FALLBACK ->' `$env:ALLOW_DEV_FALLBACK
 Write-Host 'DB ->' `$env:DB_HOST`':'`$env:DB_PORT`'/'`$env:DB_NAME
 Write-Host 'Starting: $($svc.name) > $log'
@@ -442,3 +469,30 @@ switch ($Action) {
 }
 
 Write-Host "Script finished. Logs are in: $logDir"
+
+
+
+#----only --- IGNORE ---#
+# stop existing (if any)
+# $p = Get-Process -Name BuildAQ.SchoolsApi -ErrorAction SilentlyContinue
+# if ($p) { Stop-Process -Id $p.Id -Force }
+
+# # open a new PowerShell window and run the API there (you'll see logs)
+# Start-Process -FilePath 'powershell' -ArgumentList '-NoExit','-Command','Push-Location \"C:\\DEV\\buildaq-schools\\schools-api-dotnet\\BuildAQ.SchoolsApi\"; dotnet run --no-launch-profile'
+
+# Token Generation
+# Invoke-RestMethod -Uri 'http://127.0.0.1:3000/api/auth/login' -Method Post -ContentType 'application/json' -Body (@{username='admin@demo';password='BuildAQDemo!2025';tenant='1'} | ConvertTo-Json) -ErrorAction Stop | ConvertTo-Json -Depth 5
+
+
+# #start backend 
+# Start-Process -FilePath 'powershell' -ArgumentList '-NoExit','-Command','Push-Location "C:\DEV\buildaq-schools\backend"; npm run dev' ; Start-Sleep -Seconds 6
+
+
+# Login with real DB-backed user (replace values)
+# $login = Invoke-RestMethod -Uri 'http://localhost:3000/api/auth/login' -Method Post -ContentType 'application/json' -Body (ConvertTo-Json @{ username='admin@demo'; password='BuildAQDemo!2025'; tenant='demo.buildaq.com' })
+# $token = $login.token
+# Write-Host "Token:" $token
+
+# # Call protected endpoints
+# Invoke-RestMethod -Uri 'http://localhost:3000/api/v1/classes/summary' -Method GET -Headers @{ Authorization = "Bearer $token" } -Verbose
+# Invoke-RestMethod -Uri 'http://localhost:3000/api/v1/teachers/summary' -Method GET -Headers @{ Authorization = "Bearer $token" } -Verbose

@@ -15,6 +15,7 @@ const healthRoutes = require('./routes/health');
 const remotesRoute = require('./routes/remotes');
 const tenantRoutes = require('./routes/tenants');
 const enrollmentsRoutes = require('./routes/enrollments');
+const departmentsRoutes = require('./routes/departments');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -197,11 +198,21 @@ app.use('/assets', remotesRoute);
 const classesAuth = process.env.NODE_ENV === 'development' ? optionalAuth : authMiddleware;
 const teachersAuth = process.env.NODE_ENV === 'development' ? optionalAuth : authMiddleware;
 app.use('/api/v1/students', authMiddleware, studentRoutes);
-app.use('/api/v1/teachers', teachersAuth, teacherRoutes);
-app.use('/api/v1/classes', classesAuth, classRoutes);
-// Enrollments: allow optional auth in development for easier local testing
-const enrollmentsAuth = process.env.NODE_ENV === 'development' ? optionalAuth : authMiddleware;
-app.use('/api/v1/enrollments', enrollmentsAuth, enrollmentsRoutes);
+// Require authentication for teachers/classes/enrollments so tenant is resolved from token
+app.use('/api/v1/teachers', authMiddleware, teacherRoutes);
+app.use('/api/v1/classes', authMiddleware, classRoutes);
+// Enrollments: require auth to ensure tenant resolution matches other routes
+app.use('/api/v1/enrollments', authMiddleware, enrollmentsRoutes);
+const departmentsAuth = process.env.NODE_ENV === 'development' ? optionalAuth : authMiddleware;
+app.use('/api/v1/departments', departmentsAuth, departmentsRoutes);
+
+// Backwards-compatible alias routes under /api/v1/schools/* used by the
+// front-end remote. For the alias routes we require authentication so the
+// tenant is always resolved from the token (matches `/api/v1/students` behavior).
+app.use('/api/v1/schools/students', authMiddleware, studentRoutes);
+app.use('/api/v1/schools/teachers', authMiddleware, teacherRoutes);
+app.use('/api/v1/schools/classes', authMiddleware, classRoutes);
+app.use('/api/v1/schools/departments', authMiddleware, departmentsRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {

@@ -1,8 +1,9 @@
 import { Component, HostListener, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { ApiService } from '../../core/services/api.service';
 
 export interface Subject {
   id: string;
@@ -64,7 +65,7 @@ export class TeachersComponent implements OnInit {
   // Department options (populated from API)
   departments: string[] = [];
 
-  constructor(private http: HttpClient, private zone: NgZone, private cdr: ChangeDetectorRef) {
+  constructor(private api: ApiService, private zone: NgZone, private cdr: ChangeDetectorRef) {
     this.detectViewMode();
   }
 
@@ -74,40 +75,70 @@ export class TeachersComponent implements OnInit {
   }
 
   fetchTeachers() {
-    const url = `${environment.apiUrl}/${environment.apiVersion}/teachers/summary`;
-    this.http.get<any>(url).subscribe({
-      next: (data) => {
-        if (!Array.isArray(data)) {
-          console.warn('Unexpected teachers response, expected array', data);
+    this.api.get<any>('teachers/summary').subscribe({
+      next: (resp) => {
+        // Support multiple response shapes:
+        // - direct array: [{...}, ...]
+        // - ApiResponse wrapper: { success: true, data: [...] }
+        // - nested wrapper: { data: { teachers: [...] } }
+        // - legacy wrapper: { teachers: [...] }
+        let data: any[] = [];
+        try {
+          if (Array.isArray(resp)) {
+            data = resp as any[];
+          } else if (resp && Array.isArray(resp.data)) {
+            data = resp.data as any[];
+          } else if (resp && resp.data && Array.isArray(resp.data.teachers)) {
+            data = resp.data.teachers as any[];
+          } else if (resp && Array.isArray(resp.teachers)) {
+            data = resp.teachers as any[];
+          } else {
+            console.warn('Unexpected teachers response, expected array-like shape', resp);
+          }
+        } catch (e) {
+          console.warn('Error parsing teachers response', e, resp);
           data = [];
         }
+        try { console.debug && console.debug('Teachers fetched shape', { sourceLength: Array.isArray(resp) ? resp.length : undefined, normalizedLength: data.length }); } catch (e) {}
         const deptSet = new Set<string>();
-        this.teachers = data.map((t: any) => {
-          const dept = Array.isArray(t.departments) && t.departments.length > 0 ? t.departments[0] : (t.department || '');
-          if (dept) deptSet.add(dept);
+        try {
+          this.teachers = data.map((t: any) => {
+            const dept = Array.isArray(t.departments) && t.departments.length > 0 ? t.departments[0] : (t.department || '');
+            if (dept) deptSet.add(dept);
 
-          const subjects: Subject[] = Array.isArray(t.subjects)
-            ? t.subjects.map((s: any) => ({ id: String(s), name: String(s), code: String(s), credits: 0 }))
-            : (t.subjects || []);
+            const subjects: Subject[] = Array.isArray(t.subjects)
+              ? t.subjects.map((s: any) => {
+                  try {
+                    return { id: String(s), name: String(s), code: String(s), credits: 0 } as Subject;
+                  } catch (e) {
+                    return { id: String(s || ''), name: String(s || ''), code: String(s || ''), credits: 0 } as Subject;
+                  }
+                })
+              : (t.subjects || []);
 
-          const teacher: Teacher = {
-            id: t.id,
-            firstName: t.firstName || (t.fullName ? (t.fullName.split(' ')[0] || '') : ''),
-            lastName: t.lastName || '',
-            email: t.email || '',
-            phone: t.phone || '',
-            department: dept,
-            subjects,
-            hireDate: t.hireDate ? new Date(t.hireDate) : new Date(),
-            status: (t.status as any) || 'active',
-            experience: t.experience ?? 0,
-            qualification: t.qualification || '',
-            salary: t.salary ?? 0,
-            avatar: t.avatar || undefined
-          };
+            const teacher: Teacher = {
+              id: t.id,
+              firstName: t.firstName || (t.fullName ? (String(t.fullName).split(' ')[0] || '') : ''),
+              lastName: t.lastName || '',
+              email: t.email || '',
+              phone: t.phone || '',
+              department: dept,
+              subjects,
+              hireDate: t.hireDate ? new Date(t.hireDate) : new Date(),
+              status: (t.status as any) || 'active',
+              experience: t.experience ?? 0,
+              qualification: t.qualification || '',
+              salary: t.salary ?? 0,
+              avatar: t.avatar || undefined
+            };
 
-          return teacher;
-        });
+            return teacher;
+          });
+        } catch (e) {
+          console.error('Error mapping teachers response to model', e, data);
+          this.teachers = [];
+        }
+        try { console.log('Teachers normalized count:', this.teachers.length); } catch (e) {}
 
         // populate departments dropdown from unique departments found
         try {

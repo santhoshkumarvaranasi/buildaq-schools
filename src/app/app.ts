@@ -22,6 +22,8 @@ export class App implements OnInit {
     if (authToken) {
       // Store the auth token for API calls
       localStorage.setItem('shellAuthToken', authToken);
+      // Also store under the standard key used by ApiService/auth interceptor
+      localStorage.setItem('auth_token', authToken);
       
       // Notify parent frame (shell) that we're ready
       if (window.parent !== window) {

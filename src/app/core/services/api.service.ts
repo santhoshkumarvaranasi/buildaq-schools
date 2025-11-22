@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, retry, tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -49,19 +49,30 @@ export class ApiService {
   /**
    * Generic GET request
    */
-  get<T>(endpoint: string, params?: any): Observable<ApiResponse<T>> {
+  get<T>(endpoint: string, params?: any): Observable<any> {
     this.setLoading(true);
-    
+
     const url = this.buildUrl(endpoint);
     const options = {
       headers: this.getHeaders(),
-      params: this.buildParams(params)
-    };
+      params: this.buildParams(params),
+    } as any;
 
-    return this.http.get<ApiResponse<T>>(url, options).pipe(
+    return this.http.get<any>(url, options).pipe(
       retry(2),
-      tap(() => this.setLoading(false)),
-      tap(() => this.clearError()),
+      tap((resp: any) => {
+        this.setLoading(false);
+        this.clearError();
+        if (resp == null) {
+          console.warn('ApiService.get: received null response for', endpoint);
+        }
+      }),
+      // Normalize: if the API uses { data: ... } wrapper, return that payload; otherwise return raw response
+      map((resp: any) => {
+        if (resp == null) return {} as any;
+        if (resp.data !== undefined) return resp.data;
+        return resp;
+      }),
       catchError(error => this.handleError(error))
     );
   }
@@ -271,7 +282,8 @@ export class ApiService {
    */
   private getAuthToken(): string | null {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+      // Support multiple possible token keys (shell integration may use `shellAuthToken`)
+      return localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token') || localStorage.getItem('shellAuthToken') || sessionStorage.getItem('shellAuthToken');
     }
     return null;
   }

@@ -25,8 +25,11 @@ const authMiddleware = async (req, res, next) => {
     // Add user info to request
     req.user = decoded;
 
-    // Resolve tenant: prefer header, then token value, then host lookup
-    let tenantIdentifier = req.header('X-Tenant-ID') || decoded.tenant || decoded.tenantId || null;
+    // Prefer tenant claim names commonly used: tenant_id, tenantId, or tenant
+    const claimTenant = decoded.tenant_id || decoded.tenantId || decoded.tenant || null;
+
+    // Resolve tenant: prefer header, then token claim value, then host lookup
+    let tenantIdentifier = req.header('X-Tenant-ID') || claimTenant || null;
 
     // If tenantIdentifier looks like a domain (contains a dot) or missing, try lookup by host
     if (!tenantIdentifier || String(tenantIdentifier).indexOf('.') !== -1) {
@@ -70,6 +73,13 @@ const authMiddleware = async (req, res, next) => {
           // ignore
         }
       }
+    }
+
+    // If we resolved a tenantId, also set the request header so downstream proxy
+    // and services receive a consistent `x-tenant-id` header.
+    if (req.tenantId) {
+      try { req.headers['x-tenant-id'] = String(req.tenantId); } catch (e) { /* best-effort */ }
+      try { console.debug && console.debug(`authMiddleware: resolved tenantId=${req.tenantId}`); } catch (e) {}
     }
 
     next();
@@ -140,7 +150,13 @@ const optionalAuth = async (req, res, next) => {
     // Don't fail, just continue without user info
   }
 
-  next();
+    // If we resolved a tenantId, ensure header is set
+    if (req.tenantId) {
+      try { req.headers['x-tenant-id'] = String(req.tenantId); } catch (e) { /* best-effort */ }
+      try { console.debug && console.debug(`optionalAuth: resolved tenantId=${req.tenantId}`); } catch (e) {}
+    }
+
+    next();
 };
 
 /**

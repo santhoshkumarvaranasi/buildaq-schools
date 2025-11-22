@@ -31,10 +31,15 @@
           <label class="filter-label">Grade</label>
           <select [(ngModel)]="selectedGrade" (change)="filterStudents()" class="form-select">
             <option value="">All Grades</option>
-            <option value="9th">9th Grade</option>
-            <option value="10th">10th Grade</option>
-            <option value="11th">11th Grade</option>
-            <option value="12th">12th Grade</option>
+            <ng-container *ngIf="grades && grades.length; else defaultGrades">
+              <option *ngFor="let g of grades" [value]="g">{{g}}</option>
+            </ng-container>
+            <ng-template #defaultGrades>
+              <option value="9th">9th Grade</option>
+              <option value="10th">10th Grade</option>
+              <option value="11th">11th Grade</option>
+              <option value="12th">12th Grade</option>
+            </ng-template>
           </select>
         </div>
         

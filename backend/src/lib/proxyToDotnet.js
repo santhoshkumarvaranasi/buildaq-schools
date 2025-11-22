@@ -22,21 +22,73 @@ function proxyToDotnet(req, res) {
   // Ensure tenant header is present for tenant-scoped APIs.
   try {
     // If upstream already set X-Tenant-ID, keep it. Otherwise infer from hostname (subdomain)
-    const existingTenant = req.headers['x-tenant-id'] || req.headers['x-tenant-id'.toLowerCase()];
+    const existingTenant = req.get && (req.get('X-Tenant-ID') || req.get('x-tenant-id')) || req.headers['x-tenant-id'];
     if (!existingTenant) {
-      // hostname may be like 'tenant.buildaq.com' or 'tenant.localhost' (dev)
-      const hostHeader = req.hostname || req.headers.host || '';
-      const parts = String(hostHeader).split(':')[0].split('.');
-      if (parts.length > 2) {
-        // take left-most as tenant
-        options.headers['x-tenant-id'] = parts[0];
-      } else if (parts.length === 2 && parts[0] !== 'www' && parts[0] !== 'localhost') {
-        // two-part host might be 'tenant.local' or 'tenant.buildaq'
-        options.headers['x-tenant-id'] = parts[0];
+      // Developer-friendly fallback: if a query parameter `tenantId` is present
+      // use that as the tenant header (only in development). This helps local
+      // shell/remote calls that include `?tenantId=...` to be routed correctly
+      // when Authorization is not present.
+      try {
+        if ((process.env.NODE_ENV || 'development') === 'development' && req.query && req.query.tenantId) {
+          options.headers['x-tenant-id'] = req.query.tenantId;
+          console.debug && console.debug(`proxyToDotnet: using tenant from query param -> ${req.query.tenantId}`);
+        } else {
+          // hostname may be like 'tenant.buildaq.com' or 'tenant.localhost' (dev)
+          const hostHeader = req.hostname || req.headers.host || '';
+          // remove port and split by dot
+          const hostOnly = String(hostHeader).split(':')[0];
+          const parts = hostOnly.split('.').filter(Boolean);
+          // Only infer a tenant subdomain when the left-most part is non-numeric and not localhost
+          const candidate = parts[0];
+          const isNumeric = /^[0-9]+$/.test(candidate || '');
+          if (!isNumeric && candidate && candidate !== 'localhost' && candidate !== 'www' && parts.length >= 2) {
+            options.headers['x-tenant-id'] = candidate;
+          }
+        }
+      } catch (e) {
+        // best-effort only
       }
+    } else {
+      // preserve whatever upstream provided (usually a numeric id)
+      options.headers['x-tenant-id'] = existingTenant;
     }
   } catch (e) {
     // best-effort only
+  }
+
+  // Add helpful debug output so requests can be traced during dev
+  try {
+    const forwardedTenant = options.headers['x-tenant-id'] || '(none)';
+    const hasAuth = !!(req.get && req.get('Authorization')) || !!req.headers.authorization;
+    console.debug && console.debug(`proxyToDotnet: ${req.method} ${req.originalUrl} -> x-tenant-id=${forwardedTenant} auth=${hasAuth}`);
+
+    // Dev-only: if requested via query param or env var, dump sanitized forwarded headers
+    // Usage: add `?_dumpHeaders=1` to the request URL or set `ENABLE_PROXY_HEADER_DUMP=true` in env
+    const shouldDump = (process.env.ENABLE_PROXY_HEADER_DUMP === 'true') || (req.query && String(req.query._dumpHeaders) === '1');
+    if (shouldDump) {
+      try {
+        // Create shallow copy of headers we're about to forward and redact sensitive keys
+        const headersCopy = Object.assign({}, options.headers || {});
+        const redact = (v) => (v ? 'REDACTED' : v);
+        const sensitive = ['authorization', 'cookie', 'set-cookie', 'x-api-key', 'proxy-authorization'];
+        for (const k of Object.keys(headersCopy)) {
+          if (sensitive.includes(k.toLowerCase())) {
+            headersCopy[k] = redact(headersCopy[k]);
+          }
+        }
+        // Also include original incoming headers (sanitized) for comparison
+        const incoming = Object.assign({}, req.headers || {});
+        for (const k of Object.keys(incoming)) {
+          if (sensitive.includes(k.toLowerCase())) incoming[k] = redact(incoming[k]);
+        }
+        console.debug && console.debug('proxyToDotnet: forwarded-headers (sanitized):', JSON.stringify(headersCopy, null, 2));
+        console.debug && console.debug('proxyToDotnet: incoming-headers (sanitized):', JSON.stringify(incoming, null, 2));
+      } catch (e) {
+        // ignore logging failures
+      }
+    }
+  } catch (e) {
+    // ignore logging failures
   }
 
   const proxyReq = http.request(options, (proxyRes) => {

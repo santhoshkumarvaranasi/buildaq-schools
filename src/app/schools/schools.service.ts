@@ -28,8 +28,23 @@ export class SchoolsService {
     const tenantId = this.tenant.getTenantId();
     const params = { tenantId };
     return this.api.get<RemoteStudent[]>('schools/students', params).pipe(
-      map((resp: ApiResponse<RemoteStudent[]>) => {
-        return resp?.data || [];
+
+
+
+      map((resp: any) => {
+        // resp may be:
+        // - ApiResponse { data: [...] }
+        // - raw array [...]
+        // - HttpResponse wrapping the above (ApiService may return full response as fallback)
+        try {
+          if (!resp) return [];
+          if (Array.isArray(resp)) return resp as RemoteStudent[];
+          if (resp.data && Array.isArray(resp.data)) return resp.data as RemoteStudent[];
+          if ((resp as any).body && Array.isArray((resp as any).body)) return (resp as any).body as RemoteStudent[];
+        } catch (e) {
+          console.warn('Unexpected students response shape', resp, e);
+        }
+        return [];
       }),
       catchError((err) => {
         console.error('Failed to load students from API', err);

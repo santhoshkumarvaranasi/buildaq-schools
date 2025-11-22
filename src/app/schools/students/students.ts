@@ -1,123 +1,183 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, NgZone, OnInit, ApplicationRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SchoolsService, RemoteStudent } from '../schools.service';
+import { SchoolsService } from '../schools.service';
 import { TenantService } from '../../core/services/tenant.service';
 
 export interface Student {
   id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  grade: string;
-  class: string;
-  enrollmentDate: Date;
-  status: 'active' | 'inactive' | 'transferred';
+  rollNo?: string;
+  firstName?: string;
+  lastName?: string;
+  class?: string;
+  fullName?: string;
+  grade?: string;
+  section?: string;
+  status?: string;
+  email?: string;
+  enrollmentDate?: Date | string;
+  schoolId?: number;
+  [key: string]: any;
 }
 
 export interface SortConfig {
   field: string;
-  direction: 'asc' | 'desc';
+  dir: 'asc' | 'desc';
 }
 
 @Component({
   selector: 'app-students',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './students.html',
-  styleUrl: './students.scss',
+  styleUrls: ['./students.scss'],
+  // allow template directives and ngModel in this component
+  imports: [CommonModule, FormsModule],
 })
 export class StudentsComponent implements OnInit {
   students: Student[] = [];
+  filteredStudents: Student[] = [];
+  grades: string[] = [];
+  searchTerm = '';
+  selectedGrade?: string;
+  selectedStatus?: string;
+  showMobileFilters = false;
+  // support template expectations: 'table' / 'cards' and legacy 'list'/'grid'
+  viewMode: 'list' | 'grid' | 'table' | 'cards' = 'table';
+  displayLimit = 50;
+  isLoading = false;
+  sortConfig: SortConfig = { field: 'fullName', dir: 'asc' };
 
-  // Filter and search properties
-  filteredStudents: Student[] = [...this.students];
-  searchTerm: string = '';
-  selectedGrade: string = '';
-  selectedStatus: string = '';
-  
-  // Mobile-specific properties
-  showMobileFilters: boolean = false;
-  viewMode: 'table' | 'cards' = 'table';
+  // template-facing fields
   selectedStudent: Student | null = null;
-  
-  // Sorting properties
-  sortField: string = 'name';
-  currentSort: SortConfig = { field: 'name', direction: 'asc' };
-  
-  // Performance properties
-  displayLimit: number = 20;
-  showScrollIndicator: boolean = false;
+  showScrollIndicator = false;
+  sortField = this.sortConfig.field;
 
-  constructor(private schoolsService: SchoolsService, private tenantService: TenantService) {
+  constructor(
+    private schoolsService: SchoolsService,
+    private tenantService: TenantService,
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef,
+    private appRef: ApplicationRef
+  ) {}
+
+  ngOnInit(): void {
     this.detectViewMode();
-  }
-
-  ngOnInit() {
     this.loadStudents();
-    this.checkScrollIndicator();
   }
 
-  // Load students from API
-  async loadStudents() {
-    try {
-      const remote = (await this.schoolsService.getStudents().toPromise()) || [];
-      // Map remote shape to local Student model
-      this.students = remote.map((s: RemoteStudent) => ({
-        id: s.id,
-        firstName: s.firstName,
-        lastName: s.lastName,
-        email: s.email,
-        grade: s.grade,
-        class: s.class,
-        enrollmentDate: new Date(s.enrollmentDate),
-        status: s.status
-      }));
-      this.filterStudents();
-    } catch (e) {
-      console.error('Error loading students', e);
-      // Fallback to existing empty list
-      this.students = [];
-      this.filterStudents();
+  loadStudents(): void {
+    this.isLoading = true;
+    this.schoolsService.getStudents().subscribe({
+      next: (resp) => {
+        const response: any = resp as any;
+        let arrRaw: any;
+        if (Array.isArray(response)) arrRaw = response;
+        else if (response && response.data) arrRaw = response.data;
+        else if (response && response.students) arrRaw = response.students;
+        else if (response && response.items) arrRaw = response.items;
+        else arrRaw = [];
+
+        const arr: Student[] = Array.isArray(arrRaw) ? arrRaw : [];
+
+        const mapped = arr.map((s: any) => ({
+          id: s.id ?? s.studentId ?? 0,
+          rollNo: s.rollNo ?? s.roll_number ?? s.roll,
+          firstName: s.firstName ?? s.first_name ?? s.fname ?? s.first,
+          lastName: s.lastName ?? s.last_name ?? s.lname ?? s.last,
+          fullName: s.fullName ?? `${s.firstName || s.first || ''} ${s.lastName || s.last || ''}`.trim(),
+          grade: s.grade ?? s.class ?? s.standard,
+          section: s.section ?? s.sectionName ?? s.section_id,
+          status: s.status ?? s.enrollmentStatus ?? 'active',
+          email: s.email,
+          enrollmentDate: s.enrollmentDate ?? s.enrollmentDateString,
+          schoolId: s.schoolId ?? s.school_id,
+          ...s,
+        }));
+
+        this.zone.run(() => {
+          this.students = mapped;
+          this.grades = Array.from(new Set(this.students.map((st) => st.grade).filter(Boolean))) as string[];
+          this.applyFiltersAndSort();
+          this.isLoading = false;
+          setTimeout(() => this.cdr.detectChanges(), 0);
+        });
+      },
+      error: (err) => {
+        console.error('Failed to load students', err);
+        this.zone.run(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        });
+      },
+    });
+  }
+
+  applyFiltersAndSort(): void {
+    let list = [...this.students];
+    if (this.selectedGrade) list = list.filter((s) => s.grade === this.selectedGrade);
+    if (this.selectedStatus) list = list.filter((s) => (s.status || '').toLowerCase() === (this.selectedStatus || '').toLowerCase());
+    if (this.searchTerm && this.searchTerm.trim().length > 0) {
+      const term = this.searchTerm.trim().toLowerCase();
+      list = list.filter((s) => (s.fullName || '').toLowerCase().includes(term) || (s.rollNo || '').toLowerCase().includes(term));
     }
+
+    const field = this.sortConfig.field;
+    const dir = this.sortConfig.dir === 'asc' ? 1 : -1;
+    list.sort((a: any, b: any) => {
+      const va = (a[field] ?? '') as string | number;
+      const vb = (b[field] ?? '') as string | number;
+      if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir;
+      return String(va).localeCompare(String(vb)) * dir;
+    });
+
+    this.filteredStudents = list.slice(0, this.displayLimit);
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    this.detectViewMode();
-    this.checkScrollIndicator();
+  // Template-friendly APIs -------------------------------------------------
+  onSearch(): void {
+    this.applyFiltersAndSort();
+    this.cdr.detectChanges();
   }
 
-  // Scroll indicator methods
-  checkScrollIndicator() {
-    setTimeout(() => {
-      const tableContainer = document.querySelector('.table-scroll-container');
-      if (tableContainer) {
-        this.showScrollIndicator = tableContainer.scrollWidth > tableContainer.clientWidth;
-      }
-    }, 100);
-  }
-
-  // Mobile filter methods
-  toggleMobileFilters() {
-    this.showMobileFilters = !this.showMobileFilters;
-  }
-
-  clearSearch() {
+  clearSearch(): void {
     this.searchTerm = '';
-    this.filterStudents();
+    this.applyFiltersAndSort();
+    this.cdr.detectChanges();
   }
 
-  // View mode methods
-  detectViewMode() {
-    this.viewMode = window.innerWidth < 768 ? 'cards' : 'table';
+  clearFilters(): void {
+    this.selectedGrade = undefined;
+    this.selectedStatus = undefined;
+    this.searchTerm = '';
+    this.applyFiltersAndSort();
+    this.cdr.detectChanges();
   }
 
-  setViewMode(mode: 'table' | 'cards') {
-    this.viewMode = mode;
+  sortByField(field: string): void {
+    if (this.sortConfig.field === field) this.sortConfig.dir = this.sortConfig.dir === 'asc' ? 'desc' : 'asc';
+    else this.sortConfig = { field, dir: 'asc' };
+    this.applyFiltersAndSort();
   }
 
-  // Student selection methods
+  sortStudents(): void {
+    this.applyFiltersAndSort();
+  }
+
+  // Compatibility alias used by templates
+  filterStudents(): void {
+    this.applyFiltersAndSort();
+    try { this.cdr.detectChanges(); } catch (e) { /* noop */ }
+  }
+
+  get currentSort() {
+    return { field: this.sortConfig.field, direction: this.sortConfig.dir };
+  }
+
+  loadMoreStudents(): void {
+    this.displayLimit += 50;
+    this.applyFiltersAndSort();
+    this.cdr.detectChanges();
+  }
+
   selectStudent(student: Student) {
     this.selectedStudent = this.selectedStudent?.id === student.id ? null : student;
   }
@@ -126,93 +186,26 @@ export class StudentsComponent implements OnInit {
     return this.selectedStudent?.id === student.id;
   }
 
-  trackByStudentId(index: number, student: Student): number {
-    return student.id;
+  toggleMobileFilters() {
+    this.showMobileFilters = !this.showMobileFilters;
   }
 
-  // Sorting methods
-  sortByField(field: string) {
-    if (this.currentSort.field === field) {
-      this.currentSort.direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.currentSort = { field, direction: 'asc' };
-    }
-    this.sortStudents();
+  setViewMode(mode: 'table' | 'cards' | 'list' | 'grid') {
+    this.viewMode = mode;
   }
 
-  sortStudents() {
-    this.filteredStudents.sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
-
-      switch (this.currentSort.field) {
-        case 'id':
-          aValue = a.id;
-          bValue = b.id;
-          break;
-        case 'name':
-          aValue = `${a.firstName} ${a.lastName}`.toLowerCase();
-          bValue = `${b.firstName} ${b.lastName}`.toLowerCase();
-          break;
-        case 'grade':
-          aValue = a.grade;
-          bValue = b.grade;
-          break;
-        case 'enrollment':
-          aValue = a.enrollmentDate.getTime();
-          bValue = b.enrollmentDate.getTime();
-          break;
-        case 'status':
-          aValue = a.status;
-          bValue = b.status;
-          break;
-        default:
-          return 0;
-      }
-
-      if (aValue < bValue) {
-        return this.currentSort.direction === 'asc' ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return this.currentSort.direction === 'asc' ? 1 : -1;
-      }
-      return 0;
-    });
+  detectViewMode() {
+    this.viewMode = window.innerWidth < 768 ? 'cards' : 'table';
   }
 
-  // Filter and search methods
-  onSearch() {
-    this.filterStudents();
+  checkScrollIndicator() {
+    setTimeout(() => {
+      const tableContainer = document.querySelector('.table-scroll-container');
+      if (tableContainer) this.showScrollIndicator = tableContainer.scrollWidth > tableContainer.clientWidth;
+    }, 100);
   }
 
-  filterStudents() {
-    this.filteredStudents = this.students.filter(student => {
-      const matchesSearch = !this.searchTerm || 
-        student.firstName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        student.lastName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        student.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        student.grade.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        student.class.toLowerCase().includes(this.searchTerm.toLowerCase());
-      
-      const matchesGrade = !this.selectedGrade || student.grade === this.selectedGrade;
-      const matchesStatus = !this.selectedStatus || student.status === this.selectedStatus;
-
-      return matchesSearch && matchesGrade && matchesStatus;
-    });
-
-    // Apply current sorting
-    this.sortStudents();
-  }
-
-  clearFilters() {
-    this.searchTerm = '';
-    this.selectedGrade = '';
-    this.selectedStatus = '';
-    this.filterStudents();
-  }
-
-  // Status and display methods
-  getStatusClass(status: string): string {
+  getStatusClass(status?: string): string {
     switch (status) {
       case 'active': return 'status-active';
       case 'inactive': return 'status-inactive';
@@ -221,7 +214,7 @@ export class StudentsComponent implements OnInit {
     }
   }
 
-  getStatusIcon(status: string): string {
+  getStatusIcon(status?: string): string {
     switch (status) {
       case 'active': return '✅';
       case 'inactive': return '⏸️';
@@ -231,43 +224,24 @@ export class StudentsComponent implements OnInit {
   }
 
   getActiveCount(): number {
-    return this.students.filter(student => student.status === 'active').length;
+    return this.students.filter(s => s.status === 'active').length;
   }
 
-  // Performance methods
-  loadMoreStudents() {
-    this.displayLimit += 20;
+  // Placeholder actions
+  addNewStudent() { console.log('Add new student'); }
+  viewStudent(student: Student) { console.log('View', student); }
+  editStudent(student: Student) { console.log('Edit', student); }
+  showMoreActions(student: Student) { console.log('Actions', student); }
+
+  trackByStudentId(_i: number, s: Student): number {
+    return s.id;
   }
 
-  // Touch and swipe methods
-  onSwipeLeft(student: Student) {
-    // Email action
-    window.open(`mailto:${student.email}`, '_blank');
-  }
-
-  onSwipeRight(student: Student) {
-    // Edit action
-    this.editStudent(student);
-  }
-
-  // Action methods
-  editStudent(student: Student) {
-    // TODO: Open edit dialog
-    console.log('Edit student:', student);
-  }
-
-  viewStudent(student: Student) {
-    // TODO: Open student details
-    console.log('View student:', student);
-  }
-
-  addNewStudent() {
-    // TODO: Open add student dialog
-    console.log('Add new student');
-  }
-
-  showMoreActions(student: Student) {
-    // TODO: Show action menu
-    console.log('More actions for student:', student);
+  @HostListener('window:resize')
+  onResize(): void {
+    this.detectViewMode();
+    this.checkScrollIndicator();
   }
 }
+
+

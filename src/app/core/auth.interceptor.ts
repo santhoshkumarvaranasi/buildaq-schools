@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   try {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('auth_token') || localStorage.getItem('shellAuthToken');
     const tenantId = localStorage.getItem('tenant_id') || environment.multiTenant?.defaultTenant;
 
     let headers = req.headers;

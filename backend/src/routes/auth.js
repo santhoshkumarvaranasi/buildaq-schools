@@ -66,17 +66,24 @@ router.post('/login', async (req, res) => {
         return res.status(401).json({ error: 'invalid credentials' });
       }
 
-      const tenantId = tenant || userRow.tenant_domain || userRow.tenant_id;
+      const tenantFromReq = tenant || null;
+      const tenantDomainFromUser = userRow.tenant_domain || null;
+      const tenantIdFromUser = userRow.tenant_id !== undefined ? userRow.tenant_id : null;
+      const numericTenantId = tenantIdFromUser !== null && tenantIdFromUser !== undefined ? Number(tenantIdFromUser) : null;
+
+      // Prefer tenant domain/string for `tenant` claim (for UI), but include numeric `tenant_id` claim
+      const tenantClaim = tenantFromReq || tenantDomainFromUser || (numericTenantId ? String(numericTenantId) : null);
       const now = Math.floor(Date.now() / 1000);
       const payload = {
         sub: userRow.email,
-        tenant: tenantId,
+        tenant: tenantClaim,
         iat: now,
         exp: now + TOKEN_TTL,
       };
+      if (!Number.isNaN(numericTenantId) && numericTenantId !== null) payload.tenant_id = numericTenantId;
 
       const token = jwt.sign(payload, JWT_SECRET);
-      return res.json({ token, expiresIn: TOKEN_TTL, tenant: tenantId });
+      return res.json({ token, expiresIn: TOKEN_TTL, tenant: tenantClaim, tenant_id: payload.tenant_id || null });
     }
   } catch (err) {
     console.error('Auth DB lookup error:', err);
@@ -118,10 +125,13 @@ router.post('/login', async (req, res) => {
     iat: now,
     exp: now + TOKEN_TTL,
   };
+  // If tenantId looks numeric, include tenant_id claim
+  const numericFallback = Number(tenantId);
+  if (!Number.isNaN(numericFallback)) payload.tenant_id = numericFallback;
 
   const token = jwt.sign(payload, JWT_SECRET);
 
-  return res.json({ token, expiresIn: TOKEN_TTL, tenant: tenantId });
+  return res.json({ token, expiresIn: TOKEN_TTL, tenant: tenantId, tenant_id: payload.tenant_id || null });
 });
 
 // Simple token introspect for shell to check login status
@@ -131,7 +141,7 @@ router.get('/me', (req, res) => {
   const token = auth.slice('Bearer '.length);
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    return res.json({ user: decoded.sub, tenant: decoded.tenant, exp: decoded.exp });
+    return res.json({ user: decoded.sub, tenant: decoded.tenant, tenant_id: decoded.tenant_id || null, exp: decoded.exp });
   } catch (err) {
     return res.status(401).json({ error: 'invalid token', message: err.message });
   }

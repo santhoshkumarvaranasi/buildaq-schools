@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { proxyToDotnet } = require('../lib/proxyToDotnet');
 
 /**
  * @swagger
@@ -12,10 +13,8 @@ const router = express.Router();
  *         description: List of students
  */
 router.get('/', (req, res) => {
-  res.json({
-    message: 'Students endpoint',
-    students: []
-  });
+  // Forward to .NET API which uses the database for tenant-scoped data.
+  return proxyToDotnet(req, res);
 });
 
 /**
@@ -29,10 +28,7 @@ router.get('/', (req, res) => {
  *         description: Student created successfully
  */
 router.post('/', (req, res) => {
-  res.status(201).json({
-    message: 'Student created',
-    student: req.body
-  });
+  return proxyToDotnet(req, res);
 });
 
 /**
@@ -52,10 +48,7 @@ router.post('/', (req, res) => {
  *         description: Student details
  */
 router.get('/:id', (req, res) => {
-  res.json({
-    message: 'Student details',
-    studentId: req.params.id
-  });
+  return proxyToDotnet(req, res);
 });
 
 module.exports = router;
