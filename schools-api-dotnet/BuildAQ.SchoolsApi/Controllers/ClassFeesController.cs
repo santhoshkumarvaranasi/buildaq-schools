@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BuildAQ.SchoolsApi.Data;
 using BuildAQ.SchoolsApi.Models;
+using BuildAQ.SchoolsApi.Controllers;
 
 namespace BuildAQ.SchoolsApi.Controllers
 {

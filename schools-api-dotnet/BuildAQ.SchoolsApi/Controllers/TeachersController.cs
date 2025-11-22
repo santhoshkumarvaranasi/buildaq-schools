@@ -19,6 +19,9 @@ namespace BuildAQ.SchoolsApi.Controllers
         {
             try
             {
+                var tenantId = await TenantResolver.ResolveAsync(HttpContext, _context);
+                if (tenantId == null) return Ok(new object[0]);
+
                 var teachers = await _context.Users
                     .Include(u => u.Roles)
                     .Include(u => u.Status)
@@ -26,7 +29,7 @@ namespace BuildAQ.SchoolsApi.Controllers
                     .Include(u => u.Departments)
                     .Include(u => u.ClassSubjects)
                         .ThenInclude(cs => cs.Subject)
-                    .Where(u => u.Roles.Any(r => r.Name.ToLower() == "teacher"))
+                    .Where(u => u.Roles.Any(r => r.Name.ToLower() == "teacher") && u.TenantId == tenantId)
                     .Select(u => new
                     {
                         id = u.Id,
