@@ -24,17 +24,13 @@ router.get('/remotes.json', (req, res) => {
   res.json(defaultRemotes);
 });
 
-// Proxy runtime requests for the remoteEntry (JS/JSON) to the MF static server.
-// This allows callers to fetch /assets/remoteEntry.js or /assets/remoteEntry.json
-// from the backend and have the backend forward the request to the dev static server
-// running on port 4201.
-router.get(['/remoteEntry.js', '/remoteEntry.json'], (req, res) => {
-  const targetPath = req.path.replace(/^\/+/, ''); // e.g. remoteEntry.js or remoteEntry.json
+// Proxy runtime requests for the remoteEntry JSON to the MF static server.
+// This allows callers to fetch /assets/remoteEntry.json from the backend and
+// have the backend forward the request to the dev static server running on port 4201.
+router.get('/remoteEntry.json', (req, res) => {
+  const targetPath = 'remoteEntry.json';
   const upstream = `http://localhost:4201/${targetPath}`;
-  const cacheDir = path.resolve(__dirname, '..', '..', '..', 'scripts');
-  const cacheFile = path.join(cacheDir, 'remoteEntry.cached.json');
   const distPath = path.resolve(__dirname, '..', '..', '..', 'dist', 'buildaq-schools', 'browser', targetPath);
-  const scriptManifest = path.resolve(__dirname, '..', '..', '..', 'scripts', 'remoteEntry.js');
 
   const http = upstream.startsWith('https') ? require('https') : require('http');
 
@@ -47,8 +43,6 @@ router.get(['/remoteEntry.js', '/remoteEntry.json'], (req, res) => {
       upRes.on('end', () => {
         try {
           const body = Buffer.concat(chunks).toString('utf8');
-          // Save cache (only for JSON-like payloads)
-          try { fs.writeFileSync(cacheFile, body, { encoding: 'utf8' }); } catch (e) { /* ignore cache write errors */ }
           // Forward the content-type header if present
           if (upRes.headers && upRes.headers['content-type']) res.setHeader('Content-Type', upRes.headers['content-type']);
           res.status(upRes.statusCode).send(body);
@@ -76,30 +70,9 @@ router.get(['/remoteEntry.js', '/remoteEntry.json'], (req, res) => {
       return res.sendFile(distPath);
     }
 
-    // 2) Try scripts/remoteEntry.js (repo manifest)
-    if (fs.existsSync(scriptManifest)) {
-      res.setHeader('Content-Type', 'application/json');
-      try {
-        const data = fs.readFileSync(scriptManifest, 'utf8');
-        return res.status(200).send(data);
-      } catch (e) {
-        console.warn('remotes: failed reading script manifest', e && e.message);
-      }
-    }
-
-    // 3) Try cached copy
-    if (fs.existsSync(cacheFile)) {
-      try {
-        const data = fs.readFileSync(cacheFile, 'utf8');
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(200).send(data);
-      } catch (e) {
-        console.warn('remotes: failed reading cache file', e && e.message);
-      }
-    }
-
-    // 4) Nothing to serve
-    return res.status(502).json({ error: 'Bad gateway', message: 'Remote manifest unavailable (upstream and local fallbacks failed)' });
+    // 2) Nothing else: return error. Keep behavior minimal and require
+    // the build/watch to produce `remoteEntry.json` in dist.
+    return res.status(502).json({ error: 'Bad gateway', message: 'Remote manifest unavailable (upstream and dist fallbacks failed)' });
   }
 });
 
@@ -118,8 +91,7 @@ router.get('/remote-events', (req, res) => {
   // rather than rewriting the top-level manifest. Also include script manifest
   // and cached file as fallbacks.
   const distDir = path.resolve(__dirname, '..', '..', '..', 'dist', 'buildaq-schools', 'browser');
-  const scriptManifest = path.resolve(__dirname, '..', '..', '..', 'scripts', 'remoteEntry.js');
-  const cacheFile = path.resolve(__dirname, '..', '..', '..', 'scripts', 'remoteEntry.cached.json');
+  const cacheFile = null;
 
   let lastMtime = 0;
   function getLatestMtime() {
@@ -138,15 +110,7 @@ router.get('/remote-events', (req, res) => {
       }
     } catch (e) { /* ignore dir read errors */ }
 
-    [scriptManifest, cacheFile].forEach(p => {
-      try {
-        if (fs.existsSync(p)) {
-          const s = fs.statSync(p);
-          const t = s.mtimeMs || (s.mtime && s.mtime.getTime()) || 0;
-          if (t > mt) mt = t;
-        }
-      } catch (e) { /* ignore */ }
-    });
+    // Only consider files in dist; incremental builds update chunk files here.
 
     return mt;
   }
@@ -194,12 +158,7 @@ router.get('/*.js', (req, res) => {
 
   // 2) Try to remap via manifest (remoteEntry.json) in dist or scripts
   try {
-    let manifestPath = path.join(distDir, 'remoteEntry.json');
-    if (!fs.existsSync(manifestPath)) {
-      const scriptManifest = path.resolve(__dirname, '..', '..', '..', 'scripts', 'remoteEntry.js');
-      if (fs.existsSync(scriptManifest)) manifestPath = scriptManifest;
-    }
-
+    const manifestPath = path.join(distDir, 'remoteEntry.json');
     if (fs.existsSync(manifestPath)) {
       let manifestRaw = fs.readFileSync(manifestPath, 'utf8');
       const manifest = JSON.parse(manifestRaw);

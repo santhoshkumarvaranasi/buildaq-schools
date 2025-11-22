@@ -302,25 +302,10 @@ function Start-All {
         if ($env:USE_MF_STATIC -and $env:USE_MF_STATIC.ToString().ToLower() -eq 'true') { $autoStatic = $true }
         if ($autoStatic) {
             Write-Host 'Detected built frontend assets; switching frontend service to mf-build-watch + mf-browsersync (static MF with live reload)'
-            # Ensure remoteEntry.json exists in the dist folder. Some developer workflows
-            # generate a manifest at `scripts/remoteEntry.js` (JSON payload). If the
-            # dist manifest is missing but a scripts manifest exists, copy it into dist
-            # so the static server can serve federation metadata.
-            try {
-                $manifestDistJson = Join-Path $distDir 'remoteEntry.json'
-                $manifestDistJs = Join-Path $distDir 'remoteEntry.js'
-                $scriptManifest = Join-Path $scriptRoot 'remoteEntry.js'
-                # If either JSON or JS artifact is missing in dist and a scripts/remoteEntry.js exists,
-                # copy it into dist as both `remoteEntry.json` and `remoteEntry.js` so dev servers
-                # and native federation runtimes can fetch the expected path.
-                if ((-not (Test-Path $manifestDistJson) -or -not (Test-Path $manifestDistJs)) -and (Test-Path $scriptManifest)) {
-                    Write-Host "Copying manifest from $scriptManifest -> $manifestDistJson and $manifestDistJs"
-                    Copy-Item -Path $scriptManifest -Destination $manifestDistJson -Force
-                    Copy-Item -Path $scriptManifest -Destination $manifestDistJs -Force
-                }
-            } catch {
-                Write-Host 'Warning: failed to copy scripts/remoteEntry.js to dist (continuing)'
-            }
+            # Expect the build to produce `remoteEntry.json` in `dist/buildaq-schools/browser`.
+            # We intentionally do not copy a repo-level manifest; the dev workflow should
+            # generate `remoteEntry.json` as part of the build/watch so the static server
+            # can serve the canonical artifact.
             for ($i = 0; $i -lt $services.Count; $i++) {
                 if ($services[$i].name -eq 'frontend') {
                     $before = $services[0..($i-1)]
@@ -480,11 +465,11 @@ function Start-All {
                 }
             } elseif ($svc.name -eq 'mf-watch' -or $svc.name -eq 'mf-browsersync' -or $svc.name -eq 'mf-static') {
                 # For the static MF server (BrowserSync or npm script variant), ensure the federation manifest or container is available
-                if (Wait-For-Url 'http://localhost:4201/remoteEntry.js' 20 -or Wait-For-Url 'http://localhost:4201/remoteEntry.json' 20) {
-                    Write-Host 'MF static server is up (remoteEntry available)'
+                    if (Wait-For-Url 'http://localhost:4201/remoteEntry.json' 20) {
+                    Write-Host 'MF static server is up (remoteEntry.json available)'
                     $started = $true
                 } else {
-                    Write-Host "MF static server did not respond with remoteEntry on attempt $attempt"
+                    Write-Host "MF static server did not respond with remoteEntry.json on attempt $attempt"
                 }
             } elseif ($svc.name -eq 'shell') {
                 # shell typically listens on 4200
