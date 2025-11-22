@@ -52,4 +52,20 @@ export class SchoolsService {
       })
     );
   }
+
+  /**
+   * Create a new student for the current tenant
+   */
+  createStudent(student: Partial<RemoteStudent>): Observable<RemoteStudent> {
+    const tenantId = this.tenant.getTenantId();
+    const params = tenantId ? { tenantId } : undefined;
+    return this.api.post<RemoteStudent>('schools/students', student).pipe(
+      map((resp: any) => {
+        if (!resp) throw new Error('Empty response from create student');
+        if (resp.data !== undefined) return resp.data as RemoteStudent;
+        // Fallback: if API returned the created entity directly
+        return resp as RemoteStudent;
+      })
+    );
+  }
 }

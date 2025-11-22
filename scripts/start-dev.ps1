@@ -22,12 +22,49 @@ $services = @(
 # Note: the static server serves files from `dist/buildaq-schools/browser` so run `npm run build`
 # in the repo root before enabling this option.
 if ($env:USE_MF_STATIC -and $env:USE_MF_STATIC.ToString().ToLower() -eq 'true') {
-    Write-Host 'USE_MF_STATIC=true -> replacing frontend service with mf-static (npm run start:mf)'
+    Write-Host 'USE_MF_STATIC=true -> configuring mf build-watch + BrowserSync (live reload for dist)'
+    # Replace the single frontend service entry with two services:
+    #  - mf-build-watch: runs an ng build in watch mode and writes to dist
+    #  - mf-browsersync: serves the dist folder with BrowserSync on port 4201
     for ($i = 0; $i -lt $services.Count; $i++) {
         if ($services[$i].name -eq 'frontend') {
-            $services[$i].name = 'mf-static'
-            $services[$i].command = 'npm run start:mf'
-            $services[$i].log = 'mf-static.log'
+            # remove the frontend service and insert two entries in its place
+            $before = $services[0..($i-1)]
+            $after = $services[($i+1)..($services.Count-1)]
+
+
+            # Prefer the npm script `start:mf-watch` which encapsulates build-watch + BrowserSync.
+            # If the script is not defined in package.json, fall back to an npx concurrently command.
+            $pkgPath = Join-Path $scriptRoot '..\package.json'
+            $mfCommand = 'npm run start:mf-watch'
+            if (Test-Path $pkgPath) {
+                try {
+                    $pkg = Get-Content $pkgPath -Raw | ConvertFrom-Json
+                    if (-not ($pkg.scripts -and $pkg.scripts.'start:mf-watch')) {
+                        $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
+                        $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201 --cors'
+                        $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
+                    }
+                    } catch {
+                        $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
+                        $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201 --cors'
+                        $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
+                }
+            } else {
+                $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
+                $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201'
+                $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
+            }
+
+            $mfWatch = @{ name='mf-watch'; cwd=Join-Path $scriptRoot '..'; command=$mfCommand; ports=@(4201); log='mf-watch.log' }
+
+            $new = @()
+            if ($before) { $new += $before }
+            $new += $mfWatch
+            if ($after) { $new += $after }
+
+            # Reassign services to the new array
+            $services = $new
             break
         }
     }
@@ -264,12 +301,62 @@ function Start-All {
         if (Test-Path $distDir) { $autoStatic = $true }
         if ($env:USE_MF_STATIC -and $env:USE_MF_STATIC.ToString().ToLower() -eq 'true') { $autoStatic = $true }
         if ($autoStatic) {
-            Write-Host 'Detected built frontend assets; switching frontend service to mf-static (static MF server)'
+            Write-Host 'Detected built frontend assets; switching frontend service to mf-build-watch + mf-browsersync (static MF with live reload)'
+            # Ensure remoteEntry.json exists in the dist folder. Some developer workflows
+            # generate a manifest at `scripts/remoteEntry.js` (JSON payload). If the
+            # dist manifest is missing but a scripts manifest exists, copy it into dist
+            # so the static server can serve federation metadata.
+            try {
+                $manifestDistJson = Join-Path $distDir 'remoteEntry.json'
+                $manifestDistJs = Join-Path $distDir 'remoteEntry.js'
+                $scriptManifest = Join-Path $scriptRoot 'remoteEntry.js'
+                # If either JSON or JS artifact is missing in dist and a scripts/remoteEntry.js exists,
+                # copy it into dist as both `remoteEntry.json` and `remoteEntry.js` so dev servers
+                # and native federation runtimes can fetch the expected path.
+                if ((-not (Test-Path $manifestDistJson) -or -not (Test-Path $manifestDistJs)) -and (Test-Path $scriptManifest)) {
+                    Write-Host "Copying manifest from $scriptManifest -> $manifestDistJson and $manifestDistJs"
+                    Copy-Item -Path $scriptManifest -Destination $manifestDistJson -Force
+                    Copy-Item -Path $scriptManifest -Destination $manifestDistJs -Force
+                }
+            } catch {
+                Write-Host 'Warning: failed to copy scripts/remoteEntry.js to dist (continuing)'
+            }
             for ($i = 0; $i -lt $services.Count; $i++) {
                 if ($services[$i].name -eq 'frontend') {
-                    $services[$i].name = 'mf-static'
-                    $services[$i].command = 'npm run start:mf'
-                    $services[$i].log = 'mf-static.log'
+                    $before = $services[0..($i-1)]
+                    $after = $services[($i+1)..($services.Count-1)]
+
+                    # Prefer running the npm script which bundles the watch build and BrowserSync.
+                    # If it's not present, fall back to npx concurrently + browser-sync.
+                    $pkgPath = Join-Path $scriptRoot '..\package.json'
+                    $mfCommand = 'npm run start:mf-watch'
+                    if (Test-Path $pkgPath) {
+                        try {
+                            $pkg = Get-Content $pkgPath -Raw | ConvertFrom-Json
+                            if (-not ($pkg.scripts -and $pkg.scripts.'start:mf-watch')) {
+                                $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
+                                $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201'
+                                $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
+                            }
+                        } catch {
+                            $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
+                            $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201'
+                            $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
+                        }
+                    } else {
+                        $ngWatch = 'npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser'
+                        $bsCmd = 'npx browser-sync start --server "dist/buildaq-schools/browser" --files "dist/buildaq-schools/browser/**/*" --no-ui --no-notify --port 4201 --cors'
+                        $mfCommand = "npx concurrently `"$ngWatch`" `"$bsCmd`""
+                    }
+
+                    $mfWatch = @{ name='mf-watch'; cwd=Join-Path $scriptRoot '..'; command=$mfCommand; ports=@(4201); log='mf-watch.log' }
+
+                    $new = @()
+                    if ($before) { $new += $before }
+                    $new += $mfWatch
+                    if ($after) { $new += $after }
+
+                    $services = $new
                     break
                 }
             }
@@ -377,15 +464,22 @@ function Start-All {
             Start-ServiceWindow $svc
             Start-Sleep -Milliseconds 500
 
-            if ($svc.name -eq 'frontend') {
+            if ($svc.name -eq 'backend') {
+                if (Wait-For-Url 'http://localhost:3000/' 30) {
+                    Write-Host 'Backend is up'
+                    $started = $true
+                } else {
+                    Write-Host "Backend did not respond on attempt $attempt"
+                }
+            } elseif ($svc.name -eq 'frontend') {
                 if (Wait-For-Url 'http://localhost:4201/' 30) {
                     Write-Host 'Frontend is up'
                     $started = $true
                 } else {
                     Write-Host "Frontend did not respond on attempt $attempt"
                 }
-            } elseif ($svc.name -eq 'mf-static') {
-                # For the static MF server, ensure the federation manifest or container is available
+            } elseif ($svc.name -eq 'mf-watch' -or $svc.name -eq 'mf-browsersync' -or $svc.name -eq 'mf-static') {
+                # For the static MF server (BrowserSync or npm script variant), ensure the federation manifest or container is available
                 if (Wait-For-Url 'http://localhost:4201/remoteEntry.js' 20 -or Wait-For-Url 'http://localhost:4201/remoteEntry.json' 20) {
                     Write-Host 'MF static server is up (remoteEntry available)'
                     $started = $true

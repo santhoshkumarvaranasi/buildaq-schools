@@ -27,6 +27,7 @@ export interface SortConfig {
 
 @Component({
   selector: 'app-students',
+  standalone: true,
   templateUrl: './students.html',
   styleUrls: ['./students.scss'],
   // allow template directives and ngModel in this component
@@ -50,6 +51,10 @@ export class StudentsComponent implements OnInit {
   selectedStudent: Student | null = null;
   showScrollIndicator = false;
   sortField = this.sortConfig.field;
+  // Add-student form state
+  showAddForm = false;
+  isSubmitting = false;
+  newStudent: Partial<Student> = { firstName: '', lastName: '', grade: '', section: '', email: '', status: 'active', rollNo: '' };
 
   constructor(
     private schoolsService: SchoolsService,
@@ -108,6 +113,62 @@ export class StudentsComponent implements OnInit {
           this.cdr.detectChanges();
         });
       },
+    });
+  }
+
+  /* Add student form handlers */
+  openAddForm() {
+    try { console.debug && console.debug('openAddForm called'); } catch (e) {}
+    this.showAddForm = true;
+    this.newStudent = { firstName: '', lastName: '', grade: '', section: '', email: '', status: 'active', rollNo: '' };
+    try { this.cdr.detectChanges(); } catch (e) {}
+  }
+
+  cancelAdd() {
+    this.showAddForm = false;
+    this.isSubmitting = false;
+  }
+
+  submitNewStudent() {
+    if (this.isSubmitting) return;
+    // basic validation
+    if (!this.newStudent.firstName || !this.newStudent.lastName) {
+      alert('Please enter first and last name');
+      return;
+    }
+    this.isSubmitting = true;
+    this.schoolsService.createStudent(this.newStudent as any).subscribe({
+      next: (created: any) => {
+        try {
+          // Normalize created shape and add to local list
+          const s = {
+            id: created.id ?? created.studentId ?? Date.now(),
+            rollNo: created.rollNo ?? created.roll_number ?? this.newStudent.rollNo,
+            firstName: created.firstName ?? this.newStudent.firstName,
+            lastName: created.lastName ?? this.newStudent.lastName,
+            fullName: created.fullName ?? `${this.newStudent.firstName || ''} ${this.newStudent.lastName || ''}`.trim(),
+            grade: created.grade ?? this.newStudent.grade,
+            section: created.section ?? this.newStudent.section,
+            status: created.status ?? this.newStudent.status ?? 'active',
+            email: created.email ?? this.newStudent.email,
+            enrollmentDate: created.enrollmentDate ?? new Date().toISOString(),
+            schoolId: created.schoolId ?? null,
+            ...created
+          } as Student;
+          this.students.unshift(s);
+          this.applyFiltersAndSort();
+          this.showAddForm = false;
+        } catch (e) {
+          console.error('Error handling created student', e, created);
+        }
+        this.isSubmitting = false;
+        try { this.cdr.detectChanges(); } catch (e) {}
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        console.error('Failed to create student', err);
+        alert('Failed to create student: ' + (err?.message || 'Unknown error'));
+      }
     });
   }
 
@@ -228,7 +289,7 @@ export class StudentsComponent implements OnInit {
   }
 
   // Placeholder actions
-  addNewStudent() { console.log('Add new student'); }
+  addNewStudent() { try { console.debug && console.debug('addNewStudent clicked'); } catch (e) {} this.openAddForm(); }
   viewStudent(student: Student) { console.log('View', student); }
   editStudent(student: Student) { console.log('Edit', student); }
   showMoreActions(student: Student) { console.log('Actions', student); }

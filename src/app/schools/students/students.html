@@ -1,9 +1,31 @@
 <div class="students-container">
   <div class="students-header">
-    <h2>👨‍🎓 Student Management</h2>
+    <h2>👨‍🎓 Student Management1</h2>
     <button class="btn btn-primary add-student-btn" (click)="addNewStudent()">
       ➕ Add New Student
     </button>
+  </div>
+
+  <!-- Inline Add Student Form -->
+  <div class="add-student-form" *ngIf="showAddForm">
+    <h3>Add New Student</h3>
+    <div class="form-grid">
+      <input class="form-input" placeholder="First name" [(ngModel)]="newStudent.firstName" />
+      <input class="form-input" placeholder="Last name" [(ngModel)]="newStudent.lastName" />
+      <input class="form-input" placeholder="Roll No" [(ngModel)]="newStudent.rollNo" />
+      <input class="form-input" placeholder="Email" [(ngModel)]="newStudent.email" />
+      <input class="form-input" placeholder="Grade" [(ngModel)]="newStudent.grade" />
+      <input class="form-input" placeholder="Section" [(ngModel)]="newStudent.section" />
+      <select class="form-select" [(ngModel)]="newStudent.status">
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+        <option value="transferred">Transferred</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" (click)="submitNewStudent()" [disabled]="isSubmitting">{{isSubmitting? 'Saving...' : 'Save'}}</button>
+      <button class="btn btn-secondary" (click)="cancelAdd()" [disabled]="isSubmitting">Cancel</button>
+    </div>
   </div>
 
   <div class="filters-section">
