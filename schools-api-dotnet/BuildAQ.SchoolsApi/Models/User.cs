@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace BuildAQ.SchoolsApi.Models;
 
@@ -48,8 +49,8 @@ public partial class User
     [Column("medical_info")]
     public string? MedicalInfo { get; set; }
 
-    [Column("academic_info")]
-    public string? AcademicInfo { get; set; }
+    [Column("academic_info", TypeName = "jsonb")]
+    public JsonDocument? AcademicInfo { get; set; }
 
     [Column("qualification")]
     public string? Qualification { get; set; }

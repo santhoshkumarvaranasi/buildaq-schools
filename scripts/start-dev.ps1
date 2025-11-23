@@ -10,7 +10,7 @@ New-Item -Path $logDir -ItemType Directory -Force | Out-Null
 
 # Repo root and micro-frontend output path (single source of truth)
 $repoRoot = Join-Path $scriptRoot '..'
-$mfOutputRel = 'dist/buildaq-schools/browser'
+$mfOutputRel = 'dist/buildaq-schools'
 $mfOutputAbs = Join-Path $repoRoot $mfOutputRel
 # Files pattern used by BrowserSync. Use forward-slash glob so browser-sync parses it reliably.
 $mfFilesGlob = "$mfOutputRel/**/*"
@@ -29,7 +29,7 @@ $services = @(
 
 # Optionally use the lightweight static MF server (serves built dist) instead of the Angular dev server.
 # Set the environment variable `USE_MF_STATIC=true` before running this script to enable.
-# Note: the static server serves files from `dist/buildaq-schools/browser` so run `npm run build`
+# Note: the static server serves files from `dist/buildaq-schools` so run `npm run build`
 # in the repo root before enabling this option.
 if ($env:USE_MF_STATIC -and $env:USE_MF_STATIC.ToString().ToLower() -eq 'true') {
     Write-Host 'USE_MF_STATIC=true -> configuring mf build-watch + BrowserSync (live reload for dist)'
