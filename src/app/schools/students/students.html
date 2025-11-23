@@ -6,25 +6,33 @@
     </button>
   </div>
 
-  <!-- Inline Add Student Form -->
-  <div class="add-student-form" *ngIf="showAddForm">
-    <h3>Add New Student</h3>
-    <div class="form-grid">
-      <input class="form-input" placeholder="First name" [(ngModel)]="newStudent.firstName" />
-      <input class="form-input" placeholder="Last name" [(ngModel)]="newStudent.lastName" />
-      <input class="form-input" placeholder="Roll No" [(ngModel)]="newStudent.rollNo" />
-      <input class="form-input" placeholder="Email" [(ngModel)]="newStudent.email" />
-      <input class="form-input" placeholder="Grade" [(ngModel)]="newStudent.grade" />
-      <input class="form-input" placeholder="Section" [(ngModel)]="newStudent.section" />
-      <select class="form-select" [(ngModel)]="newStudent.status">
-        <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
-        <option value="transferred">Transferred</option>
-      </select>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-primary" (click)="submitNewStudent()" [disabled]="isSubmitting">{{isSubmitting? 'Saving...' : 'Save'}}</button>
-      <button class="btn btn-secondary" (click)="cancelAdd()" [disabled]="isSubmitting">Cancel</button>
+  <!-- Add Student Modal (popup) -->
+  <div class="modal-backdrop" *ngIf="showAddForm" (click)="cancelAdd()"></div>
+  <div class="modal" *ngIf="showAddForm" role="dialog" aria-modal="true" aria-label="Add New Student">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Add New Student</h3>
+        <button class="modal-close" (click)="cancelAdd()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <input class="form-input" placeholder="First name" [(ngModel)]="newStudent.firstName" />
+          <input class="form-input" placeholder="Last name" [(ngModel)]="newStudent.lastName" />
+          <input class="form-input" placeholder="Roll No" [(ngModel)]="newStudent.rollNo" />
+          <input class="form-input" placeholder="Email" [(ngModel)]="newStudent.email" />
+          <input class="form-input" placeholder="Grade" [(ngModel)]="newStudent.grade" />
+          <input class="form-input" placeholder="Section" [(ngModel)]="newStudent.section" />
+          <select class="form-select" [(ngModel)]="newStudent.status">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="transferred">Transferred</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" (click)="submitNewStudent()" [disabled]="isSubmitting">{{isSubmitting ? 'Saving...' : 'Save'}}</button>
+        <button class="btn btn-secondary" (click)="cancelAdd()" [disabled]="isSubmitting">Cancel</button>
+      </div>
     </div>
   </div>
 

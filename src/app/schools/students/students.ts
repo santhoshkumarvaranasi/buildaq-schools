@@ -83,20 +83,45 @@ export class StudentsComponent implements OnInit {
 
         const arr: Student[] = Array.isArray(arrRaw) ? arrRaw : [];
 
-        const mapped = arr.map((s: any) => ({
-          id: s.id ?? s.studentId ?? 0,
-          rollNo: s.rollNo ?? s.roll_number ?? s.roll,
-          firstName: s.firstName ?? s.first_name ?? s.fname ?? s.first,
-          lastName: s.lastName ?? s.last_name ?? s.lname ?? s.last,
-          fullName: s.fullName ?? `${s.firstName || s.first || ''} ${s.lastName || s.last || ''}`.trim(),
-          grade: s.grade ?? s.class ?? s.standard,
-          section: s.section ?? s.sectionName ?? s.section_id,
-          status: s.status ?? s.enrollmentStatus ?? 'active',
-          email: s.email,
-          enrollmentDate: s.enrollmentDate ?? s.enrollmentDateString,
-          schoolId: s.schoolId ?? s.school_id,
-          ...s,
-        }));
+        const mapped = arr.map((s: any) => {
+          // Normalize status to a string so Angular pipes (titlecase) don't receive objects
+          let statusVal = 'active';
+          if (typeof s.status === 'string' && s.status.trim()) {
+            statusVal = s.status;
+          } else if (s.status && (s.status.name || s.status.Name)) {
+            statusVal = s.status.name || s.status.Name;
+          } else if (s.enrollmentStatus) {
+            statusVal = s.enrollmentStatus;
+          } else if (s.statusId) {
+            statusVal = String(s.statusId);
+          }
+
+          // Start from a shallow copy of the original to preserve extra fields,
+          // then explicitly override the keys we normalize so the normalized
+          // `status` (string) is not accidentally overwritten by the original
+          // navigation object (which caused the TitleCase pipe error).
+          const base = Object.assign({}, s);
+          // remove status from base to ensure we replace it with a string
+          if (base.hasOwnProperty('status')) delete base.status;
+
+          return Object.assign({}, base, {
+            id: s.id ?? s.studentId ?? 0,
+            rollNo: s.rollNo ?? s.roll_number ?? s.roll,
+            firstName: s.firstName ?? s.first_name ?? s.fname ?? s.first,
+            lastName: s.lastName ?? s.last_name ?? s.lname ?? s.last,
+            fullName: s.fullName ?? `${s.firstName || s.first || ''} ${s.lastName || s.last || ''}`.trim(),
+            // backend exposes grade as a few different shapes (grade, gradeLevel, grade_level)
+            grade: s.grade ?? s.gradeLevel ?? s.grade_level ?? s.class ?? s.standard,
+            // Classes may be returned as an array of class objects; pick the first class name
+            class: (s.classes && s.classes.length) ? (s.classes[0].name ?? s.classes[0].Name ?? '') : (s.class ?? s.className ?? ''),
+            section: s.section ?? s.sectionName ?? s.section_id,
+            // Use the normalized status string
+            status: statusVal,
+            email: s.email,
+            enrollmentDate: s.enrollmentDate ?? s.enrollmentDateString,
+            schoolId: s.schoolId ?? s.school_id,
+          }) as Student;
+        });
 
         this.zone.run(() => {
           this.students = mapped;

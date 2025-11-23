@@ -80,49 +80,52 @@ export class ApiService {
   /**
    * Generic POST request
    */
-  post<T>(endpoint: string, data: any): Observable<ApiResponse<T>> {
+  post<T>(endpoint: string, data: any, params?: any): Observable<ApiResponse<T>> {
     this.setLoading(true);
     
     const url = this.buildUrl(endpoint);
-    const options = { headers: this.getHeaders() };
+    const options: any = { headers: this.getHeaders() };
+    if (params) options.params = this.buildParams(params);
 
     return this.http.post<ApiResponse<T>>(url, data, options).pipe(
       tap(() => this.setLoading(false)),
       tap(() => this.clearError()),
       catchError(error => this.handleError(error))
-    );
+    ) as unknown as Observable<ApiResponse<T>>;
   }
 
   /**
    * Generic PUT request
    */
-  put<T>(endpoint: string, data: any): Observable<ApiResponse<T>> {
+  put<T>(endpoint: string, data: any, params?: any): Observable<ApiResponse<T>> {
     this.setLoading(true);
     
     const url = this.buildUrl(endpoint);
-    const options = { headers: this.getHeaders() };
+    const options: any = { headers: this.getHeaders() };
+    if (params) options.params = this.buildParams(params);
 
     return this.http.put<ApiResponse<T>>(url, data, options).pipe(
       tap(() => this.setLoading(false)),
       tap(() => this.clearError()),
       catchError(error => this.handleError(error))
-    );
+    ) as unknown as Observable<ApiResponse<T>>;
   }
 
   /**
    * Generic DELETE request
    */
-  delete<T>(endpoint: string): Observable<ApiResponse<T>> {
+  delete<T>(endpoint: string, params?: any): Observable<ApiResponse<T>> {
     this.setLoading(true);
     
     const url = this.buildUrl(endpoint);
-    const options = { headers: this.getHeaders() };
+    const options: any = { headers: this.getHeaders() };
+    if (params) options.params = this.buildParams(params);
 
     return this.http.delete<ApiResponse<T>>(url, options).pipe(
       tap(() => this.setLoading(false)),
       tap(() => this.clearError()),
       catchError(error => this.handleError(error))
-    );
+    ) as unknown as Observable<ApiResponse<T>>;
   }
 
   /**

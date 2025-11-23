@@ -8,12 +8,32 @@ function proxyToDotnet(req, res) {
   const host = process.env.DOTNET_API_HOST || '127.0.0.1';
   const port = parseInt(process.env.DOTNET_API_PORT || '5000', 10);
 
+  // Parse the original URL into pathname + search so rewrites ignore querystring.
+  // This ensures requests like `/api/v1/schools/students?tenantId=default` are
+  // rewritten correctly to `/api/users?tenantId=default`.
+  let forwardedPath = String(req.originalUrl || '');
+  try {
+    // Use URL parser with a dummy base so path+search are available
+    const tmp = new URL(forwardedPath, 'http://localhost');
+    let pathname = tmp.pathname.replace(/\/+/g, '/'); // normalize repeated slashes
+    const search = tmp.search || '';
+
+    // rewrite rules for students -> users (target .NET route is /api/users)
+    pathname = pathname.replace(/^\/api\/v1\/schools\/students(\/|$)/, '/api/users$1');
+    pathname = pathname.replace(/^\/api\/v1\/students(\/|$)/, '/api/users$1');
+
+    forwardedPath = pathname + search;
+  } catch (e) {
+    // best-effort only; fall back to original string if parsing fails
+    forwardedPath = forwardedPath.replace(/\\+/g, '/');
+  }
+
   const options = {
     hostname: host,
     port: port,
     method: req.method,
-    // Forward the original path as-is so .NET routes under /api/v1/* are reachable.
-    path: String(req.originalUrl),
+    // Forward (possibly rewritten) path
+    path: forwardedPath,
     // copy headers but ensure host: header points to target API host:port
     headers: Object.assign({}, req.headers, { host: `${host}:${port}` }),
     timeout: 15000,
@@ -60,7 +80,8 @@ function proxyToDotnet(req, res) {
   try {
     const forwardedTenant = options.headers['x-tenant-id'] || '(none)';
     const hasAuth = !!(req.get && req.get('Authorization')) || !!req.headers.authorization;
-    console.debug && console.debug(`proxyToDotnet: ${req.method} ${req.originalUrl} -> x-tenant-id=${forwardedTenant} auth=${hasAuth}`);
+    // Debug original and rewritten path for easier troubleshooting
+    console.debug && console.debug(`proxyToDotnet: ${req.method} ${req.originalUrl} -> forwardedPath=${forwardedPath} x-tenant-id=${forwardedTenant} auth=${hasAuth}`);
 
     // Dev-only: if requested via query param or env var, dump sanitized forwarded headers
     // Usage: add `?_dumpHeaders=1` to the request URL or set `ENABLE_PROXY_HEADER_DUMP=true` in env

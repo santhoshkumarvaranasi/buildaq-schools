@@ -23,7 +23,14 @@ namespace BuildAQ.SchoolsApi.Controllers
             {
                 return Ok(new object[0]);
             }
-            var users = await _context.Users.AsNoTracking().Where(u => u.TenantId == tenantId).ToListAsync();
+            // Include related navigation properties so frontend can display
+            // grade, class and status without additional requests.
+            var users = await _context.Users
+                .AsNoTracking()
+                .Where(u => u.TenantId == tenantId)
+                .Include(u => u.Status)
+                .Include(u => u.Classes)
+                .ToListAsync();
             return Ok(users);
         }
 
@@ -36,7 +43,12 @@ namespace BuildAQ.SchoolsApi.Controllers
                 return Ok(new { success = true, data = new object[] { }, message = "No tenant provided or tenant could not be resolved" });
             }
 
-            var user = await _context.Users.FindAsync(id);
+            // Load user including related Status and Classes so UI can render
+            // human-friendly fields without extra API calls.
+            var user = await _context.Users
+                .Include(u => u.Status)
+                .Include(u => u.Classes)
+                .FirstOrDefaultAsync(u => u.Id == id);
             if (user == null || user.TenantId != tenantId) return NotFound();
             return Ok(user);
         }
