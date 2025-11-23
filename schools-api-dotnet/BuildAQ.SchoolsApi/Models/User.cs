@@ -28,8 +28,8 @@ public partial class User
     [Column("phone")]
     public string? Phone { get; set; }
 
-    [Column("address")]
-    public string? Address { get; set; }
+    [Column("address", TypeName = "jsonb")]
+    public JsonDocument? Address { get; set; }
 
     [Column("date_of_birth")]
     public DateTime? DateOfBirth { get; set; }
@@ -43,11 +43,11 @@ public partial class User
     [Column("gpa")]
     public decimal? Gpa { get; set; }
 
-    [Column("emergency_contact")]
-    public string? EmergencyContact { get; set; }
+    [Column("emergency_contact", TypeName = "jsonb")]
+    public JsonDocument? EmergencyContact { get; set; }
 
-    [Column("medical_info")]
-    public string? MedicalInfo { get; set; }
+    [Column("medical_info", TypeName = "jsonb")]
+    public JsonDocument? MedicalInfo { get; set; }
 
     [Column("academic_info", TypeName = "jsonb")]
     public JsonDocument? AcademicInfo { get; set; }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BuildAQ.SchoolsApi.Data;
 using BuildAQ.SchoolsApi.Controllers;
+using System.Text.Json;
 
 namespace BuildAQ.SchoolsApi.Controllers
 {
@@ -67,6 +68,7 @@ namespace BuildAQ.SchoolsApi.Controllers
                 public string? RollNo { get; set; }
                 public string? Phone { get; set; }
                 public string? Address { get; set; }
+                public string? EmergencyContact { get; set; }
                 public string? EmailConfirmation { get; set; }
             }
 
@@ -85,9 +87,10 @@ namespace BuildAQ.SchoolsApi.Controllers
                 user.FirstName = dto.FirstName;
                 user.LastName = dto.LastName;
                 user.Phone = dto.Phone;
-                user.Address = dto.Address;
+                user.Address = ToJsonDocumentOrWrapped(dto.Address);
                 // prefer GradeLevel, fallback to Grade
                 user.GradeLevel = dto.GradeLevel ?? dto.Grade;
+                user.EmergencyContact = ToJsonDocumentOrWrapped(dto.EmergencyContact);
 
                 // Resolve status: allow either StatusId (int) or Status (string name)
                 if (dto.StatusId.HasValue)
@@ -122,6 +125,21 @@ namespace BuildAQ.SchoolsApi.Controllers
 
                 return CreatedAtAction(nameof(Get), new { id = user.Id }, created);
             }
+
+                private JsonDocument? ToJsonDocumentOrWrapped(string? raw)
+                {
+                    if (string.IsNullOrWhiteSpace(raw)) return null;
+                    try
+                    {
+                        return JsonDocument.Parse(raw);
+                    }
+                    catch
+                    {
+                        // Not valid JSON — wrap the raw value into a small JSON object so it can be stored as jsonb
+                        var wrapped = JsonSerializer.Serialize(raw);
+                        return JsonDocument.Parse($"{{\"text\":{wrapped}}}");
+                    }
+                }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Models.User user)
