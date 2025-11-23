@@ -112,25 +112,159 @@ function proxyToDotnet(req, res) {
     // ignore logging failures
   }
 
-  const proxyReq = http.request(options, (proxyRes) => {
-    // Forward status and headers
-    res.statusCode = proxyRes.statusCode || 502;
-    Object.keys(proxyRes.headers || {}).forEach((h) => {
-      // Skip hop-by-hop headers that may cause issues
-      if (["connection","keep-alive","transfer-encoding","upgrade","proxy-authorization","proxy-authenticate"].includes(h.toLowerCase())) return;
-      res.setHeader(h, proxyRes.headers[h]);
+  // We'll create the proxied request when we're ready to send. This lets
+  // us set Content-Length (and remove Transfer-Encoding) for requests with
+  // bodies so the .NET API does not see a chunked/slow request which can
+  // trigger MinRequestBodyDataRate timeouts.
+  let proxyReq = null;
+  function createProxyReq() {
+    // Ensure we don't forward hop-by-hop headers that will confuse the server
+    const outgoingHeaders = Object.assign({}, options.headers || {});
+    delete outgoingHeaders['transfer-encoding'];
+    // Create a shallow copy of options so we can modify headers safely
+    const requestOptions = Object.assign({}, options, { headers: outgoingHeaders });
+
+    const r = http.request(requestOptions, (proxyRes) => {
+      console.debug && console.debug('proxyToDotnet: received response from dotnet', { statusCode: proxyRes.statusCode, headersCount: proxyRes.headers && Object.keys(proxyRes.headers).length });
+      // Forward status and headers
+      res.statusCode = proxyRes.statusCode || 502;
+      Object.keys(proxyRes.headers || {}).forEach((h) => {
+        // Skip hop-by-hop headers that may cause issues
+        if (["connection","keep-alive","transfer-encoding","upgrade","proxy-authorization","proxy-authenticate"].includes(h.toLowerCase())) return;
+        res.setHeader(h, proxyRes.headers[h]);
+      });
+
+      proxyRes.pipe(res, { end: true });
     });
 
-    proxyRes.pipe(res, { end: true });
-  });
+    r.on('error', (err) => {
+      console.error('Proxy to .NET API error:', err && err.message);
+      if (!res.headersSent) res.status(502).json({ error: 'Bad Gateway', message: 'Failed to contact .NET API' });
+    });
 
-  proxyReq.on('error', (err) => {
-    console.error('Proxy to .NET API error:', err && err.message);
-    if (!res.headersSent) res.status(502).json({ error: 'Bad Gateway', message: 'Failed to contact .NET API' });
-  });
+    r.on('timeout', () => {
+      console.error('proxyToDotnet: proxy request timed out');
+      try { r.abort(); } catch (e) {}
+      if (!res.headersSent) res.status(504).json({ error: 'Gateway Timeout', message: 'Request to .NET API timed out' });
+    });
 
-  // Pipe request body
-  req.pipe(proxyReq);
+    return r;
+  }
+
+  // Pipe or buffer request body.
+  // Some clients (PowerShell, dev proxies) may send bodies slowly or chunked
+  // which can trigger Kestrel's MinRequestBodyDataRate. To avoid timeouts,
+  // buffer the body for methods that typically include a payload and then
+  // send it with a Content-Length header so the server reads it deterministically.
+  const methodsWithBody = ['POST', 'PUT', 'PATCH', 'DELETE'];
+  if (methodsWithBody.includes(String(req.method).toUpperCase())) {
+    const chunks = [];
+    let finished = false;
+    const readTimeoutMs = parseInt(process.env.DEV_PROXY_READ_TIMEOUT_MS || '15000', 10) || 15000;
+    const readTimer = setTimeout(() => {
+      if (!finished) {
+        console.error('proxyToDotnet: timeout waiting for incoming request body');
+        if (!res.headersSent) {
+          try { res.status(408).json({ error: 'Request Timeout', message: 'Timed out reading request body' }); } catch (e) {}
+        }
+      }
+    }, readTimeoutMs);
+
+    // Helper: create outgoing request and send a buffered body
+    const sendBuffered = (bodyBuf) => {
+      try {
+        clearTimeout(readTimer);
+        finished = true;
+        bodyBuf = bodyBuf || Buffer.alloc(0);
+        console.debug && console.debug('proxyToDotnet: sending buffered body bytes=', bodyBuf.length);
+
+        const outHeaders = Object.assign({}, options.headers || {});
+        delete outHeaders['transfer-encoding'];
+        if (!outHeaders['content-length']) outHeaders['content-length'] = String(bodyBuf.length);
+
+        const proxyReq2 = http.request(Object.assign({}, options, { headers: outHeaders }), (proxyRes) => {
+          console.debug && console.debug('proxyToDotnet: received response from dotnet', { statusCode: proxyRes.statusCode, headersCount: proxyRes.headers && Object.keys(proxyRes.headers).length });
+          res.statusCode = proxyRes.statusCode || 502;
+          Object.keys(proxyRes.headers || {}).forEach((h) => {
+            if (["connection","keep-alive","transfer-encoding","upgrade","proxy-authorization","proxy-authenticate"].includes(h.toLowerCase())) return;
+            res.setHeader(h, proxyRes.headers[h]);
+          });
+          proxyRes.pipe(res, { end: true });
+        });
+
+        proxyReq2.on('error', (err) => {
+          console.error('Proxy to .NET API error:', err && err.message);
+          if (!res.headersSent) res.status(502).json({ error: 'Bad Gateway', message: 'Failed to contact .NET API' });
+        });
+
+        if (bodyBuf.length > 0) proxyReq2.write(bodyBuf);
+        proxyReq2.end();
+      } catch (e) {
+        console.error('Error sending buffered request body:', e && e.message);
+        try { if (!res.headersSent) res.status(500).json({ error: 'Proxy Error', message: 'Failed to buffer and forward request body' }); } catch (e) {}
+      }
+    };
+
+    // If body was parsed by earlier middleware (express.json / urlencoded), use it
+    try {
+      if (req.body !== undefined) {
+        let bodyBuf;
+        if (Buffer.isBuffer(req.body)) bodyBuf = req.body;
+        else if (typeof req.body === 'object') bodyBuf = Buffer.from(JSON.stringify(req.body));
+        else bodyBuf = Buffer.from(String(req.body));
+        return sendBuffered(bodyBuf);
+      }
+    } catch (e) {
+      // fall through to streaming/collecting below
+    }
+
+    // If the stream has already ended (no data events will fire), send empty body
+    if (req.readableEnded) {
+      return sendBuffered(Buffer.alloc(0));
+    }
+
+    req.on('data', (c) => {
+      try { chunks.push(Buffer.from(c)); } catch (e) {}
+    });
+    req.on('end', () => {
+      finished = true;
+      clearTimeout(readTimer);
+      try {
+        const bodyBuf = Buffer.concat(chunks);
+        return sendBuffered(bodyBuf);
+      } catch (e) {
+        console.error('Error buffering request body for proxy:', e && e.message);
+        try { if (!res.headersSent) res.status(500).json({ error: 'Proxy Error', message: 'Failed to buffer and forward request body' }); } catch (e) {}
+      }
+    });
+    req.on('error', (err) => {
+      finished = true;
+      clearTimeout(readTimer);
+      console.error('Error reading incoming request body:', err && err.message);
+      try { if (!res.headersSent) res.status(500).json({ error: 'Proxy Read Error' }); } catch (e) {}
+    });
+  } else {
+    // Methods without a body — create outgoing request and stream directly
+    // Remove transfer-encoding to avoid conflicting hop-by-hop headers
+    const outHeaders = Object.assign({}, options.headers || {});
+    delete outHeaders['transfer-encoding'];
+    const proxyReqNoBody = http.request(Object.assign({}, options, { headers: outHeaders }), (proxyRes) => {
+      console.debug && console.debug('proxyToDotnet: received response from dotnet', { statusCode: proxyRes.statusCode, headersCount: proxyRes.headers && Object.keys(proxyRes.headers).length });
+      res.statusCode = proxyRes.statusCode || 502;
+      Object.keys(proxyRes.headers || {}).forEach((h) => {
+        if (["connection","keep-alive","transfer-encoding","upgrade","proxy-authorization","proxy-authenticate"].includes(h.toLowerCase())) return;
+        res.setHeader(h, proxyRes.headers[h]);
+      });
+      proxyRes.pipe(res, { end: true });
+    });
+
+    proxyReqNoBody.on('error', (err) => {
+      console.error('Proxy to .NET API error:', err && err.message);
+      if (!res.headersSent) res.status(502).json({ error: 'Bad Gateway', message: 'Failed to contact .NET API' });
+    });
+
+    req.pipe(proxyReqNoBody);
+  }
 }
 
 function fetchFromDotnet(path, method = 'GET', headers = {}, body = null, timeoutMs = 10000) {

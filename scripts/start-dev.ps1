@@ -199,6 +199,17 @@ function Start-ServiceWindow($svc) {
     $command = $svc.command
     $log = Join-Path $logDir $svc.log
     $escapedPath = $cwd -replace "'", "''"
+    # If the service command is empty or missing (generated earlier), provide sensible defaults
+    if (-not $command -or $command -eq '') {
+        switch ($svc.name) {
+            'mf-ng-watch' { $command = 'npm run start:mf-watch' }
+            'mf-browsersync' { $command = "npx browser-sync start --server `"$mfOutputAbsUnix`" --files `"$mfFilesGlobAbs`" --no-ui --no-notify --port 4201 --cors" }
+            'backend' { $command = 'npm run dev' }
+            'schools-api-dotnet' { $command = 'dotnet run --no-launch-profile' }
+            'shell' { $command = 'npm start' }
+            default { $command = 'npm start' }
+        }
+    }
 
     # Services that use a persistent wrapper script (launched via -File) to avoid complex command-line quoting
     if ($svc.name -in @('backend','schools-api-dotnet','shell','mf-ng-watch','mf-browsersync','mf-static')) {
@@ -240,28 +251,29 @@ function Start-ServiceWindow($svc) {
         if (-not $jwtSecret -or $jwtSecret -eq '') { $jwtSecret = 'dev-secret-change-me' }
         $jwtSecret = $jwtSecret -replace "'", "''"
 
-        $wrapper = @"
-Set-Location -LiteralPath '$escapedPath'
-`$env:CORS_ORIGIN = '$escapedCors'
-`$env:ALLOWED_ORIGINS = '$escapedCors'
-`$env:ALLOW_DEV_FALLBACK = '$allowDevEsc'
-# Database settings injected by orchestrator (only host/port/user/name are echoed)
-`$env:DB_HOST = '$dbHost'
-`$env:DB_PORT = '$dbPort'
-`$env:DB_USER = '$dbUser'
-    `$env:DB_PASSWORD = '$dbPassword'
-`$env:DB_NAME = '$dbName'
-` $env:JWT_SECRET = '$jwtSecret'
-Write-Host 'ALLOW_DEV_FALLBACK ->' `$env:ALLOW_DEV_FALLBACK
-Write-Host 'DB ->' `$env:DB_HOST`':'`$env:DB_PORT`'/'`$env:DB_NAME
-Write-Host 'Starting: $($svc.name) > $log'
-& $command 2>&1 | Tee-Object -FilePath '$log'
-"@
+        # Build wrapper content line-by-line to avoid here-string variable expansion pitfalls
+        $commandEscaped = $command -replace "'", "''"
+        $lines = @()
+        $lines += "Set-Location -LiteralPath '$escapedPath'"
+        $lines += "`$env:CORS_ORIGIN = '$escapedCors'"
+        $lines += "`$env:ALLOWED_ORIGINS = '$escapedCors'"
+        $lines += "`$env:ALLOW_DEV_FALLBACK = '$allowDevEsc'"
+        $lines += "# Database settings injected by orchestrator (only host/port/user/name are echoed)"
+        $lines += "`$env:DB_HOST = '$dbHost'"
+        $lines += "`$env:DB_PORT = '$dbPort'"
+        $lines += "`$env:DB_USER = '$dbUser'"
+        $lines += "`$env:DB_PASSWORD = '$dbPassword'"
+        $lines += "`$env:DB_NAME = '$dbName'"
+        $lines += "`$env:JWT_SECRET = '$jwtSecret'"
+        $lines += "Write-Host 'ALLOW_DEV_FALLBACK ->' `$env:ALLOW_DEV_FALLBACK"
+        $lines += "Write-Host 'DB ->' `$env:DB_HOST`':'`$env:DB_PORT`'/'`$env:DB_NAME"
+        $lines += "Write-Host 'Starting: $($svc.name) > $log'"
+        $lines += "& $commandEscaped 2>&1 | Tee-Object -FilePath '$log'"
 
         $wrapperDir = Join-Path $scriptRoot 'wrappers'
         New-Item -Path $wrapperDir -ItemType Directory -Force | Out-Null
         $tmpFile = Join-Path $wrapperDir "start-$($svc.name).ps1"
-        $wrapper | Set-Content -LiteralPath $tmpFile -Force -Encoding UTF8
+        ($lines -join "`n") | Set-Content -LiteralPath $tmpFile -Force -Encoding UTF8
 
         $args = @('-NoExit','-File',$tmpFile)
         Start-Process -FilePath 'powershell.exe' -ArgumentList $args -WorkingDirectory $cwd -WindowStyle Normal | Out-Null
