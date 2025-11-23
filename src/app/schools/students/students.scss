@@ -671,15 +671,17 @@
 }
 
 .modal {
-  position: fixed;
+  position: fixed !important;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1001;
-  width: 95%;
+  z-index: 9999;
+  width: min(95%, 720px);
   max-width: 720px;
   display: block;
   padding: 0.5rem;
+  box-sizing: border-box;
+  max-height: 90vh;
 }
 
 .modal-content {
@@ -689,6 +691,26 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+/* Ensure the modal body scrolls when content is tall so the dialog never overflows the viewport */
+.modal-body {
+  overflow-y: auto;
+  max-height: calc(90vh - 140px); /* header + footer allowance */
+}
+
+/* On small screens position slightly below top and avoid vertical centering which can crop */
+@media (max-width: 600px) {
+  .modal {
+    top: 6%;
+    transform: translateX(-50%);
+    width: calc(100% - 2rem);
+    left: 50%;
+    padding: 0.25rem;
+  }
+  .modal-content {
+    border-radius: 10px;
+  }
 }
 
 .modal-header {

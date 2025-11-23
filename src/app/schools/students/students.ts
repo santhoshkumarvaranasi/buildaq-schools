@@ -16,6 +16,17 @@ export interface Student {
   status?: string;
   email?: string;
   enrollmentDate?: Date | string;
+  dateOfBirth?: Date | string;
+  // Structured address parts used by the Add modal
+  addressLine1?: string;
+  addressLine2?: string;
+  addressCity?: string;
+  addressState?: string;
+  addressPostalCode?: string;
+  // Emergency contact pieces
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactRelation?: string;
   schoolId?: number;
   [key: string]: any;
 }
@@ -54,7 +65,43 @@ export class StudentsComponent implements OnInit {
   // Add-student form state
   showAddForm = false;
   isSubmitting = false;
-  newStudent: Partial<Student> = { firstName: '', lastName: '', grade: '', section: '', email: '', status: 'active', rollNo: '' };
+  newStudent: Partial<Student> = {
+    firstName: '',
+    lastName: '',
+    grade: '',
+    section: '',
+    email: '',
+    status: 'active',
+    rollNo: '',
+    class: '',
+    dateOfBirth: '',
+    enrollmentDate: '',
+    addressLine1: '',
+    addressLine2: '',
+    addressCity: '',
+    addressState: '',
+    addressPostalCode: '',
+    emergencyContactName: '',
+    emergencyContactPhone: '',
+    emergencyContactRelation: ''
+  };
+
+  // Progressive disclosure flags for the Add modal
+  showAddressSection = false;
+  showEmergencySection = false;
+  showMoreSection = false;
+
+  toggleAddress() {
+    this.showAddressSection = !this.showAddressSection;
+  }
+
+  toggleEmergency() {
+    this.showEmergencySection = !this.showEmergencySection;
+  }
+
+  toggleMore() {
+    this.showMoreSection = !this.showMoreSection;
+  }
 
   constructor(
     private schoolsService: SchoolsService,
@@ -162,7 +209,27 @@ export class StudentsComponent implements OnInit {
       return;
     }
     this.isSubmitting = true;
-    this.schoolsService.createStudent(this.newStudent as any).subscribe({
+    // Prepare payload: send structured fields as JSON strings for backend jsonb columns
+    const payload: any = { ...this.newStudent };
+    // address -> json string
+    payload.address = JSON.stringify({
+      line1: this.newStudent.addressLine1 ?? null,
+      line2: this.newStudent.addressLine2 ?? null,
+      city: this.newStudent.addressCity ?? null,
+      state: this.newStudent.addressState ?? null,
+      postalCode: this.newStudent.addressPostalCode ?? null,
+    });
+    // emergency contact -> json string
+    payload.emergencyContact = JSON.stringify({
+      name: this.newStudent.emergencyContactName ?? null,
+      phone: this.newStudent.emergencyContactPhone ?? null,
+      relation: this.newStudent.emergencyContactRelation ?? null,
+    });
+    // normalize dates to ISO strings when provided
+    if (this.newStudent.dateOfBirth) payload.dateOfBirth = new Date(this.newStudent.dateOfBirth as any).toISOString();
+    if (this.newStudent.enrollmentDate) payload.enrollmentDate = new Date(this.newStudent.enrollmentDate as any).toISOString();
+
+    this.schoolsService.createStudent(payload).subscribe({
       next: (created: any) => {
         try {
           // Normalize created shape and add to local list

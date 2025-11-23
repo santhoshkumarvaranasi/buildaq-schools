@@ -15,20 +15,53 @@
         <button class="modal-close" (click)="cancelAdd()" aria-label="Close">✕</button>
       </div>
       <div class="modal-body">
-        <div class="form-grid">
-          <input class="form-input" placeholder="First name" [(ngModel)]="newStudent.firstName" />
-          <input class="form-input" placeholder="Last name" [(ngModel)]="newStudent.lastName" />
-          <input class="form-input" placeholder="Roll No" [(ngModel)]="newStudent.rollNo" />
-          <input class="form-input" placeholder="Email" [(ngModel)]="newStudent.email" />
-          <input class="form-input" placeholder="Grade" [(ngModel)]="newStudent.grade" />
-          <input class="form-input" placeholder="Section" [(ngModel)]="newStudent.section" />
-          <select class="form-select" [(ngModel)]="newStudent.status">
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="transferred">Transferred</option>
-          </select>
+          <!-- Minimal primary inputs shown by default -->
+          <div class="form-grid minimal">
+            <input class="form-input" placeholder="First name" [(ngModel)]="newStudent.firstName" />
+            <input class="form-input" placeholder="Last name" [(ngModel)]="newStudent.lastName" />
+            <input class="form-input" placeholder="Email" [(ngModel)]="newStudent.email" />
+            <input class="form-input" placeholder="Grade" [(ngModel)]="newStudent.grade" />
+          </div>
+
+          <!-- Action strip: progressive disclosure controls -->
+          <div class="modal-action-strip" style="display:flex;gap:0.5rem;margin-top:0.75rem;margin-bottom:0.75rem;">
+            <button type="button" class="btn btn-outline" (click)="toggleAddress()" aria-pressed="{{showAddressSection}}" title="Add address">
+              📍 Address
+            </button>
+            <button type="button" class="btn btn-outline" (click)="toggleEmergency()" aria-pressed="{{showEmergencySection}}" title="Add emergency contact">
+              🚑 Emergency
+            </button>
+            <button type="button" class="btn btn-outline" (click)="toggleMore()" aria-pressed="{{showMoreSection}}" title="More details">
+              ➕ More
+            </button>
+          </div>
+
+          <!-- Address section (collapsed by default) -->
+          <div *ngIf="showAddressSection" class="form-grid address-section">
+            <input class="form-input" placeholder="Address line 1" [(ngModel)]="newStudent.addressLine1" />
+            <input class="form-input" placeholder="Address line 2" [(ngModel)]="newStudent.addressLine2" />
+            <input class="form-input" placeholder="City" [(ngModel)]="newStudent.addressCity" />
+            <input class="form-input" placeholder="State" [(ngModel)]="newStudent.addressState" />
+            <input class="form-input" placeholder="Postal code" [(ngModel)]="newStudent.addressPostalCode" />
+          </div>
+
+          <!-- Emergency contact (collapsed by default) -->
+          <div *ngIf="showEmergencySection" class="form-grid emergency-section" style="margin-top:0.5rem;">
+            <input class="form-input" placeholder="Emergency contact name" [(ngModel)]="newStudent.emergencyContactName" />
+            <input class="form-input" placeholder="Emergency contact phone" [(ngModel)]="newStudent.emergencyContactPhone" />
+            <input class="form-input" placeholder="Emergency contact relation" [(ngModel)]="newStudent.emergencyContactRelation" />
+          </div>
+
+          <!-- More details: class, roll, dates, section (collapsed by default) -->
+          <div *ngIf="showMoreSection" class="form-grid more-section" style="margin-top:0.5rem;">
+            <input class="form-input" placeholder="Class / Group" [(ngModel)]="newStudent.class" />
+            <input class="form-input" placeholder="Roll No" [(ngModel)]="newStudent.rollNo" />
+            <input class="form-input" placeholder="Section" [(ngModel)]="newStudent.section" />
+            <input class="form-input" type="date" placeholder="Date of birth" [(ngModel)]="newStudent.dateOfBirth" />
+            <input class="form-input" type="date" placeholder="Enrollment date" [(ngModel)]="newStudent.enrollmentDate" />
+          </div>
+
         </div>
-      </div>
       <div class="modal-footer">
         <button class="btn btn-primary" (click)="submitNewStudent()" [disabled]="isSubmitting">{{isSubmitting ? 'Saving...' : 'Save'}}</button>
         <button class="btn btn-secondary" (click)="cancelAdd()" [disabled]="isSubmitting">Cancel</button>
