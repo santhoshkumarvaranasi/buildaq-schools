@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { ApiService } from '../../core/services/api.service';
+import { MockDataService, MockStaff } from '../../core/services/mock-data.service';
 
 export interface Subject {
   id: string;
@@ -65,7 +65,7 @@ export class TeachersComponent implements OnInit {
   // Department options (populated from API)
   departments: string[] = [];
 
-  constructor(private api: ApiService, private zone: NgZone, private cdr: ChangeDetectorRef) {
+  constructor(private mock: MockDataService, private zone: NgZone, private cdr: ChangeDetectorRef) {
     this.detectViewMode();
   }
 
@@ -75,89 +75,35 @@ export class TeachersComponent implements OnInit {
   }
 
   fetchTeachers() {
-    this.api.get<any>('teachers/summary').subscribe({
-      next: (resp) => {
-        // Support multiple response shapes:
-        // - direct array: [{...}, ...]
-        // - ApiResponse wrapper: { success: true, data: [...] }
-        // - nested wrapper: { data: { teachers: [...] } }
-        // - legacy wrapper: { teachers: [...] }
-        let data: any[] = [];
-        try {
-          if (Array.isArray(resp)) {
-            data = resp as any[];
-          } else if (resp && Array.isArray(resp.data)) {
-            data = resp.data as any[];
-          } else if (resp && resp.data && Array.isArray(resp.data.teachers)) {
-            data = resp.data.teachers as any[];
-          } else if (resp && Array.isArray(resp.teachers)) {
-            data = resp.teachers as any[];
-          } else {
-            console.warn('Unexpected teachers response, expected array-like shape', resp);
-          }
-        } catch (e) {
-          console.warn('Error parsing teachers response', e, resp);
-          data = [];
-        }
-        try { console.debug && console.debug('Teachers fetched shape', { sourceLength: Array.isArray(resp) ? resp.length : undefined, normalizedLength: data.length }); } catch (e) {}
-        const deptSet = new Set<string>();
-        try {
-          this.teachers = data.map((t: any) => {
-            const dept = Array.isArray(t.departments) && t.departments.length > 0 ? t.departments[0] : (t.department || '');
-            if (dept) deptSet.add(dept);
-
-            const subjects: Subject[] = Array.isArray(t.subjects)
-              ? t.subjects.map((s: any) => {
-                  try {
-                    return { id: String(s), name: String(s), code: String(s), credits: 0 } as Subject;
-                  } catch (e) {
-                    return { id: String(s || ''), name: String(s || ''), code: String(s || ''), credits: 0 } as Subject;
-                  }
-                })
-              : (t.subjects || []);
-
-            const teacher: Teacher = {
-              id: t.id,
-              firstName: t.firstName || (t.fullName ? (String(t.fullName).split(' ')[0] || '') : ''),
-              lastName: t.lastName || '',
-              email: t.email || '',
-              phone: t.phone || '',
-              department: dept,
-              subjects,
-              hireDate: t.hireDate ? new Date(t.hireDate) : new Date(),
-              status: (t.status as any) || 'active',
-              experience: t.experience ?? 0,
-              qualification: t.qualification || '',
-              salary: t.salary ?? 0,
-              avatar: t.avatar || undefined
-            };
-
-            return teacher;
-          });
-        } catch (e) {
-          console.error('Error mapping teachers response to model', e, data);
-          this.teachers = [];
-        }
-        try { console.log('Teachers normalized count:', this.teachers.length); } catch (e) {}
-
-        // populate departments dropdown from unique departments found
-        try {
-          this.zone.run(() => {
-            this.departments = Array.from(deptSet).sort();
-            this.filterTeachers();
-          });
-        } catch (e) {
-          this.departments = Array.from(deptSet).sort();
-          this.filterTeachers();
-        }
-
-        // Ensure template updates reliably
-        try { setTimeout(() => { try { this.cdr.detectChanges(); } catch (e) {} }, 0); } catch (e) { try { this.cdr.detectChanges(); } catch (e) {} }
-      },
-      error: (err) => {
-        console.error('Failed to load teachers summary', err);
-      }
-    });
+    try {
+      const data = this.mock.getStaff();
+      const deptSet = new Set<string>();
+      this.teachers = data.map((t: any) => {
+        const nameParts = (t.name || '').split(' ');
+        const firstName = nameParts.shift() || '';
+        const lastName = nameParts.join(' ') || '';
+        const teacher: Teacher = {
+          id: t.id,
+          firstName,
+          lastName,
+          email: t.email || '',
+          phone: t.phone || '',
+          department: t.role || '',
+          subjects: [],
+          hireDate: new Date(),
+          status: 'active',
+          experience: 0,
+          qualification: '',
+          salary: 0,
+          avatar: undefined
+        };
+        if (teacher.department) deptSet.add(teacher.department);
+        return teacher;
+      });
+      this.zone.run(() => { this.departments = Array.from(deptSet).sort(); this.filterTeachers(); });
+    } catch (err) {
+      console.error('Failed to load mock teachers', err);
+    }
   }
 
   @HostListener('window:resize')
@@ -365,8 +311,13 @@ export class TeachersComponent implements OnInit {
 
   // Action methods
   editTeacher(teacher: Teacher) {
-    // TODO: Open edit dialog
-    console.log('Edit teacher:', teacher);
+    // Open inline edit in mock mode
+    const updated = this.mock.updateStaff(teacher.id, { name: `${teacher.firstName} ${teacher.lastName}`, email: teacher.email, phone: teacher.phone, role: teacher.department });
+    if (updated) {
+      const idx = this.teachers.findIndex(t => t.id === teacher.id);
+      if (idx !== -1) this.teachers[idx] = Object.assign({}, this.teachers[idx], teacher as any);
+      this.cdr.detectChanges();
+    }
   }
 
   viewTeacher(teacher: Teacher) {
@@ -375,8 +326,23 @@ export class TeachersComponent implements OnInit {
   }
 
   addNewTeacher() {
-    // TODO: Open add teacher dialog
-    console.log('Add new teacher');
+    const payload: Partial<MockStaff> = { name: 'New Teacher', role: 'Teacher', email: '', phone: '' };
+    const created = this.mock.createStaff(payload);
+    this.teachers.unshift({
+      id: created.id,
+      firstName: (created.name || '').split(' ')[0] || '',
+      lastName: (created.name || '').split(' ').slice(1).join(' ') || '',
+      email: created.email || '',
+      phone: created.phone || '',
+      department: created.role || '',
+      subjects: [],
+      hireDate: new Date(),
+      status: 'active',
+      experience: 0,
+      qualification: '',
+      salary: 0
+    } as Teacher);
+    this.cdr.detectChanges();
   }
 
   showMoreActions(teacher: Teacher) {
@@ -396,5 +362,16 @@ export class TeachersComponent implements OnInit {
 
   callTeacher(teacher: Teacher) {
     window.open(`tel:${teacher.phone}`, '_self');
+  }
+
+  deleteTeacher(teacher: Teacher) {
+    if (!confirm('Delete teacher?')) return;
+    const ok = this.mock.deleteStaff(teacher.id);
+    if (ok) {
+      this.teachers = this.teachers.filter(t => t.id !== teacher.id);
+      this.cdr.detectChanges();
+    } else {
+      alert('Failed to delete teacher');
+    }
   }
 }

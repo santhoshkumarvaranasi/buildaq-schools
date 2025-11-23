@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, HostListener, NgZone, OnInit, ApplicationRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SchoolsService } from '../schools.service';
 import { TenantService } from '../../core/services/tenant.service';
+import { MockDataService, MockStudent } from '../../core/services/mock-data.service';
 
 export interface Student {
   id: number;
@@ -104,7 +104,7 @@ export class StudentsComponent implements OnInit {
   }
 
   constructor(
-    private schoolsService: SchoolsService,
+    private mock: MockDataService,
     private tenantService: TenantService,
     private zone: NgZone,
     private cdr: ChangeDetectorRef,
@@ -118,74 +118,36 @@ export class StudentsComponent implements OnInit {
 
   loadStudents(): void {
     this.isLoading = true;
-    this.schoolsService.getStudents().subscribe({
-      next: (resp) => {
-        const response: any = resp as any;
-        let arrRaw: any;
-        if (Array.isArray(response)) arrRaw = response;
-        else if (response && response.data) arrRaw = response.data;
-        else if (response && response.students) arrRaw = response.students;
-        else if (response && response.items) arrRaw = response.items;
-        else arrRaw = [];
+    try {
+      const arr = this.mock.getStudents() as MockStudent[];
+      const mapped = arr.map((s: any) => {
+        return {
+          id: s.id,
+          rollNo: s.rollNo ?? s.roll_number ?? s.roll,
+          firstName: s.firstName,
+          lastName: s.lastName,
+          fullName: `${s.firstName || ''} ${s.lastName || ''}`.trim(),
+          grade: s.grade,
+          class: s.class,
+          section: s.section,
+          status: s.status || 'active',
+          email: s.email,
+          enrollmentDate: s.enrollmentDate,
+          schoolId: s.schoolId ?? null
+        } as Student;
+      });
 
-        const arr: Student[] = Array.isArray(arrRaw) ? arrRaw : [];
-
-        const mapped = arr.map((s: any) => {
-          // Normalize status to a string so Angular pipes (titlecase) don't receive objects
-          let statusVal = 'active';
-          if (typeof s.status === 'string' && s.status.trim()) {
-            statusVal = s.status;
-          } else if (s.status && (s.status.name || s.status.Name)) {
-            statusVal = s.status.name || s.status.Name;
-          } else if (s.enrollmentStatus) {
-            statusVal = s.enrollmentStatus;
-          } else if (s.statusId) {
-            statusVal = String(s.statusId);
-          }
-
-          // Start from a shallow copy of the original to preserve extra fields,
-          // then explicitly override the keys we normalize so the normalized
-          // `status` (string) is not accidentally overwritten by the original
-          // navigation object (which caused the TitleCase pipe error).
-          const base = Object.assign({}, s);
-          // remove status from base to ensure we replace it with a string
-          if (base.hasOwnProperty('status')) delete base.status;
-
-          return Object.assign({}, base, {
-            id: s.id ?? s.studentId ?? 0,
-            rollNo: s.rollNo ?? s.roll_number ?? s.roll,
-            firstName: s.firstName ?? s.first_name ?? s.fname ?? s.first,
-            lastName: s.lastName ?? s.last_name ?? s.lname ?? s.last,
-            fullName: s.fullName ?? `${s.firstName || s.first || ''} ${s.lastName || s.last || ''}`.trim(),
-            // backend exposes grade as a few different shapes (grade, gradeLevel, grade_level)
-            grade: s.grade ?? s.gradeLevel ?? s.grade_level ?? s.class ?? s.standard,
-            // Classes may be returned as an array of class objects; pick the first class name
-            class: (s.classes && s.classes.length) ? (s.classes[0].name ?? s.classes[0].Name ?? '') : (s.class ?? s.className ?? ''),
-            section: s.section ?? s.sectionName ?? s.section_id,
-            // Use the normalized status string
-            status: statusVal,
-            email: s.email,
-            enrollmentDate: s.enrollmentDate ?? s.enrollmentDateString,
-            schoolId: s.schoolId ?? s.school_id,
-          }) as Student;
-        });
-
-        this.zone.run(() => {
-          this.students = mapped;
-          this.grades = Array.from(new Set(this.students.map((st) => st.grade).filter(Boolean))) as string[];
-          this.applyFiltersAndSort();
-          this.isLoading = false;
-          setTimeout(() => this.cdr.detectChanges(), 0);
-        });
-      },
-      error: (err) => {
-        console.error('Failed to load students', err);
-        this.zone.run(() => {
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        });
-      },
-    });
+      this.zone.run(() => {
+        this.students = mapped;
+        this.grades = Array.from(new Set(this.students.map((st) => st.grade).filter(Boolean))) as string[];
+        this.applyFiltersAndSort();
+        this.isLoading = false;
+        setTimeout(() => this.cdr.detectChanges(), 0);
+      });
+    } catch (err) {
+      console.error('Failed to load mock students', err);
+      this.zone.run(() => { this.isLoading = false; this.cdr.detectChanges(); });
+    }
   }
 
   /* Add student form handlers */
@@ -211,57 +173,75 @@ export class StudentsComponent implements OnInit {
     this.isSubmitting = true;
     // Prepare payload: send structured fields as JSON strings for backend jsonb columns
     const payload: any = { ...this.newStudent };
-    // address -> json string
-    payload.address = JSON.stringify({
+    payload.address = {
       line1: this.newStudent.addressLine1 ?? null,
       line2: this.newStudent.addressLine2 ?? null,
       city: this.newStudent.addressCity ?? null,
       state: this.newStudent.addressState ?? null,
       postalCode: this.newStudent.addressPostalCode ?? null,
-    });
-    // emergency contact -> json string
-    payload.emergencyContact = JSON.stringify({
+    };
+    payload.emergencyContact = {
       name: this.newStudent.emergencyContactName ?? null,
       phone: this.newStudent.emergencyContactPhone ?? null,
       relation: this.newStudent.emergencyContactRelation ?? null,
-    });
-    // normalize dates to ISO strings when provided
+    };
     if (this.newStudent.dateOfBirth) payload.dateOfBirth = new Date(this.newStudent.dateOfBirth as any).toISOString();
     if (this.newStudent.enrollmentDate) payload.enrollmentDate = new Date(this.newStudent.enrollmentDate as any).toISOString();
 
-    this.schoolsService.createStudent(payload).subscribe({
-      next: (created: any) => {
-        try {
-          // Normalize created shape and add to local list
-          const s = {
-            id: created.id ?? created.studentId ?? Date.now(),
-            rollNo: created.rollNo ?? created.roll_number ?? this.newStudent.rollNo,
-            firstName: created.firstName ?? this.newStudent.firstName,
-            lastName: created.lastName ?? this.newStudent.lastName,
-            fullName: created.fullName ?? `${this.newStudent.firstName || ''} ${this.newStudent.lastName || ''}`.trim(),
-            grade: created.grade ?? this.newStudent.grade,
-            section: created.section ?? this.newStudent.section,
-            status: created.status ?? this.newStudent.status ?? 'active',
-            email: created.email ?? this.newStudent.email,
-            enrollmentDate: created.enrollmentDate ?? new Date().toISOString(),
-            schoolId: created.schoolId ?? null,
-            ...created
-          } as Student;
-          this.students.unshift(s);
-          this.applyFiltersAndSort();
-          this.showAddForm = false;
-        } catch (e) {
-          console.error('Error handling created student', e, created);
-        }
-        this.isSubmitting = false;
-        try { this.cdr.detectChanges(); } catch (e) {}
-      },
-      error: (err) => {
-        this.isSubmitting = false;
-        console.error('Failed to create student', err);
-        alert('Failed to create student: ' + (err?.message || 'Unknown error'));
+    try {
+      const created = this.mock.createStudent(payload as any);
+      const s = Object.assign({}, created) as Student;
+      s.fullName = s.fullName ?? `${s.firstName || ''} ${s.lastName || ''}`.trim();
+      this.students.unshift(s);
+      this.applyFiltersAndSort();
+      this.showAddForm = false;
+    } catch (err) {
+      console.error('Failed to create student (mock)', err);
+      alert('Failed to create student: ' + (((err as any)?.message) ?? String(err) ?? 'Unknown error'));
+    } finally {
+      this.isSubmitting = false;
+      try { this.cdr.detectChanges(); } catch (e) {}
+    }
+  }
+
+  // In-memory edit/delete support
+  editStudent(student: Student) {
+    // populate newStudent with selected student for editing
+    this.selectedStudent = student;
+    this.newStudent = Object.assign({}, student);
+    this.showAddForm = true;
+  }
+
+  updateStudent() {
+    if (!this.selectedStudent) return;
+    const id = this.selectedStudent.id;
+    const changes = { ...this.newStudent } as any;
+    try {
+      const updated = this.mock.updateStudent(id, changes as any);
+      if (updated) {
+        const idx = this.students.findIndex(s => s.id === id);
+        if (idx !== -1) this.students[idx] = Object.assign({}, this.students[idx], updated as any);
+        this.applyFiltersAndSort();
+        this.showAddForm = false;
+        this.selectedStudent = null;
+      } else {
+        alert('Failed to update (not found)');
       }
-    });
+    } catch (err) {
+      console.error('Failed to update mock student', err);
+      alert('Failed to update student');
+    }
+  }
+
+  deleteStudentById(id: number) {
+    if (!confirm('Delete this student?')) return;
+    const ok = this.mock.deleteStudent(id);
+    if (ok) {
+      this.students = this.students.filter(s => s.id !== id);
+      this.applyFiltersAndSort();
+    } else {
+      alert('Failed to delete student');
+    }
   }
 
   applyFiltersAndSort(): void {
@@ -380,10 +360,9 @@ export class StudentsComponent implements OnInit {
     return this.students.filter(s => s.status === 'active').length;
   }
 
-  // Placeholder actions
-  addNewStudent() { try { console.debug && console.debug('addNewStudent clicked'); } catch (e) {} this.openAddForm(); }
+  // Action aliases used by templates
+  addNewStudent() { this.openAddForm(); }
   viewStudent(student: Student) { console.log('View', student); }
-  editStudent(student: Student) { console.log('Edit', student); }
   showMoreActions(student: Student) { console.log('Actions', student); }
 
   trackByStudentId(_i: number, s: Student): number {

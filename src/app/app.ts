@@ -1,18 +1,22 @@
-import { Component, signal, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, signal, OnInit, inject } from '@angular/core';
+import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import { TenantSwitcherComponent } from './core/components/tenant-switcher/tenant-switcher';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterModule, TenantSwitcherComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App implements OnInit {
   protected readonly title = signal('buildaq-schools');
 
-  constructor(private route: ActivatedRoute) {}
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  constructor() {}
 
   ngOnInit() {
     // Check for auth token from shell app
@@ -33,7 +37,20 @@ export class App implements OnInit {
       // Remove token from URL for security
       const url = new URL(window.location.href);
       url.searchParams.delete('authToken');
-      window.history.replaceState({}, '', url.pathname + url.hash);
+        window.history.replaceState({}, '', url.pathname + url.hash);
     }
+
+      // If shell requested a specific inner route via ?goto=..., navigate after boot
+      const goto = urlParams.get('goto');
+      if (goto) {
+        try {
+          // navigate relative to the remote root
+          setTimeout(() => {
+            try { this.router.navigate([goto]); } catch (e) { console.warn('goto navigation failed', e); }
+          }, 50);
+        } catch (e) {
+          console.warn('Failed to process goto query param', e);
+        }
+      }
   }
 }

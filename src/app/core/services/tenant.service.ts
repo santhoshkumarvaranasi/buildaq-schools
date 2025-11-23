@@ -311,6 +311,89 @@ export class TenantService {
     return this.isInitialized && this.currentTenantSubject.value !== null;
   }
 
+  /**
+   * Update tenant features (partial merge)
+   */
+  updateFeatures(partial: Partial<TenantFeatures>): void {
+    const tenant = this.getCurrentTenant();
+    if (!tenant) return;
+    tenant.features = Object.assign({}, tenant.features, partial);
+    tenant.updatedAt = new Date();
+    this.setCurrentTenant(tenant);
+  }
+
+  /**
+   * Convenience: set subscription plan and apply preset feature gates
+   */
+  setPlan(plan: 'free' | 'basic' | 'premium' | 'enterprise') {
+    const tenant = this.getCurrentTenant();
+    if (!tenant) return;
+    tenant.subscription.plan = plan;
+    switch (plan) {
+      case 'free':
+        tenant.features = {
+          gradebook: false,
+          reports: false,
+          analytics: false,
+          bulkOperations: false,
+          dataExport: false,
+          realTimeUpdates: false,
+          notifications: false,
+          customBranding: false,
+          apiAccess: false,
+          advancedReporting: false
+        };
+        break;
+      case 'basic':
+        tenant.features = {
+          gradebook: true,
+          reports: true,
+          analytics: false,
+          bulkOperations: true,
+          dataExport: false,
+          realTimeUpdates: false,
+          notifications: true,
+          customBranding: false,
+          apiAccess: true,
+          advancedReporting: false
+        };
+        break;
+      case 'premium':
+        tenant.features = {
+          gradebook: true,
+          reports: true,
+          analytics: true,
+          bulkOperations: true,
+          dataExport: true,
+          realTimeUpdates: true,
+          notifications: true,
+          customBranding: true,
+          apiAccess: true,
+          advancedReporting: true
+        };
+        break;
+      case 'enterprise':
+      default:
+        tenant.features = {
+          gradebook: true,
+          reports: true,
+          analytics: true,
+          bulkOperations: true,
+          dataExport: true,
+          realTimeUpdates: true,
+          notifications: true,
+          customBranding: true,
+          apiAccess: true,
+          advancedReporting: true
+        };
+        break;
+    }
+
+    tenant.updatedAt = new Date();
+    this.setCurrentTenant(tenant);
+    this.applyTenantConfiguration(tenant);
+  }
+
   // Private utility methods
   private setLoading(loading: boolean): void {
     this.loadingSubject.next(loading);

@@ -1,1 +1,20 @@
-<router-outlet />
+<div class="app-shell">
+	<aside class="app-sidebar">
+		<div class="brand">BuildAQ Schools</div>
+		<app-tenant-switcher></app-tenant-switcher>
+		<nav class="nav">
+			<a routerLink="/dashboard" class="nav-link">🏠 Dashboard</a>
+			<a routerLink="/students" class="nav-link">👨‍🎓 Students</a>
+			<a routerLink="/teachers" class="nav-link">👩‍🏫 Teachers</a>
+			<a routerLink="/classes" class="nav-link">🏫 Classes</a>
+			<a routerLink="/attendance" class="nav-link">🕒 Attendance</a>
+			<a routerLink="/fees" class="nav-link">💳 Fees</a>
+			<a routerLink="/timetable" class="nav-link">📅 Timetable</a>
+			<a routerLink="/exams" class="nav-link">📝 Exams</a>
+		</nav>
+	</aside>
+
+	<main class="app-main">
+		<router-outlet></router-outlet>
+	</main>
+</div>
