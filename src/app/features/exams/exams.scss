@@ -1,30 +1,9 @@
-@use '../../schools/students/students';
-
-/* Exams-specific overrides (keeps students/teachers styles) */
-.exam-form {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  padding: 1rem;
+.exams-page {
+  padding: 0;
 }
 
-.exam-form .filter-group { min-width: 180px; }
-
-.exam-list {
+.exam-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
-}
-
-.student-card .student-card-name { font-size: 1.05rem; }
-
-/* Action buttons */
-.card-action-btn.primary { background: #4299e1; color: white; }
-
-/* Table inside card */
-.students-table { width:100%; border-collapse: collapse; }
-.students-table th, .students-table td { padding: 0.5rem; border-bottom: 1px solid #f1f5f9 }
-
-@media (max-width: 767px) {
-  .exam-form { flex-direction: column; }
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 12px;
 }

@@ -1,355 +1,119 @@
-<div class="teachers-container">
-  <div class="teachers-header">
-    <h2>👨‍🏫 Teacher Management</h2>
-    <div class="header-search">
-      <div class="search-wrapper">
-        <input
-          type="text"
-          placeholder="🔍 Search teachers..."
-          [(ngModel)]="searchTerm"
-          (input)="onSearch()"
-          class="form-input header-search-input">
-        <button *ngIf="searchTerm" class="clear-search-btn" (click)="clearSearch()">✕</button>
-      </div>
+<div class="fees-page teachers-page">
+  <mat-toolbar color="primary" class="fees-toolbar mat-elevation-z2">
+    <div class="toolbar-left">
+      <div class="eyebrow">School Management</div>
+      <div class="title">Teachers</div>
     </div>
+    <span class="spacer"></span>
+    <div class="toolbar-actions">
+      <button mat-flat-button color="accent" class="record-btn" (click)="addTeacher()">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z" fill="currentColor"/></svg>
+        Add Teacher
+      </button>
+    </div>
+  </mat-toolbar>
 
-    <button class="btn btn-primary add-teacher-btn" (click)="addNewTeacher()">
-      ➕ Add New Teacher
-    </button>
+  <div class="summary-grid">
+    <mat-card class="metric-card mat-elevation-z2">
+      <div class="metric-icon">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm-7 9v-1a6 6 0 0 1 12 0v1H5z" fill="currentColor"/></svg>
+      </div>
+      <div class="metric-body">
+        <div class="metric-label">Total</div>
+        <div class="metric-value">{{ metrics.total }}</div>
+        <div class="metric-hint">Teachers</div>
+      </div>
+    </mat-card>
+    <mat-card class="metric-card mat-elevation-z2">
+      <div class="metric-icon success">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 14-4-4 1.41-1.41L11 13.17l5.59-5.58L18 9l-7 7z" fill="currentColor"/></svg>
+      </div>
+      <div class="metric-body">
+        <div class="metric-label">Active</div>
+        <div class="metric-value">{{ metrics.active }}</div>
+        <div class="metric-hint">Available</div>
+      </div>
+    </mat-card>
   </div>
 
-  <div class="filters-section">
-    <!-- Mobile Filter Toggle -->
-    <div class="mobile-filter-toggle" (click)="toggleMobileFilters()">
-      <span>🔍 Filters & Search</span>
-      <span class="filter-icon" [class.rotated]="showMobileFilters">▼</span>
-    </div>
-
-    <div class="filter-row" [class.mobile-expanded]="showMobileFilters">
-      <div class="mobile-filter-row">
-        <div class="filter-group">
-          <label class="filter-label">Department</label>
-          <select [(ngModel)]="selectedDepartment" (change)="filterTeachers()" class="form-select">
-            <option value="">All Departments</option>
-            <option *ngFor="let dept of departments" [value]="dept">{{dept}}</option>
-          </select>
-        </div>
-        
-        <div class="filter-group">
-          <label class="filter-label">Status</label>
-          <select [(ngModel)]="selectedStatus" (change)="filterTeachers()" class="form-select">
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="on-leave">On Leave</option>
-          </select>
-        </div>
-      </div>
-      
-      <div class="filter-actions">
-        <button class="btn btn-secondary clear-filters" (click)="clearFilters()">
-          🗑️ Clear Filters
+  <mat-card class="filters-card mat-elevation-z2">
+    <div class="filter-grid">
+      <mat-form-field appearance="fill" class="full-width search-field">
+        <mat-label>Search</mat-label>
+        <span matPrefix class="icon-wrap">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28h.79l5 4.99L20.49 19l-5-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/></svg>
+        </span>
+        <input matInput [(ngModel)]="search" (ngModelChange)="applyFilters()" placeholder="name or id" />
+        <button *ngIf="search" matSuffix mat-icon-button aria-label="Clear search" (click)="clearSearch()">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L12 13.41l-4.89 4.9-1.41-1.42L10.59 12 4.29 5.71 5.7 4.29 12 10.59l6.29-6.3z" fill="currentColor"/></svg>
         </button>
-        
-        <div class="sort-options">
-          <label class="filter-label">Sort By</label>
-          <select [(ngModel)]="sortField" (change)="sortTeachers()" class="form-select">
-            <option value="lastName">Name (A-Z)</option>
-            <option value="name-desc">Name (Z-A)</option>
-            <option value="department">Department</option>
-            <option value="experience">Experience</option>
-            <option value="hireDate">Hire Date</option>
-            <option value="salary">Salary</option>
-            <option value="status">Status</option>
-          </select>
-        </div>
-      </div>
+      </mat-form-field>
+
+      <mat-chip-listbox class="status-chips" [value]="statusFilter" (selectionChange)="onStatusChange($event)">
+        <mat-chip-option value="all">All</mat-chip-option>
+        <mat-chip-option value="active">Active</mat-chip-option>
+        <mat-chip-option value="inactive">Inactive</mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+  </mat-card>
+
+  <mat-card class="table-card mat-elevation-z2">
+    <mat-card-title>Teacher roster</mat-card-title>
+    <mat-card-subtitle>All teaching staff with contact.</mat-card-subtitle>
+
+    <div class="table-wrap">
+      <table mat-table [dataSource]="dataSource" matSort class="fees-table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+          <td mat-cell *matCellDef="let row">
+            <div class="cell-title">{{ row.name }}</div>
+            <div class="cell-meta">ID #{{ row.id }}</div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Role</th>
+          <td mat-cell *matCellDef="let row">{{ row.role }}</td>
+        </ng-container>
+        <ng-container matColumnDef="classes">
+          <th mat-header-cell *matHeaderCellDef>Classes</th>
+          <td mat-cell *matCellDef="let row">{{ row.classes || '--' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let row">{{ row.email || '--' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef>Phone</th>
+          <td mat-cell *matCellDef="let row">{{ row.phone || '--' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let row">
+            <mat-chip class="status-chip" [color]="(row.status || '').toLowerCase() === 'active' ? 'primary' : 'warn'">
+              {{ row.status || 'active' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row">
+            <div class="action-row">
+              <button mat-stroked-button color="accent" class="ghost-button" (click)="editTeacher(row)">Edit</button>
+              <button mat-stroked-button color="warn" class="ghost-button" (click)="deleteTeacher(row)">Delete</button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr class="empty-state" *matNoDataRow>
+          <td [attr.colspan]="displayedColumns.length">
+            <div class="fee-empty">No teachers match your filters.</div>
+          </td>
+        </tr>
+      </table>
     </div>
 
-    <!-- Quick Stats -->
-    <div class="quick-stats">
-      <div class="stat-item">
-        <span class="stat-number">{{filteredTeachers.length}}</span>
-        <span class="stat-label">Showing</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{getActiveCount()}}</span>
-        <span class="stat-label">Active</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{getDepartmentCount()}}</span>
-        <span class="stat-label">Departments</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{getAverageExperience()}}</span>
-        <span class="stat-label">Avg. Exp.</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="teachers-table-container">
-    <!-- View Controls -->
-    <div class="view-controls">
-      <div class="teachers-count">
-        <p>Showing {{filteredTeachers.length}} of {{teachers.length}} teachers</p>
-      </div>
-      
-      <div class="view-toggle-buttons">
-        <button 
-          class="view-toggle-btn"
-          [class.active]="viewMode === 'table'"
-          (click)="setViewMode('table')"
-          title="Table View">
-          📊
-        </button>
-        <button 
-          class="view-toggle-btn"
-          [class.active]="viewMode === 'cards'"
-          (click)="setViewMode('cards')"
-          title="Card View">
-          🃏
-        </button>
-      </div>
-    </div>
-    
-    <!-- Enhanced Desktop/Tablet Table View -->
-    <div class="table-wrapper" [class.hidden]="viewMode === 'cards'">
-      <div class="table-scroll-container">
-        <table class="teachers-table">
-          <thead>
-            <tr>
-              <th class="sortable" (click)="sortByField('id')">
-                ID 
-                <span class="sort-indicator" [class.active]="currentSort.field === 'id'">
-                  {{currentSort.field === 'id' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th class="sortable" (click)="sortByField('lastName')">
-                Name
-                <span class="sort-indicator" [class.active]="currentSort.field === 'lastName'">
-                  {{currentSort.field === 'lastName' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th>Email</th>
-              <th class="sortable" (click)="sortByField('department')">
-                Department
-                <span class="sort-indicator" [class.active]="currentSort.field === 'department'">
-                  {{currentSort.field === 'department' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th>Subjects</th>
-              <th class="sortable" (click)="sortByField('experience')">
-                Experience
-                <span class="sort-indicator" [class.active]="currentSort.field === 'experience'">
-                  {{currentSort.field === 'experience' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th class="sortable" (click)="sortByField('salary')">
-                Salary
-                <span class="sort-indicator" [class.active]="currentSort.field === 'salary'">
-                  {{currentSort.field === 'salary' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th class="sortable" (click)="sortByField('status')">
-                Status
-                <span class="sort-indicator" [class.active]="currentSort.field === 'status'">
-                  {{currentSort.field === 'status' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let teacher of filteredTeachers; trackBy: trackByTeacherId" 
-                class="teacher-row"
-                [class.highlighted]="isTeacherSelected(teacher)"
-                (click)="selectTeacher(teacher)">
-              <td class="teacher-id">#{{teacher.id}}</td>
-              <td class="teacher-name">
-                <div class="name-wrapper">
-                  <strong>{{teacher.firstName}} {{teacher.lastName}}</strong>
-                  <small class="teacher-qualification">{{teacher.qualification}}</small>
-                </div>
-              </td>
-              <td class="teacher-email">{{teacher.email}}</td>
-              <td class="department-cell">
-                <span class="department-badge">{{teacher.department}}</span>
-              </td>
-              <td class="subjects-cell">
-                <div class="subjects-list">
-                  <span *ngFor="let subject of teacher.subjects" class="subject-tag">
-                    {{subject.code}}
-                  </span>
-                </div>
-              </td>
-              <td class="experience-cell">{{teacher.experience}} years</td>
-              <td class="salary-cell">{{formatSalary(teacher.salary)}}</td>
-              <td class="status-cell">
-                <span class="status-badge" [ngClass]="getStatusClass(teacher.status)">
-                  <span class="status-icon">{{getStatusIcon(teacher.status)}}</span>
-                  {{teacher.status | titlecase}}
-                </span>
-              </td>
-              <td class="actions-cell">
-                <div class="action-buttons">
-                  <button class="btn-action btn-view" 
-                          (click)="viewTeacher(teacher); $event.stopPropagation()" 
-                          title="View Details">
-                    👁️
-                  </button>
-                  <button class="btn-action btn-edit" 
-                          (click)="editTeacher(teacher); $event.stopPropagation()" 
-                          title="Edit Teacher">
-                    ✏️
-                  </button>
-                  <button class="btn-action btn-schedule" 
-                          (click)="viewSchedule(teacher); $event.stopPropagation()" 
-                          title="View Schedule">
-                    📅
-                  </button>
-                  <button class="btn-action btn-more" 
-                          (click)="showMoreActions(teacher); $event.stopPropagation()" 
-                          title="More Actions">
-                    ⋯
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      
-      <!-- Horizontal Scroll Indicator -->
-      <div class="scroll-indicator" *ngIf="showScrollIndicator">
-        <span class="scroll-text">← Scroll horizontally to see more →</span>
-      </div>
-    </div>
-
-    <!-- Enhanced Mobile Card View -->
-    <div class="mobile-cards" [class.visible]="viewMode === 'cards'">
-      <div *ngFor="let teacher of filteredTeachers; trackBy: trackByTeacherId" 
-           class="teacher-card"
-           [class.selected]="isTeacherSelected(teacher)"
-           (click)="selectTeacher(teacher)">
-        
-        <!-- Card Header -->
-        <div class="teacher-card-header">
-          <div class="teacher-info">
-            <h3 class="teacher-card-name">{{teacher.firstName}} {{teacher.lastName}}</h3>
-            <span class="teacher-card-id">#{{teacher.id}}</span>
-          </div>
-          <div class="teacher-card-status">
-            <span class="status-badge" [ngClass]="getStatusClass(teacher.status)">
-              <span class="status-icon">{{getStatusIcon(teacher.status)}}</span>
-              {{teacher.status | titlecase}}
-            </span>
-          </div>
-        </div>
-        
-        <!-- Card Body -->
-        <div class="teacher-card-body">
-          <div class="card-row">
-            <div class="teacher-card-field">
-              <span class="teacher-card-label">🏫 Department</span>
-              <span class="teacher-card-value">
-                <span class="department-badge">{{teacher.department}}</span>
-              </span>
-            </div>
-          </div>
-          
-          <div class="card-row">
-            <div class="teacher-card-field">
-              <span class="teacher-card-label">📚 Subjects</span>
-              <span class="teacher-card-value">
-                <div class="subjects-list-mobile">
-                  <span *ngFor="let subject of teacher.subjects" class="subject-tag-mobile">
-                    {{subject.code}}
-                  </span>
-                </div>
-              </span>
-            </div>
-          </div>
-          
-          <div class="card-row">
-            <div class="teacher-card-field">
-              <span class="teacher-card-label">🎓 Qualification</span>
-              <span class="teacher-card-value">{{teacher.qualification}}</span>
-            </div>
-          </div>
-          
-          <div class="card-row">
-            <div class="teacher-card-field">
-              <span class="teacher-card-label">⏱️ Experience</span>
-              <span class="teacher-card-value">{{teacher.experience}} years</span>
-            </div>
-          </div>
-          
-          <div class="card-row">
-            <div class="teacher-card-field">
-              <span class="teacher-card-label">💰 Salary</span>
-              <span class="teacher-card-value">{{formatSalary(teacher.salary)}}</span>
-            </div>
-          </div>
-          
-          <div class="card-row">
-            <div class="teacher-card-field full-width">
-              <span class="teacher-card-label">📧 Email</span>
-              <a href="mailto:{{teacher.email}}" class="teacher-card-email">{{teacher.email}}</a>
-            </div>
-          </div>
-          
-          <div class="card-row">
-            <div class="teacher-card-field">
-              <span class="teacher-card-label">📞 Phone</span>
-              <a href="tel:{{teacher.phone}}" class="teacher-card-phone">{{teacher.phone}}</a>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Card Actions -->
-        <div class="teacher-card-actions">
-          <button class="card-action-btn primary" 
-                  (click)="viewTeacher(teacher); $event.stopPropagation()" 
-                  title="View Details">
-            <span class="btn-icon">👁️</span>
-            <span class="btn-text">View</span>
-          </button>
-          <button class="card-action-btn secondary" 
-                  (click)="callTeacher(teacher); $event.stopPropagation()" 
-                  title="Call Teacher">
-            <span class="btn-icon">📞</span>
-            <span class="btn-text">Call</span>
-          </button>
-          <button class="card-action-btn tertiary" 
-                  (click)="viewSchedule(teacher); $event.stopPropagation()" 
-                  title="Schedule">
-            <span class="btn-icon">📅</span>
-            <span class="btn-text">Schedule</span>
-          </button>
-          <button class="card-action-btn quaternary" 
-                  (click)="assignSubject(teacher); $event.stopPropagation()" 
-                  title="Assign Subject">
-            <span class="btn-icon">📚</span>
-            <span class="btn-text">Assign</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Load More Button for Performance -->
-      <div class="load-more-section" *ngIf="filteredTeachers.length > displayLimit">
-        <button class="btn btn-outline load-more-btn" (click)="loadMoreTeachers()">
-          <span class="btn-icon">⬇️</span>
-          Load More Teachers ({{filteredTeachers.length - displayLimit}} remaining)
-        </button>
-      </div>
-    </div>
-
-    <div *ngIf="filteredTeachers.length === 0" class="no-teachers">
-      <div class="empty-state">
-        <h3>👨‍🏫 No Teachers Found</h3>
-        <p>No teachers match your current search criteria.</p>
-        <button class="btn btn-primary" (click)="clearFilters()">Clear Filters</button>
-      </div>
-    </div>
-  </div>
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+  </mat-card>
 </div>
