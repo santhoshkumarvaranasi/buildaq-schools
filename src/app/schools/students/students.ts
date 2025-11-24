@@ -117,4 +117,10 @@ export class StudentsComponent implements AfterViewInit {
     this.mock.deleteStudent(row.id);
     this.loadRows();
   }
+
+  toggleTransfer(row: StudentRow) {
+    const nextStatus = (row.status || '').toLowerCase() === 'transferred' ? 'active' : 'transferred';
+    this.mock.updateStudent(row.id, { status: nextStatus });
+    this.loadRows();
+  }
 }

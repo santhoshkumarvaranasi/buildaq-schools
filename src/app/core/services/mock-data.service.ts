@@ -63,6 +63,11 @@ export class MockDataService {
     { id: 1, title: 'Midterm 2025', date: '2025-10-15', studentMarks: [{ studentId: 1, marks: 78 }, { studentId: 2, marks: 85 }] }
   ];
 
+  admissions = [
+    { id: 1, name: 'Ravi Patel', class: '8A', status: 'new', submitted: '2025-06-10', notes: 'Needs guardian contact' },
+    { id: 2, name: 'Sara Lee', class: '9B', status: 'verified', submitted: '2025-06-05', notes: 'All docs uploaded' }
+  ];
+
   getStudents() { return this.students; }
   getStaff() { return this.staff; }
   getClasses() { return this.classes; }
@@ -70,6 +75,13 @@ export class MockDataService {
   getAttendance() { return this.attendance; }
   getTimetable() { return this.timetable; }
   getExams() { return this.exams; }
+  getAdmissions() { return this.admissions; }
+  updateAdmission(id: number, status: string) {
+    const idx = this.admissions.findIndex(a => a.id === id);
+    if (idx === -1) return null;
+    this.admissions[idx].status = status;
+    return this.admissions[idx];
+  }
 
   // Create a new student in-memory and return it
   createStudent(payload: Partial<MockStudent>): MockStudent {

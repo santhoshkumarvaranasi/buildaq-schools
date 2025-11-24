@@ -7,10 +7,12 @@ import { AttendanceComponent } from './features/attendance/attendance';
 import { FeesComponent } from './features/fees/fees';
 import { TimetableComponent } from './features/timetable/timetable';
 import { ExamsComponent } from './features/exams/exams';
+import { AdmissionsComponent } from './features/admissions/admissions';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
   { path: 'dashboard', component: SchoolsDashboardComponent },
+  { path: 'admissions', component: AdmissionsComponent },
   { path: 'students', component: StudentsComponent },
   { path: 'teachers', component: TeachersComponent },
   { path: 'classes', component: ClassesComponent },

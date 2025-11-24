@@ -17,6 +17,7 @@ import { FeeHistoryComponent } from '../features/fees/fee-history/fee-history';
 import { MyFeesComponent } from '../features/fees/my-fees/my-fees';
 import { TimetableComponent } from '../features/timetable/timetable';
 import { ExamsComponent } from '../features/exams/exams';
+import { AdmissionsComponent } from '../features/admissions/admissions';
 
 // Define routes for the schools module
 const routes: Routes = [
@@ -34,6 +35,7 @@ const routes: Routes = [
     { path: 'history', component: FeeHistoryComponent },
     { path: 'my-fees', component: MyFeesComponent }
   ] },
+  { path: 'admissions', component: AdmissionsComponent },
   { path: 'timetable', component: TimetableComponent },
   { path: 'exams', component: ExamsComponent }
 ];
@@ -54,6 +56,7 @@ const routes: Routes = [
     CollectFeeComponent,
     FeeHistoryComponent,
     MyFeesComponent,
+    AdmissionsComponent,
     TimetableComponent,
     ExamsComponent
   ],
