@@ -14,6 +14,8 @@ type TimetableRow = {
   teacher: string;
   day: string;
   time: string;
+  conflict?: boolean;
+  conflictReason?: string;
 };
 
 @Component({
@@ -63,6 +65,16 @@ type TimetableRow = {
             <div class="metric-hint">Earliest scheduled day</div>
           </div>
         </mat-card>
+        <mat-card class="metric-card mat-elevation-z2">
+          <div class="metric-icon warn">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2V8h2v6z" fill="currentColor"/></svg>
+          </div>
+          <div class="metric-body">
+            <div class="metric-label">Conflicts</div>
+            <div class="metric-value warn-text">{{ conflictCount }}</div>
+            <div class="metric-hint">Check class/teacher overlaps</div>
+          </div>
+        </mat-card>
       </div>
 
       <mat-card class="filters-card mat-elevation-z2">
@@ -93,6 +105,7 @@ type TimetableRow = {
               <mat-option *ngFor="let d of days" [value]="d">{{d}}</mat-option>
             </mat-select>
           </mat-form-field>
+          <mat-checkbox [(ngModel)]="showConflictsOnly" (change)="applyFilters()">Show conflicts only</mat-checkbox>
         </div>
       </mat-card>
 
@@ -155,6 +168,13 @@ type TimetableRow = {
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Time</th>
               <td mat-cell *matCellDef="let row">{{ row.time }}</td>
             </ng-container>
+            <ng-container matColumnDef="conflict">
+              <th mat-header-cell *matHeaderCellDef>Conflict</th>
+              <td mat-cell *matCellDef="let row">
+                <mat-chip *ngIf="row.conflict" color="warn" selected>{{ row.conflictReason }}</mat-chip>
+                <span *ngIf="!row.conflict">--</span>
+              </td>
+            </ng-container>
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let row">
@@ -180,13 +200,15 @@ export class TimetableComponent implements AfterViewInit {
   classes: any[] = [];
   rows: TimetableRow[] = [];
   dataSource = new MatTableDataSource<TimetableRow>([]);
-  displayedColumns = ['classId','subject','teacher','day','time','actions'];
+  displayedColumns = ['classId','subject','teacher','day','time','conflict','actions'];
   newEntry: TimetableRow = { id: 0, classId: '', subject: '', teacher: '', day: '', time: '' };
   search = '';
   filterClass = '';
   filterDay = '';
+  showConflictsOnly = false;
   classCount = 0;
   nextDay = '';
+  conflictCount = 0;
   days = ['Mon','Tue','Wed','Thu','Fri','Sat'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -223,12 +245,14 @@ export class TimetableComponent implements AfterViewInit {
   }
 
   applyFilters() {
+    this.flagConflicts();
     const term = this.search.trim().toLowerCase();
     const filtered = this.rows.filter(r => {
       const matchesTerm = !term || r.subject.toLowerCase().includes(term) || r.teacher.toLowerCase().includes(term) || r.classId.toLowerCase().includes(term);
       const matchesClass = !this.filterClass || r.classId === this.filterClass;
       const matchesDay = !this.filterDay || r.day === this.filterDay;
-      return matchesTerm && matchesClass && matchesDay;
+      const matchesConflict = !this.showConflictsOnly || !!r.conflict;
+      return matchesTerm && matchesClass && matchesDay && matchesConflict;
     });
     this.dataSource.data = filtered;
     this.attachTableHelpers();
@@ -257,5 +281,27 @@ export class TimetableComponent implements AfterViewInit {
       .filter(Boolean)
       .sort((a,b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
     this.nextDay = sorted[0] || '';
+    this.conflictCount = this.rows.filter(r => r.conflict).length;
+  }
+
+  flagConflicts() {
+    // Conflict if same class and same day/time OR same teacher and same day/time
+    const keyClass = (r: TimetableRow) => `${r.classId}-${r.day}-${r.time}`;
+    const keyTeacher = (r: TimetableRow) => `${r.teacher}-${r.day}-${r.time}`;
+    const classMap = new Map<string, TimetableRow[]>();
+    const teacherMap = new Map<string, TimetableRow[]>();
+    this.rows.forEach(r => {
+      const kc = keyClass(r);
+      const kt = keyTeacher(r);
+      classMap.set(kc, [...(classMap.get(kc) || []), r]);
+      teacherMap.set(kt, [...(teacherMap.get(kt) || []), r]);
+      r.conflict = false;
+      r.conflictReason = '';
+    });
+    const mark = (items: TimetableRow[], reason: string) => {
+      if (items.length > 1) items.forEach(r => { r.conflict = true; r.conflictReason = reason; });
+    };
+    classMap.forEach(v => mark(v, 'Class overlap'));
+    teacherMap.forEach(v => mark(v, 'Teacher overlap'));
   }
 }
