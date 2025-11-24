@@ -111,6 +111,10 @@ type FeeRow = {
               <svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>
               My Fees
             </button>
+            <button mat-stroked-button color="accent" class="ghost-button" [routerLink]="['/schools/fees/discounts']">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M12 2 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm0 2.18L18.59 6 12 7.82 5.41 6 12 4.18zM5 8.47l7 1.91 7-1.91v2.53c0 4.24-2.7 8.28-7 9.66-4.3-1.38-7-5.42-7-9.66V8.47z" fill="currentColor"/></svg>
+              Discounts
+            </button>
           </div>
         </div>
       </mat-card>

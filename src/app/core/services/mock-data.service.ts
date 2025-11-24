@@ -46,6 +46,10 @@ export class MockDataService {
     { studentId: 1, balance: 1200, lastPaid: '2025-03-15' },
     { studentId: 2, balance: 0, lastPaid: '2025-06-01' }
   ];
+  discounts = [
+    { id: 'D-001', studentId: 1, studentName: 'Jane Doe', type: 'Scholarship', amount: 200, reason: 'Merit', validUntil: '2025-12-31', status: 'active' },
+    { id: 'D-002', studentId: 2, studentName: 'John Smith', type: 'Sibling', amount: 150, reason: 'Sibling concession', validUntil: '2025-09-30', status: 'active' }
+  ];
 
   attendance = [
     { id: 1, studentId: 1, date: '2025-11-20', status: 'present' },
@@ -75,6 +79,18 @@ export class MockDataService {
   getAttendance() { return this.attendance; }
   getTimetable() { return this.timetable; }
   getExams() { return this.exams; }
+  getDiscounts() { return this.discounts; }
+  addDiscount(entry: any) {
+    const created = Object.assign({ id: `D-${(this.discounts.length + 1).toString().padStart(3,'0')}`, status: 'active' }, entry);
+    this.discounts.unshift(created);
+    return created;
+  }
+  updateDiscountStatus(id: string, status: string) {
+    const idx = this.discounts.findIndex(d => d.id === id);
+    if (idx === -1) return null;
+    this.discounts[idx].status = status;
+    return this.discounts[idx];
+  }
   getAdmissions() { return this.admissions; }
   updateAdmission(id: number, status: string) {
     const idx = this.admissions.findIndex(a => a.id === id);

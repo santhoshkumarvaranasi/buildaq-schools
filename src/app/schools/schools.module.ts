@@ -15,6 +15,7 @@ import { FeeStructureComponent } from '../features/fees/fee-structure/fee-struct
 import { CollectFeeComponent } from '../features/fees/collect-fee/collect-fee';
 import { FeeHistoryComponent } from '../features/fees/fee-history/fee-history';
 import { MyFeesComponent } from '../features/fees/my-fees/my-fees';
+import { FeeDiscountsComponent } from '../features/fees/discounts/discounts';
 import { TimetableComponent } from '../features/timetable/timetable';
 import { ExamsComponent } from '../features/exams/exams';
 import { AdmissionsComponent } from '../features/admissions/admissions';
@@ -33,6 +34,7 @@ const routes: Routes = [
     { path: 'categories', component: FeeCategoriesComponent },
     { path: 'structure', component: FeeStructureComponent },
     { path: 'history', component: FeeHistoryComponent },
+    { path: 'discounts', component: FeeDiscountsComponent },
     { path: 'my-fees', component: MyFeesComponent }
   ] },
   { path: 'admissions', component: AdmissionsComponent },
@@ -56,6 +58,7 @@ const routes: Routes = [
     CollectFeeComponent,
     FeeHistoryComponent,
     MyFeesComponent,
+    FeeDiscountsComponent,
     AdmissionsComponent,
     TimetableComponent,
     ExamsComponent
