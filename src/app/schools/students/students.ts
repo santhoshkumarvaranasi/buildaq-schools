@@ -123,4 +123,26 @@ export class StudentsComponent implements AfterViewInit {
     this.mock.updateStudent(row.id, { status: nextStatus });
     this.loadRows();
   }
+
+  exportCsv() {
+    const headers = ['Id','Name','Class','Section','Roll','Status','Email','Enrolled'];
+    const lines = this.dataSource.data.map(r => [
+      r.id,
+      `"${(r.name || '').replace(/"/g, '""')}"`,
+      r.class || '',
+      r.section || '',
+      r.rollNo || '',
+      r.status || '',
+      r.email || '',
+      r.enrollmentDate || ''
+    ].join(','));
+    const csv = [headers.join(','), ...lines].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'students.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 }
