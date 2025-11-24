@@ -81,6 +81,7 @@
 						],
 						"styles": [
 							"node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+							"src/styles/_material-theme.scss",
 							"src/styles.scss"
 						]
 					},

@@ -1,53 +1,322 @@
 @use '../../schools/students/students';
 
-/* Fees feature-wide simple overrides */
+:host {
+  display: block;
+}
 
-// Feature root uses students theme for consistent look
+.fees-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.fees-toolbar {
+  border-radius: 12px;
+  background: linear-gradient(120deg, #3949ab, #1e88e5);
+  color: #fff;
+  padding: 12px 16px;
+}
+
+.toolbar-left .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.toolbar-left .title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.toolbar-actions .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.toolbar-actions .mat-mdc-outlined-button:not(:disabled) {
+  background: #f8fafc;
+  color: var(--brand-primary, #1e3a8a);
+  border-color: rgba(30, 58, 138, 0.4);
+  border-radius: 12px;
+}
+
+.toolbar-actions .mat-mdc-outlined-button:not(:disabled) .mdc-button__label,
+.toolbar-actions .mat-mdc-outlined-button:not(:disabled) .mat-icon {
+  color: var(--brand-primary, #1e3a8a);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.metric-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+  border-radius: 12px;
+}
+
+.metric-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(25, 118, 210, 0.16);
+}
+
+.metric-icon.warn {
+  background: rgba(244, 67, 54, 0.18);
+}
+
+.metric-icon.success {
+  background: rgba(46, 125, 50, 0.18);
+}
+
+.metric-body {
+  display: grid;
+  gap: 2px;
+}
+
+.metric-label {
+  font-size: 13px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--brand-primary, #1e3a8a);
+}
+
+.metric-value.warn-text {
+  color: var(--brand-warn, #f97316);
+}
+
+.metric-hint {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.filters-card {
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(6, 182, 212, 0.08));
+  border: 1px solid var(--brand-border, rgba(255, 255, 255, 0.12));
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: 1.4fr auto auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.search-field .mat-mdc-text-field-wrapper {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+.icon-wrap .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.status-chips {
+  display: flex;
+  gap: 8px;
+}
+
+.status-chips .mat-mdc-chip-option {
+  border-radius: 12px;
+}
+
+.status-chips .mat-mdc-chip-option.mat-mdc-chip-selected {
+  background: rgba(30, 58, 138, 0.16);
+  color: var(--brand-primary, #1e3a8a);
+  border: 1px solid rgba(30, 58, 138, 0.35);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.filter-actions .ghost-button.mat-mdc-outlined-button:not(:disabled) {
+  border-color: rgba(79, 70, 229, 0.45);
+  color: var(--brand-primary, #1e3a8a);
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.filter-actions .ghost-button.mat-mdc-outlined-button:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(79, 70, 229, 0.7);
+}
+
+.ghost-button .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.table-card {
+  border-radius: 12px;
+}
+
+.table-wrap {
+  overflow: auto;
+  margin-top: 8px;
+}
+
+.fees-table {
+  min-width: 720px;
+}
+
+.fees-table th {
+  font-weight: 700;
+}
+
+.cell-title {
+  font-weight: 600;
+}
+
+.cell-meta {
+  color: var(--brand-muted, #94a3b8);
+  font-size: 12px;
+}
+
+.status-chip {
+  height: 28px;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+.due {
+  color: var(--brand-warn, #f97316);
+  font-weight: 700;
+}
+
+.clear {
+  color: var(--brand-success, #22c55e);
+  font-weight: 700;
+}
+
+.action-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.compact-number {
+  width: 140px;
+}
+
+.compact-number .mat-mdc-text-field-wrapper {
+  padding-inline: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.compact-number .mat-mdc-form-field-infix {
+  padding: 4px 0 8px;
+}
+
+.record-btn.mat-mdc-unelevated-button:not(:disabled) {
+  background: linear-gradient(135deg, var(--brand-accent, #06b6d4), var(--brand-accent-strong, #0ea5c6));
+  color: #0b1221;
+  font-weight: 700;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(6, 182, 212, 0.35);
+}
+
+.record-btn .mdc-button__label,
+.record-btn .mat-icon {
+  color: #0b1221;
+}
+
+.record-btn .icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Fee Structure alignment */
+.structure-page {
+  padding: 0;
+}
+
+.structure-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.structure-header .class-select {
+  min-width: 180px;
+}
+
+.structure-input {
+  width: 100%;
+}
+
+.structure-page .fees-table {
+  min-width: 680px;
+}
+
+.mat-mdc-chip.mat-mdc-standard-chip {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--brand-border, rgba(255, 255, 255, 0.12));
+}
+
+.fee-empty {
+  padding: 1rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.router-outlet-wrap {
+  margin-top: 8px;
+}
+
+/* Legacy helper classes used across fee feature */
 .fee-root {
   @extend .students-container;
 }
 
-.exam-form, .fee-form, .filters-section {
+.exam-form,
+.fee-form,
+.filters-section {
   padding: 0.6rem;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
   margin-bottom: 0.6rem;
-}
-
-.fee-summary {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 0.75rem;
-  background: #f8fafc;
-  border-radius: 6px;
-  font-size: 0.95rem;
-}
-
-/* Table and card styles */
-.fees-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.fees-table th, .fees-table td {
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid #f1f5f9;
-  text-align: left;
-  font-size: 0.95rem;
-}
-
-.fees-table thead th {
-  background: #f8fafc;
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  color: #2d3748;
 }
 
 .fee-card {
@@ -55,45 +324,65 @@
   border: 1px solid #edf2f7;
   border-radius: 8px;
   padding: 0.6rem;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
 }
 
-.fee-actions { display:flex; gap:0.5rem; align-items:center }
+.fee-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0;
+}
 
-.fee-row { display:flex; gap:0.5rem; align-items:center; padding:0.5rem 0; }
-.fee-row-label { flex:1; }
-.fee-row-fine { color:#718096; min-width:60px; text-align:right }
+.fee-row-label {
+  flex: 1;
+}
 
-.btn { @extend .btn; font-size: 0.9rem; padding: 0.5rem 0.75rem }
-.btn-primary { @extend .btn-primary; }
-.btn-secondary { @extend .btn-secondary; }
+.fee-row-fine {
+  color: #718096;
+  min-width: 60px;
+  text-align: right;
+}
+
+.btn {
+  @extend .btn;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.btn-primary {
+  @extend .btn-primary;
+}
+
+.btn-secondary {
+  @extend .btn-secondary;
+}
 
 /* Responsive */
-@media (max-width: 767px) {
-  .fees-table { font-size: 0.9rem; }
-  .fee-summary { flex-direction: column; align-items: flex-start; }
+@media (max-width: 1024px) {
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fees-table {
+    min-width: 600px;
+  }
+
+  .toolbar-actions {
+    flex-wrap: wrap;
+  }
 }
 
-/* Utility */
-.fee-empty { padding: 1rem; text-align:center; color:#718096 }
+@media (max-width: 640px) {
+  .fees-page {
+    padding: 12px;
+  }
 
-/* compact form inputs */
-.form-input { padding: 0.5rem; min-height: 36px }
-.form-select { padding: 0.5rem; min-height: 36px }
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
 
-/* Compact Material overrides for this feature */
-.compact-number {
-  width: 100px;
-}
-
-.compact-number .mat-form-field-wrapper,
-.compact-number .mat-form-field-infix {
-  padding: 0 6px;
-  height: 34px;
-}
-
-.compact-number .mat-input-element {
-  padding: 2px 0;
-  height: 28px;
-  line-height: 28px;
+  .fees-table {
+    min-width: 520px;
+  }
 }
