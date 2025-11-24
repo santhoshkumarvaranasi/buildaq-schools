@@ -2,6 +2,10 @@
   padding: 0;
 }
 
+.table-wrap {
+  overflow-x: auto;
+}
+
 .action-row {
   display: flex;
   gap: 8px;
@@ -13,4 +17,48 @@
 
 .students-page .status-chip {
   text-transform: capitalize;
+}
+
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+
+@media (max-width: 768px) {
+  .students-page .summary-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .students-page .table-wrap {
+    margin: 0 -12px;
+    padding: 0 12px;
+  }
+  .students-page table {
+    min-width: 640px;
+  }
+  .students-page .toolbar-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .desktop-only { display: none; }
+  .mobile-only { display: grid; gap: 12px; }
+  .mobile-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    display: grid;
+    gap: 6px;
+  }
+  .mobile-card .card-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .mobile-card .cell-meta {
+    color: #6b7280;
+    font-size: 12px;
+  }
+  .mobile-card .action-row {
+    flex-wrap: wrap;
+  }
 }

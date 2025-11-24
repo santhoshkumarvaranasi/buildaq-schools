@@ -22,3 +22,32 @@
 @media (max-width:767px) {
   .attendance-table { font-size:0.95rem }
 }
+
+/* Responsive helpers for new table/card layouts */
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+
+.mobile-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  display: grid;
+  gap: 6px;
+}
+.mobile-card .card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mobile-card .cell-meta {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: grid; gap: 12px; }
+}

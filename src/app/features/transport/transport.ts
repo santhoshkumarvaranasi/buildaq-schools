@@ -46,7 +46,7 @@ import { MockDataService, TransportRoute } from '../../core/services/mock-data.s
         </div>
       </mat-card>
 
-      <mat-card class="table-card">
+      <mat-card class="table-card desktop-only">
         <div class="table-title">Routes</div>
         <div class="table-wrap">
           <table mat-table [dataSource]="filtered" class="mat-elevation-z2 mat-table">
@@ -96,6 +96,26 @@ import { MockDataService, TransportRoute } from '../../core/services/mock-data.s
               <td [attr.colspan]="displayedColumns.length">No routes match your filters.</td>
             </tr>
           </table>
+        </div>
+      </mat-card>
+
+      <mat-card class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let row of filtered">
+          <div class="card-row">
+            <div>
+              <div class="cell-strong">{{ row.routeName }}</div>
+              <div class="cell-sub">Driver: {{ row.driver }}</div>
+            </div>
+            <mat-chip [color]="statusColor(row.status)" selected>{{ row.status }}</mat-chip>
+          </div>
+          <div class="cell-sub">Depart {{ row.departure }} · Return {{ row.returnTime }}</div>
+          <div class="cell-sub">Capacity: {{ row.assigned }}/{{ row.capacity }}</div>
+          <div class="cell-sub">Notes: {{ row.notes || '—' }}</div>
+          <div class="action-row">
+            <button mat-stroked-button color="primary" (click)="setStatus(row,'on-time')">On time</button>
+            <button mat-stroked-button color="accent" (click)="setStatus(row,'delayed')">Delay</button>
+            <button mat-stroked-button color="warn" (click)="setStatus(row,'maintenance')">Maintenance</button>
+          </div>
         </div>
       </mat-card>
     </div>

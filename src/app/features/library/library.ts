@@ -45,7 +45,7 @@ import { MockDataService, LibraryItem } from '../../core/services/mock-data.serv
         </div>
       </mat-card>
 
-      <mat-card class="table-card">
+      <mat-card class="table-card desktop-only">
         <div class="table-title">Catalog</div>
         <div class="table-wrap">
           <table mat-table [dataSource]="filtered" class="mat-elevation-z2 mat-table">
@@ -90,6 +90,24 @@ import { MockDataService, LibraryItem } from '../../core/services/mock-data.serv
               <td [attr.colspan]="displayedColumns.length">No books match your filters.</td>
             </tr>
           </table>
+        </div>
+      </mat-card>
+
+      <mat-card class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let row of filtered">
+          <div class="card-row">
+            <div>
+              <div class="cell-strong">{{ row.title }}</div>
+              <div class="cell-sub">{{ row.author }} · {{ row.category }}</div>
+            </div>
+            <mat-chip [color]="row.status === 'available' ? 'primary' : 'warn'" selected>{{ row.status }}</mat-chip>
+          </div>
+          <div class="cell-sub" *ngIf="row.status === 'checked-out'">Borrower: {{ row.borrower }} · Due {{ row.dueDate || '--' }}</div>
+          <div class="cell-sub" *ngIf="row.status === 'available'">Available for checkout</div>
+          <div class="action-row">
+            <button mat-stroked-button color="primary" *ngIf="row.status === 'available'" (click)="quickCheckout(row)">Checkout</button>
+            <button mat-stroked-button color="accent" *ngIf="row.status === 'checked-out'" (click)="markReturned(row)">Return</button>
+          </div>
         </div>
       </mat-card>
     </div>

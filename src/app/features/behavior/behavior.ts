@@ -84,7 +84,7 @@ interface BehaviorMetrics {
 
       <mat-card class="table-card">
         <div class="table-title">Behavior incidents</div>
-        <div class="table-wrap">
+        <div class="table-wrap desktop-only">
           <table mat-table [dataSource]="filtered" class="mat-elevation-z2 mat-table">
             <ng-container matColumnDef="student">
               <th mat-header-cell *matHeaderCellDef>Student</th>
@@ -143,6 +143,25 @@ interface BehaviorMetrics {
               <td [attr.colspan]="displayedColumns.length">No incidents match your filters.</td>
             </tr>
           </table>
+        </div>
+      </mat-card>
+
+      <mat-card class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let row of filtered">
+          <div class="card-row">
+            <div>
+              <div class="cell-strong">{{ row.studentName }}</div>
+              <div class="cell-sub">{{ row.class }} · {{ row.date }}</div>
+            </div>
+            <mat-chip [color]="severityColor(row.severity)" selected class="chip-tight">{{ row.severity }}</mat-chip>
+          </div>
+          <div class="cell-sub">Type: {{ row.type }} <span *ngIf="row.isRepeat" class="pill-warn">Repeat</span></div>
+          <div class="cell-sub">Action: {{ row.actionTaken }}</div>
+          <div class="cell-sub">Staff: {{ row.staff }}</div>
+          <div class="cell-sub">Follow-up: {{ row.followUpDate || '—' }} <span *ngIf="row.parentNotified">· Parent notified</span></div>
+          <div class="action-row">
+            <button mat-stroked-button color="primary" (click)="openDialog(row)">Add follow-up</button>
+          </div>
         </div>
       </mat-card>
     </div>

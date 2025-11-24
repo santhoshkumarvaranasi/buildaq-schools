@@ -60,7 +60,7 @@ import { MatDialog } from '@angular/material/dialog';
         </div>
       </mat-card>
 
-      <mat-card class="table-card">
+      <mat-card class="table-card desktop-only">
         <div class="table-title">Recent announcements</div>
         <div class="table-wrap">
           <table mat-table [dataSource]="filtered" class="mat-elevation-z2 mat-table">
@@ -96,6 +96,18 @@ import { MatDialog } from '@angular/material/dialog';
               <td [attr.colspan]="displayedColumns.length">No announcements match your filters.</td>
             </tr>
           </table>
+        </div>
+      </mat-card>
+
+      <mat-card class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let row of filtered">
+          <div class="card-row">
+            <div class="cell-strong">{{ row.title }}</div>
+            <mat-chip [color]="priorityColor(row.priority)" selected>{{ row.priority }}</mat-chip>
+          </div>
+          <div class="cell-sub">{{ row.audience }} · {{ row.date }}</div>
+          <div class="cell-sub">{{ row.body }}</div>
+          <div class="cell-sub">Author: {{ row.author }}</div>
         </div>
       </mat-card>
     </div>

@@ -65,7 +65,7 @@
     <mat-card-title>Teacher roster</mat-card-title>
     <mat-card-subtitle>All teaching staff with contact.</mat-card-subtitle>
 
-    <div class="table-wrap">
+    <div class="table-wrap desktop-only">
       <table mat-table [dataSource]="dataSource" matSort class="fees-table">
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
@@ -116,6 +116,21 @@
           </td>
         </tr>
       </table>
+    </div>
+
+    <div class="mobile-only mobile-card-list">
+      <div class="mobile-card" *ngFor="let row of dataSource.data">
+        <div class="card-row">
+          <div class="cell-title">{{ row.name }}</div>
+          <mat-chip color="primary" selected>{{ row.role || 'Teacher' }}</mat-chip>
+        </div>
+        <div class="cell-meta">Email: {{ row.email || '--' }}</div>
+        <div class="cell-meta">Phone: {{ row.phone || '--' }}</div>
+        <div class="action-row">
+          <button mat-stroked-button color="accent" class="ghost-button" (click)="editTeacher(row)">Edit</button>
+          <button mat-stroked-button color="warn" class="ghost-button" (click)="deleteTeacher(row)">Delete</button>
+        </div>
+      </div>
     </div>
 
     <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>

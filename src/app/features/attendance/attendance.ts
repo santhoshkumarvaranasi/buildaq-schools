@@ -119,7 +119,7 @@ type AttendanceRow = {
         </div>
       </mat-card>
 
-      <mat-card class="table-card mat-elevation-z2">
+      <mat-card class="table-card mat-elevation-z2 desktop-only">
         <mat-card-title>Attendance log</mat-card-title>
         <mat-card-subtitle>Filter by student, date, or status.</mat-card-subtitle>
 
@@ -171,6 +171,24 @@ type AttendanceRow = {
           </table>
         </div>
         <mat-paginator [pageSize]="8" [pageSizeOptions]="[8, 15, 25]" showFirstLastButtons></mat-paginator>
+      </mat-card>
+
+      <mat-card class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let row of dataSource.data">
+          <div class="card-row">
+            <div class="cell-title">{{ row.studentName }}</div>
+            <mat-chip class="status-chip" [color]="row.status === 'present' ? 'primary' : 'warn'">
+              {{ row.status }}
+            </mat-chip>
+          </div>
+          <div class="cell-meta">ID #{{ row.studentId }} · {{ row.class || '--' }}</div>
+          <div class="cell-meta">Date: {{ row.date }}</div>
+          <div class="action-row">
+            <button mat-stroked-button color="accent" class="ghost-button" (click)="toggleStatus(row)">
+              Toggle
+            </button>
+          </div>
+        </div>
       </mat-card>
     </div>
   `

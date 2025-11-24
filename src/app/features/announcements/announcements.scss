@@ -75,6 +75,36 @@ table {
   color: #5f6472;
 }
 
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+
+.mobile-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  display: grid;
+  gap: 6px;
+}
+.mobile-card .card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: grid; gap: 12px; }
+  .announcements {
+    padding: 0.25rem;
+  }
+  .table-wrap {
+    margin: 0 -12px;
+    padding: 0 12px;
+  }
+}
 .dialog-content {
   min-width: 480px;
 }

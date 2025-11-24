@@ -123,7 +123,7 @@ type FeeRow = {
         </div>
       </mat-card>
 
-      <mat-card class="table-card mat-elevation-z2">
+      <mat-card class="table-card mat-elevation-z2 desktop-only">
         <mat-card-title>Student balances</mat-card-title>
         <mat-card-subtitle>Quickly check outstanding balances and record payments.</mat-card-subtitle>
 
@@ -192,6 +192,28 @@ type FeeRow = {
         </div>
 
         <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+      </mat-card>
+
+      <mat-card class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let row of dataSource.data">
+          <div class="card-row">
+            <div class="cell-title">{{ row.studentName }}</div>
+            <mat-chip [color]="row.status === 'due' ? 'warn' : 'primary'" selected>
+              {{ row.status === 'due' ? 'Due' : 'Clear' }}
+            </mat-chip>
+          </div>
+          <div class="cell-meta">Class {{ row.class || '--' }} · Last paid {{ row.lastPaid || '--' }}</div>
+          <div class="cell-strong">Balance: {{ row.balance | currency }}</div>
+          <div class="action-row">
+            <mat-form-field appearance="fill" class="compact-number">
+              <mat-label>Amount</mat-label>
+              <input matInput type="number" min="0" [(ngModel)]="paymentAmounts[row.studentId]" />
+            </mat-form-field>
+            <button mat-stroked-button color="primary" (click)="pay(row.studentId)" [disabled]="!paymentAmounts[row.studentId]">
+              Record
+            </button>
+          </div>
+        </div>
       </mat-card>
 
       <div class="router-outlet-wrap">
