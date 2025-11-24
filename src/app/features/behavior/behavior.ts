@@ -32,34 +32,37 @@ interface BehaviorMetrics {
         </div>
       </div>
 
-      <div class="chips">
+      <mat-card class="chips mat-elevation-z1">
         <mat-chip-set>
           <mat-chip color="accent" selected>
+            <mat-icon inline>schedule</mat-icon>
             Open follow-ups: {{ metrics.openFollowUps }}
           </mat-chip>
           <mat-chip color="primary" selected>
-            Incidents this month: {{ metrics.incidentsThisMonth }}
+            <mat-icon inline>event</mat-icon>
+            This month: {{ metrics.incidentsThisMonth }}
           </mat-chip>
           <mat-chip *ngFor="let cause of metrics.topCauses">
+            <mat-icon inline>trending_up</mat-icon>
             {{ cause.type }} ({{ cause.count }})
           </mat-chip>
         </mat-chip-set>
-      </div>
+      </mat-card>
 
       <mat-card class="filters">
         <div class="filter-grid">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Search</mat-label>
             <input matInput [(ngModel)]="search" (ngModelChange)="applyFilters()" placeholder="student, type, staff" />
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Class</mat-label>
             <mat-select [(ngModel)]="classFilter" (selectionChange)="applyFilters()">
               <mat-option value="all">All</mat-option>
               <mat-option *ngFor="let c of classes" [value]="c">{{ c }}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Severity</mat-label>
             <mat-select [(ngModel)]="severityFilter" (selectionChange)="applyFilters()">
               <mat-option value="all">All</mat-option>
@@ -68,11 +71,11 @@ interface BehaviorMetrics {
               <mat-option value="high">High</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Start date</mat-label>
             <input matInput type="date" [(ngModel)]="startDate" (change)="applyFilters()" />
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>End date</mat-label>
             <input matInput type="date" [(ngModel)]="endDate" (change)="applyFilters()" />
           </mat-form-field>
@@ -82,7 +85,7 @@ interface BehaviorMetrics {
       <mat-card class="table-card">
         <div class="table-title">Behavior incidents</div>
         <div class="table-wrap">
-          <table mat-table [dataSource]="filtered" class="mat-elevation-z1">
+          <table mat-table [dataSource]="filtered" class="mat-elevation-z2 mat-table">
             <ng-container matColumnDef="student">
               <th mat-header-cell *matHeaderCellDef>Student</th>
               <td mat-cell *matCellDef="let row">

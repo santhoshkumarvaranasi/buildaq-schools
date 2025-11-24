@@ -23,11 +23,11 @@ import { MockDataService, LibraryItem } from '../../core/services/mock-data.serv
 
       <mat-card class="filters">
         <div class="filter-grid">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Search</mat-label>
             <input matInput [(ngModel)]="search" (ngModelChange)="applyFilters()" placeholder="title, author, borrower" />
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Status</mat-label>
             <mat-select [(ngModel)]="status" (selectionChange)="applyFilters()">
               <mat-option value="all">All</mat-option>
@@ -35,7 +35,7 @@ import { MockDataService, LibraryItem } from '../../core/services/mock-data.serv
               <mat-option value="checked-out">Checked out</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Category</mat-label>
             <mat-select [(ngModel)]="category" (selectionChange)="applyFilters()">
               <mat-option value="all">All</mat-option>
@@ -48,7 +48,7 @@ import { MockDataService, LibraryItem } from '../../core/services/mock-data.serv
       <mat-card class="table-card">
         <div class="table-title">Catalog</div>
         <div class="table-wrap">
-          <table mat-table [dataSource]="filtered" class="mat-elevation-z1">
+          <table mat-table [dataSource]="filtered" class="mat-elevation-z2 mat-table">
             <ng-container matColumnDef="title">
               <th mat-header-cell *matHeaderCellDef>Title</th>
               <td mat-cell *matCellDef="let row">

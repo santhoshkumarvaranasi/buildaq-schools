@@ -28,11 +28,11 @@ import { MatDialog } from '@angular/material/dialog';
 
       <mat-card class="filters">
         <div class="filter-grid">
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Search</mat-label>
             <input matInput [(ngModel)]="search" (ngModelChange)="applyFilters()" placeholder="title or body" />
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Audience</mat-label>
             <mat-select [(ngModel)]="audience" (selectionChange)="applyFilters()">
               <mat-option value="all">All</mat-option>
@@ -40,7 +40,7 @@ import { MatDialog } from '@angular/material/dialog';
               <mat-option value="teachers">Teachers</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Priority</mat-label>
             <mat-select [(ngModel)]="priority" (selectionChange)="applyFilters()">
               <mat-option value="all">All</mat-option>
@@ -49,11 +49,11 @@ import { MatDialog } from '@angular/material/dialog';
               <mat-option value="high">High</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Start date</mat-label>
             <input matInput type="date" [(ngModel)]="startDate" (change)="applyFilters()" />
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>End date</mat-label>
             <input matInput type="date" [(ngModel)]="endDate" (change)="applyFilters()" />
           </mat-form-field>
@@ -63,7 +63,7 @@ import { MatDialog } from '@angular/material/dialog';
       <mat-card class="table-card">
         <div class="table-title">Recent announcements</div>
         <div class="table-wrap">
-          <table mat-table [dataSource]="filtered" class="mat-elevation-z1">
+          <table mat-table [dataSource]="filtered" class="mat-elevation-z2 mat-table">
             <ng-container matColumnDef="title">
               <th mat-header-cell *matHeaderCellDef>Title</th>
               <td mat-cell *matCellDef="let row">
