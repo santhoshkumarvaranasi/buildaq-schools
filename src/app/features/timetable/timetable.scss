@@ -1,0 +1,20 @@
+@use '../../schools/students/students';
+
+/* Timetable feature styles */
+.timetable-root { padding:1rem }
+
+.timetable-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.timetable-card { background:white; border-radius:12px; padding:0.75rem; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+
+.timetable-card h4 { margin:0 0 0.5rem 0; font-size:1rem }
+
+.timetable-row { display:flex; justify-content:space-between; gap:0.5rem; padding:0.35rem 0; border-bottom:1px dashed #f1f5f9 }
+
+@media (max-width:767px) {
+  .timetable-grid { grid-template-columns: 1fr; }
+}

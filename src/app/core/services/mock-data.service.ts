@@ -52,11 +52,24 @@ export class MockDataService {
     { id: 2, studentId: 2, date: '2025-11-20', status: 'absent' }
   ];
 
+  // Timetable entries
+  timetable = [
+    { id: 1, classId: '10A', subject: 'Mathematics', teacher: 'Alice Brown', day: 'Mon', time: '09:00' },
+    { id: 2, classId: '9B', subject: 'Science', teacher: 'Robert Green', day: 'Tue', time: '10:00' }
+  ];
+
+  // Exams and marks
+  exams = [
+    { id: 1, title: 'Midterm 2025', date: '2025-10-15', studentMarks: [{ studentId: 1, marks: 78 }, { studentId: 2, marks: 85 }] }
+  ];
+
   getStudents() { return this.students; }
   getStaff() { return this.staff; }
   getClasses() { return this.classes; }
   getFees() { return this.fees; }
   getAttendance() { return this.attendance; }
+  getTimetable() { return this.timetable; }
+  getExams() { return this.exams; }
 
   // Create a new student in-memory and return it
   createStudent(payload: Partial<MockStudent>): MockStudent {
@@ -106,5 +119,68 @@ export class MockDataService {
     if (idx === -1) return false;
     this.staff.splice(idx, 1);
     return true;
+  }
+
+  // Attendance helpers
+  addAttendance(studentId: number, date: string, status: string) {
+    const nextId = (this.attendance.reduce((m, a) => Math.max(m, a.id), 0) || 0) + 1;
+    const entry = { id: nextId, studentId, date, status } as any;
+    this.attendance.unshift(entry);
+    return entry;
+  }
+
+  updateAttendanceStatus(id: number, status: string) {
+    const idx = this.attendance.findIndex(a => a.id === id);
+    if (idx === -1) return null;
+    this.attendance[idx].status = status;
+    return this.attendance[idx];
+  }
+
+  // Fees helpers: apply a payment to a student's balance
+  payFee(studentId: number, amount: number, date: string) {
+    const idx = this.fees.findIndex(x => x.studentId === studentId);
+    if (idx === -1) {
+      const f = { studentId, balance: Math.max(0, 0 - amount), lastPaid: date } as any;
+      this.fees.unshift(f);
+      return f;
+    }
+    const f = this.fees[idx] as any;
+    f.balance = Math.max(0, (f.balance || 0) - amount);
+    f.lastPaid = date;
+    return f;
+  }
+
+  // Timetable helpers
+  addTimetableEntry(entry: any) {
+    const nextId = (this.timetable.reduce((m, t) => Math.max(m, t.id), 0) || 0) + 1;
+    const created = Object.assign({ id: nextId }, entry);
+    this.timetable.unshift(created);
+    return created;
+  }
+
+  deleteTimetableEntry(id: number) {
+    const idx = this.timetable.findIndex(t => t.id === id);
+    if (idx === -1) return false;
+    this.timetable.splice(idx, 1);
+    return true;
+  }
+
+  // Exams helpers
+  createExam(title: string, date: string, studentIds: number[]) {
+    const nextId = (this.exams.reduce((m, e) => Math.max(m, e.id), 0) || 0) + 1;
+    const studentMarks = studentIds.map(id => ({ studentId: id, marks: null }));
+    const created = { id: nextId, title, date, studentMarks } as any;
+    this.exams.unshift(created);
+    return created;
+  }
+
+  recordMarks(examId: number, marks: { studentId: number; marks: number }[]) {
+    const ex = this.exams.find(e => e.id === examId);
+    if (!ex) return null;
+    marks.forEach(m => {
+      const sm = ex.studentMarks.find((s: any) => s.studentId === m.studentId);
+      if (sm) sm.marks = m.marks; else ex.studentMarks.push({ studentId: m.studentId, marks: m.marks });
+    });
+    return ex;
   }
 }

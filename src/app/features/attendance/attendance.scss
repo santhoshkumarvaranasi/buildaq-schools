@@ -1,0 +1,26 @@
+@use '../../schools/students/students';
+
+/* Attendance feature styles */
+.attendance-root { padding: 1rem; }
+
+.attendance-header {
+  display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1rem;
+}
+
+.attendance-controls { display:flex; gap:0.5rem; align-items:center; }
+
+.attendance-table {
+  width:100%; border-collapse:collapse; background:white; border-radius:8px; overflow:hidden;
+}
+
+.attendance-table th, .attendance-table td { padding:0.75rem 1rem; border-bottom:1px solid #f1f5f9 }
+.attendance-table thead th { background:#f8fafc; font-weight:700; text-transform:uppercase }
+
+.attendance-card { background:white; border-radius:12px; padding:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.04); }
+
+.status-present { background:#e6ffed; color:#155724; padding:0.25rem 0.5rem; border-radius:12px; font-weight:600 }
+.status-absent { background:#ffecec; color:#7f1d1d; padding:0.25rem 0.5rem; border-radius:12px; font-weight:600 }
+
+@media (max-width:767px) {
+  .attendance-table { font-size:0.95rem }
+}

@@ -1,0 +1,19 @@
+<div class="students-container">
+  <div class="students-header"><h2>Student Fee History</h2></div>
+  <div class="students-table-container">
+    <div class="table-scroll-container">
+      <table class="students-table">
+        <thead><tr><th>Date</th><th>Receipt No</th><th>Payment Mode</th><th>Amount</th><th>View</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let r of data.history">
+            <td>{{r.date}}</td>
+            <td>{{r.receipt}}</td>
+            <td>{{r.mode}}</td>
+            <td>{{r.amount}}</td>
+            <td><button class="btn btn-primary">PDF</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

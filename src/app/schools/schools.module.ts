@@ -10,6 +10,11 @@ import { TeachersComponent } from './teachers/teachers';
 import { ClassesComponent } from './classes/classes';
 import { AttendanceComponent } from '../features/attendance/attendance';
 import { FeesComponent } from '../features/fees/fees';
+import { FeeCategoriesComponent } from '../features/fees/fee-categories/fee-categories';
+import { FeeStructureComponent } from '../features/fees/fee-structure/fee-structure';
+import { CollectFeeComponent } from '../features/fees/collect-fee/collect-fee';
+import { FeeHistoryComponent } from '../features/fees/fee-history/fee-history';
+import { MyFeesComponent } from '../features/fees/my-fees/my-fees';
 import { TimetableComponent } from '../features/timetable/timetable';
 import { ExamsComponent } from '../features/exams/exams';
 
@@ -19,11 +24,18 @@ const routes: Routes = [
   { path: 'dashboard', component: SchoolsDashboardComponent },
   { path: 'students', component: StudentsComponent },
   { path: 'teachers', component: TeachersComponent },
-  { path: 'classes', component: ClassesComponent }
-  ,{ path: 'attendance', component: AttendanceComponent }
-  ,{ path: 'fees', component: FeesComponent }
-  ,{ path: 'timetable', component: TimetableComponent }
-  ,{ path: 'exams', component: ExamsComponent }
+  { path: 'classes', component: ClassesComponent },
+  { path: 'attendance', component: AttendanceComponent },
+  { path: 'fees', component: FeesComponent, children: [
+    { path: '', component: CollectFeeComponent },
+    { path: 'collect', component: CollectFeeComponent },
+    { path: 'categories', component: FeeCategoriesComponent },
+    { path: 'structure', component: FeeStructureComponent },
+    { path: 'history', component: FeeHistoryComponent },
+    { path: 'my-fees', component: MyFeesComponent }
+  ] },
+  { path: 'timetable', component: TimetableComponent },
+  { path: 'exams', component: ExamsComponent }
 ];
 
 @NgModule({
@@ -34,11 +46,16 @@ const routes: Routes = [
     SchoolsDashboardComponent,
     StudentsComponent,
     TeachersComponent,
-    ClassesComponent
-    ,AttendanceComponent
-    ,FeesComponent
-    ,TimetableComponent
-    ,ExamsComponent
+    ClassesComponent,
+    AttendanceComponent,
+    FeesComponent,
+    FeeCategoriesComponent,
+    FeeStructureComponent,
+    CollectFeeComponent,
+    FeeHistoryComponent,
+    MyFeesComponent,
+    TimetableComponent,
+    ExamsComponent
   ],
   providers: [
     provideHttpClient()

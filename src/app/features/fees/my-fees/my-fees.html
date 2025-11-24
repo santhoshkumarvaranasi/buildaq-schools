@@ -1,0 +1,26 @@
+<div class="students-container">
+  <div class="students-header"><h2>My Fees</h2></div>
+  <div class="students-table-container">
+    <div style="padding:1rem">
+      <p><strong>Outstanding:</strong> ₹ {{data.outstanding?.balance || 0}}</p>
+      <p><strong>Last Paid:</strong> {{data.outstanding?.lastPaid || 'N/A'}}</p>
+      <button class="btn btn-primary">Pay Online</button>
+    </div>
+  </div>
+  <div style="margin-top:1rem">
+    <h3>Previous Receipts</h3>
+    <div class="students-table-container">
+      <table class="students-table">
+        <thead><tr><th>Date</th><th>Receipt</th><th>Amount</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let r of data.history">
+            <td>{{r.date}}</td>
+            <td>{{r.receipt}}</td>
+            <td>{{r.amount}}</td>
+            <td><button class="btn btn-primary">Download</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<div class="students-container">
+  <div class="students-header">
+    <h2>Fee Categories</h2>
+    <div>
+      <button class="btn btn-primary" (click)="addCategory()">+ Add Category</button>
+    </div>
+  </div>
+
+  <div class="students-table-container">
+    <div class="view-controls">
+      <div class="students-count"><p>{{categories.length}} categories</p></div>
+    </div>
+    <div class="table-scroll-container">
+      <table class="students-table">
+        <thead>
+          <tr><th>Category Name</th><th>Description</th><th>Type</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of categories">
+            <td>{{c.name}}</td>
+            <td>{{c.description}}</td>
+            <td>{{c.type}}</td>
+            <td>{{c.status}}</td>
+            <td class="actions-cell"><button class="btn btn-secondary" (click)="deleteCategory(c.id)">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+@use '../../schools/students/students';
+
+/* Fees feature-wide simple overrides */
+
+// Feature root uses students theme for consistent look
+.fee-root {
+  @extend .students-container;
+}
+
+.exam-form, .fee-form, .filters-section {
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 1rem;
+}
+
+.fee-summary {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+/* Table and card styles */
+.fees-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.fees-table th, .fees-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  text-align: left;
+}
+
+.fees-table thead th {
+  background: #f8fafc;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: #2d3748;
+}
+
+.fee-card {
+  background: white;
+  border: 1px solid #edf2f7;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.fee-actions { display:flex; gap:0.5rem; align-items:center }
+
+.fee-row { display:flex; gap:0.5rem; align-items:center; padding:0.5rem 0; }
+.fee-row-label { flex:1; }
+.fee-row-fine { color:#718096; min-width:60px; text-align:right }
+
+.btn { @extend .btn; }
+.btn-primary { @extend .btn-primary; }
+.btn-secondary { @extend .btn-secondary; }
+
+/* Responsive */
+@media (max-width: 767px) {
+  .fees-table { font-size: 0.9rem; }
+  .fee-summary { flex-direction: column; align-items: flex-start; }
+}
+
+/* Utility */
+.fee-empty { padding: 2rem; text-align:center; color:#718096 }

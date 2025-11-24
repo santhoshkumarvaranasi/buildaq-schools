@@ -1,0 +1,27 @@
+<div class="students-container">
+  <div class="students-header">
+    <h2>Fee Structure for Class: <select [(ngModel)]="classId"><option>1A</option><option>2A</option></select></h2>
+    <div>
+      <button class="btn btn-primary" (click)="addHead()">+ Add Head</button>
+    </div>
+  </div>
+
+  <div class="students-table-container">
+    <div class="table-scroll-container">
+      <table class="students-table">
+        <thead>
+          <tr><th>Fee Head</th><th>Amount</th><th>Frequency</th><th>Optional?</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of structure; let i = index">
+            <td>{{row.head}}</td>
+            <td><input class="form-input" type="number" [(ngModel)]="row.amount" /></td>
+            <td>{{row.frequency}}</td>
+            <td>{{row.optional ? 'Yes' : 'No'}}</td>
+            <td><button class="btn btn-secondary" (click)="removeHead(i)">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
