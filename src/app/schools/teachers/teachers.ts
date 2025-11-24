@@ -99,4 +99,25 @@ export class TeachersComponent implements AfterViewInit {
 
   editTeacher(row: TeacherRow) { alert(`Edit ${row.name}`); }
   deleteTeacher(row: TeacherRow) { if (confirm('Delete this teacher?')) { /* mock remove */ alert('Deleted (mock)'); } }
+
+  exportCsv() {
+    const headers = ['Id','Name','Role','Classes','Email','Phone','Status'];
+    const lines = this.dataSource.data.map(r => [
+      r.id,
+      `"${(r.name || '').replace(/"/g, '""')}"`,
+      r.role || '',
+      r.classes || '',
+      r.email || '',
+      r.phone || '',
+      r.status || ''
+    ].join(','));
+    const csv = [headers.join(','), ...lines].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'teachers.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 }
