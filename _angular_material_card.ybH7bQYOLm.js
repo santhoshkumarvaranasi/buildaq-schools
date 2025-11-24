@@ -19,50 +19,92 @@ var o = ["*"], m = [[["mat-card-title"], ["mat-card-subtitle"], ["", "mat-card-t
 `], encapsulation: 2, changeDetection: 0 });
     }
     return t;
-})(), D = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["mat-card-title"], ["", "mat-card-title", ""], ["", "matCardTitle", ""]], hostAttrs: [1, "mat-mdc-card-title"] });
-} return t; })(), w = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵcmp = a.ɵɵdefineComponent({ type: t, selectors: [["mat-card-title-group"]], hostAttrs: [1, "mat-mdc-card-title-group"], ngContentSelectors: s, decls: 4, vars: 0, template: function (e, d) { e & 1 && (a.ɵɵprojectionDef(m), a.ɵɵdomElementStart(0, "div"), a.ɵɵprojection(1), a.ɵɵdomElementEnd(), a.ɵɵprojection(2, 1), a.ɵɵprojection(3, 2)); }, encapsulation: 2, changeDetection: 0 });
-} return t; })(), A = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["mat-card-content"]], hostAttrs: [1, "mat-mdc-card-content"] });
-} return t; })(), I = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["mat-card-subtitle"], ["", "mat-card-subtitle", ""], ["", "matCardSubtitle", ""]], hostAttrs: [1, "mat-mdc-card-subtitle"] });
-} return t; })(), _ = (() => { class t {
-    align = "start";
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["mat-card-actions"]], hostAttrs: [1, "mat-mdc-card-actions", "mdc-card__actions"], hostVars: 2, hostBindings: function (e, d) { e & 2 && a.ɵɵclassProp("mat-mdc-card-actions-align-end", d.align === "end"); }, inputs: { align: "align" }, exportAs: ["matCardActions"] });
-} return t; })(), F = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵcmp = a.ɵɵdefineComponent({ type: t, selectors: [["mat-card-header"]], hostAttrs: [1, "mat-mdc-card-header"], ngContentSelectors: g, decls: 4, vars: 0, consts: [[1, "mat-mdc-card-header-text"]], template: function (e, d) { e & 1 && (a.ɵɵprojectionDef(l), a.ɵɵprojection(0), a.ɵɵdomElementStart(1, "div", 0), a.ɵɵprojection(2, 1), a.ɵɵdomElementEnd(), a.ɵɵprojection(3, 2)); }, encapsulation: 2, changeDetection: 0 });
-} return t; })(), j = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["mat-card-footer"]], hostAttrs: [1, "mat-mdc-card-footer"] });
-} return t; })(), S = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-image", ""], ["", "matCardImage", ""]], hostAttrs: [1, "mat-mdc-card-image", "mdc-card__media"] });
-} return t; })(), k = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-sm-image", ""], ["", "matCardImageSmall", ""]], hostAttrs: [1, "mat-mdc-card-sm-image", "mdc-card__media"] });
-} return t; })(), T = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-md-image", ""], ["", "matCardImageMedium", ""]], hostAttrs: [1, "mat-mdc-card-md-image", "mdc-card__media"] });
-} return t; })(), z = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-lg-image", ""], ["", "matCardImageLarge", ""]], hostAttrs: [1, "mat-mdc-card-lg-image", "mdc-card__media"] });
-} return t; })(), E = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-xl-image", ""], ["", "matCardImageXLarge", ""]], hostAttrs: [1, "mat-mdc-card-xl-image", "mdc-card__media"] });
-} return t; })(), L = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-avatar", ""], ["", "matCardAvatar", ""]], hostAttrs: [1, "mat-mdc-card-avatar"] });
-} return t; })();
-var B = (() => { class t {
-    static ɵfac = function (e) { return new (e || t); };
-    static ɵmod = a.ɵɵdefineNgModule({ type: t });
-    static ɵinj = a.ɵɵdefineInjector({ imports: [n] });
-} return t; })();
+})(), D = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["mat-card-title"], ["", "mat-card-title", ""], ["", "matCardTitle", ""]], hostAttrs: [1, "mat-mdc-card-title"] });
+    }
+    return t;
+})(), w = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵcmp = a.ɵɵdefineComponent({ type: t, selectors: [["mat-card-title-group"]], hostAttrs: [1, "mat-mdc-card-title-group"], ngContentSelectors: s, decls: 4, vars: 0, template: function (e, d) { e & 1 && (a.ɵɵprojectionDef(m), a.ɵɵdomElementStart(0, "div"), a.ɵɵprojection(1), a.ɵɵdomElementEnd(), a.ɵɵprojection(2, 1), a.ɵɵprojection(3, 2)); }, encapsulation: 2, changeDetection: 0 });
+    }
+    return t;
+})(), A = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["mat-card-content"]], hostAttrs: [1, "mat-mdc-card-content"] });
+    }
+    return t;
+})(), I = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["mat-card-subtitle"], ["", "mat-card-subtitle", ""], ["", "matCardSubtitle", ""]], hostAttrs: [1, "mat-mdc-card-subtitle"] });
+    }
+    return t;
+})(), _ = (() => {
+    class t {
+        align = "start";
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["mat-card-actions"]], hostAttrs: [1, "mat-mdc-card-actions", "mdc-card__actions"], hostVars: 2, hostBindings: function (e, d) { e & 2 && a.ɵɵclassProp("mat-mdc-card-actions-align-end", d.align === "end"); }, inputs: { align: "align" }, exportAs: ["matCardActions"] });
+    }
+    return t;
+})(), F = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵcmp = a.ɵɵdefineComponent({ type: t, selectors: [["mat-card-header"]], hostAttrs: [1, "mat-mdc-card-header"], ngContentSelectors: g, decls: 4, vars: 0, consts: [[1, "mat-mdc-card-header-text"]], template: function (e, d) { e & 1 && (a.ɵɵprojectionDef(l), a.ɵɵprojection(0), a.ɵɵdomElementStart(1, "div", 0), a.ɵɵprojection(2, 1), a.ɵɵdomElementEnd(), a.ɵɵprojection(3, 2)); }, encapsulation: 2, changeDetection: 0 });
+    }
+    return t;
+})(), j = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["mat-card-footer"]], hostAttrs: [1, "mat-mdc-card-footer"] });
+    }
+    return t;
+})(), S = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-image", ""], ["", "matCardImage", ""]], hostAttrs: [1, "mat-mdc-card-image", "mdc-card__media"] });
+    }
+    return t;
+})(), k = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-sm-image", ""], ["", "matCardImageSmall", ""]], hostAttrs: [1, "mat-mdc-card-sm-image", "mdc-card__media"] });
+    }
+    return t;
+})(), T = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-md-image", ""], ["", "matCardImageMedium", ""]], hostAttrs: [1, "mat-mdc-card-md-image", "mdc-card__media"] });
+    }
+    return t;
+})(), z = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-lg-image", ""], ["", "matCardImageLarge", ""]], hostAttrs: [1, "mat-mdc-card-lg-image", "mdc-card__media"] });
+    }
+    return t;
+})(), E = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-xl-image", ""], ["", "matCardImageXLarge", ""]], hostAttrs: [1, "mat-mdc-card-xl-image", "mdc-card__media"] });
+    }
+    return t;
+})(), L = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵdir = a.ɵɵdefineDirective({ type: t, selectors: [["", "mat-card-avatar", ""], ["", "matCardAvatar", ""]], hostAttrs: [1, "mat-mdc-card-avatar"] });
+    }
+    return t;
+})();
+var B = (() => {
+    class t {
+        static ɵfac = function (e) { return new (e || t); };
+        static ɵmod = a.ɵɵdefineNgModule({ type: t });
+        static ɵinj = a.ɵɵdefineInjector({ imports: [n] });
+    }
+    return t;
+})();
 export { u as MAT_CARD_CONFIG, M as MatCard, _ as MatCardActions, L as MatCardAvatar, A as MatCardContent, j as MatCardFooter, F as MatCardHeader, S as MatCardImage, z as MatCardLgImage, T as MatCardMdImage, B as MatCardModule, k as MatCardSmImage, I as MatCardSubtitle, D as MatCardTitle, w as MatCardTitleGroup, E as MatCardXlImage };

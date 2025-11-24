@@ -11,9 +11,12 @@ import "rxjs";
 import "rxjs/operators";
 import "@angular/cdk/observers/private";
 import "@angular/cdk/layout";
-var b = (() => { class r {
-    static ɵfac = function (i) { return new (i || r); };
-    static ɵmod = o.ɵɵdefineNgModule({ type: r });
-    static ɵinj = o.ɵɵdefineInjector({ imports: [m, t, e] });
-} return r; })();
+var b = (() => {
+    class r {
+        static ɵfac = function (i) { return new (i || r); };
+        static ɵmod = o.ɵɵdefineNgModule({ type: r });
+        static ɵinj = o.ɵɵdefineInjector({ imports: [m, t, e] });
+    }
+    return r;
+})();
 export { b as a };

@@ -30,51 +30,74 @@ import "@angular/forms";
 import "@angular/cdk/private";
 import "@angular/cdk/observers";
 import "@angular/cdk/portal";
-function T(a, r) { if (a & 1 && (t.ɵɵelementStart(0, "mat-option", 17), t.ɵɵtext(1), t.ɵɵelementEnd()), a & 2) {
-    let e = r.$implicit;
-    t.ɵɵproperty("value", e), t.ɵɵadvance(), t.ɵɵtextInterpolate1(" ", e, " ");
-} }
-function D(a, r) { if (a & 1) {
-    let e = t.ɵɵgetCurrentView();
-    t.ɵɵelementStart(0, "mat-form-field", 14)(1, "mat-select", 16, 0), t.ɵɵlistener("selectionChange", function (i) { t.ɵɵrestoreView(e); let o = t.ɵɵnextContext(2); return t.ɵɵresetView(o._changePageSize(i.value)); }), t.ɵɵrepeaterCreate(3, T, 2, 2, "mat-option", 17, t.ɵɵrepeaterTrackByIdentity), t.ɵɵelementEnd(), t.ɵɵelementStart(5, "div", 18), t.ɵɵlistener("click", function () { t.ɵɵrestoreView(e); let i = t.ɵɵreference(2); return t.ɵɵresetView(i.open()); }), t.ɵɵelementEnd()();
-} if (a & 2) {
-    let e = t.ɵɵnextContext(2);
-    t.ɵɵproperty("appearance", e._formFieldAppearance)("color", e.color), t.ɵɵadvance(), t.ɵɵproperty("value", e.pageSize)("disabled", e.disabled), t.ɵɵariaProperty("aria-labelledby", e._pageSizeLabelId), t.ɵɵproperty("panelClass", e.selectConfig.panelClass || "")("disableOptionCentering", e.selectConfig.disableOptionCentering), t.ɵɵadvance(2), t.ɵɵrepeater(e._displayedPageSizeOptions);
-} }
-function M(a, r) { if (a & 1 && (t.ɵɵelementStart(0, "div", 15), t.ɵɵtext(1), t.ɵɵelementEnd()), a & 2) {
-    let e = t.ɵɵnextContext(2);
-    t.ɵɵadvance(), t.ɵɵtextInterpolate(e.pageSize);
-} }
-function O(a, r) { if (a & 1 && (t.ɵɵelementStart(0, "div", 3)(1, "div", 13), t.ɵɵtext(2), t.ɵɵelementEnd(), t.ɵɵconditionalCreate(3, D, 6, 7, "mat-form-field", 14), t.ɵɵconditionalCreate(4, M, 2, 1, "div", 15), t.ɵɵelementEnd()), a & 2) {
-    let e = t.ɵɵnextContext();
-    t.ɵɵadvance(), t.ɵɵattribute("id", e._pageSizeLabelId), t.ɵɵadvance(), t.ɵɵtextInterpolate1(" ", e._intl.itemsPerPageLabel, " "), t.ɵɵadvance(), t.ɵɵconditional(e._displayedPageSizeOptions.length > 1 ? 3 : -1), t.ɵɵadvance(), t.ɵɵconditional(e._displayedPageSizeOptions.length <= 1 ? 4 : -1);
-} }
-function w(a, r) { if (a & 1) {
-    let e = t.ɵɵgetCurrentView();
-    t.ɵɵelementStart(0, "button", 19), t.ɵɵlistener("click", function () { t.ɵɵrestoreView(e); let i = t.ɵɵnextContext(); return t.ɵɵresetView(i._buttonClicked(0, i._previousButtonsDisabled())); }), t.ɵɵnamespaceSVG(), t.ɵɵelementStart(1, "svg", 8), t.ɵɵelement(2, "path", 20), t.ɵɵelementEnd()();
-} if (a & 2) {
-    let e = t.ɵɵnextContext();
-    t.ɵɵproperty("matTooltip", e._intl.firstPageLabel)("matTooltipDisabled", e._previousButtonsDisabled())("disabled", e._previousButtonsDisabled())("tabindex", e._previousButtonsDisabled() ? -1 : null), t.ɵɵattribute("aria-label", e._intl.firstPageLabel);
-} }
-function k(a, r) { if (a & 1) {
-    let e = t.ɵɵgetCurrentView();
-    t.ɵɵelementStart(0, "button", 21), t.ɵɵlistener("click", function () { t.ɵɵrestoreView(e); let i = t.ɵɵnextContext(); return t.ɵɵresetView(i._buttonClicked(i.getNumberOfPages() - 1, i._nextButtonsDisabled())); }), t.ɵɵnamespaceSVG(), t.ɵɵelementStart(1, "svg", 8), t.ɵɵelement(2, "path", 22), t.ɵɵelementEnd()();
-} if (a & 2) {
-    let e = t.ɵɵnextContext();
-    t.ɵɵproperty("matTooltip", e._intl.lastPageLabel)("matTooltipDisabled", e._nextButtonsDisabled())("disabled", e._nextButtonsDisabled())("tabindex", e._nextButtonsDisabled() ? -1 : null), t.ɵɵattribute("aria-label", e._intl.lastPageLabel);
-} }
-var L = (() => { class a {
-    changes = new I;
-    itemsPerPageLabel = "Items per page:";
-    nextPageLabel = "Next page";
-    previousPageLabel = "Previous page";
-    firstPageLabel = "First page";
-    lastPageLabel = "Last page";
-    getRangeLabel = (e, n, i) => { if (i == 0 || n == 0)
-        return `0 of ${i}`; i = Math.max(i, 0); let o = e * n, s = o < i ? Math.min(o + n, i) : o + n; return `${o + 1} \u2013 ${s} of ${i}`; };
-    static ɵfac = function (n) { return new (n || a); };
-    static ɵprov = t.ɵɵdefineInjectable({ token: a, factory: a.ɵfac, providedIn: "root" });
-} return a; })(), B = 50, x = class {
+function T(a, r) {
+    if (a & 1 && (t.ɵɵelementStart(0, "mat-option", 17), t.ɵɵtext(1), t.ɵɵelementEnd()), a & 2) {
+        let e = r.$implicit;
+        t.ɵɵproperty("value", e), t.ɵɵadvance(), t.ɵɵtextInterpolate1(" ", e, " ");
+    }
+}
+function D(a, r) {
+    if (a & 1) {
+        let e = t.ɵɵgetCurrentView();
+        t.ɵɵelementStart(0, "mat-form-field", 14)(1, "mat-select", 16, 0), t.ɵɵlistener("selectionChange", function (i) { t.ɵɵrestoreView(e); let o = t.ɵɵnextContext(2); return t.ɵɵresetView(o._changePageSize(i.value)); }), t.ɵɵrepeaterCreate(3, T, 2, 2, "mat-option", 17, t.ɵɵrepeaterTrackByIdentity), t.ɵɵelementEnd(), t.ɵɵelementStart(5, "div", 18), t.ɵɵlistener("click", function () { t.ɵɵrestoreView(e); let i = t.ɵɵreference(2); return t.ɵɵresetView(i.open()); }), t.ɵɵelementEnd()();
+    }
+    if (a & 2) {
+        let e = t.ɵɵnextContext(2);
+        t.ɵɵproperty("appearance", e._formFieldAppearance)("color", e.color), t.ɵɵadvance(), t.ɵɵproperty("value", e.pageSize)("disabled", e.disabled), t.ɵɵariaProperty("aria-labelledby", e._pageSizeLabelId), t.ɵɵproperty("panelClass", e.selectConfig.panelClass || "")("disableOptionCentering", e.selectConfig.disableOptionCentering), t.ɵɵadvance(2), t.ɵɵrepeater(e._displayedPageSizeOptions);
+    }
+}
+function M(a, r) {
+    if (a & 1 && (t.ɵɵelementStart(0, "div", 15), t.ɵɵtext(1), t.ɵɵelementEnd()), a & 2) {
+        let e = t.ɵɵnextContext(2);
+        t.ɵɵadvance(), t.ɵɵtextInterpolate(e.pageSize);
+    }
+}
+function O(a, r) {
+    if (a & 1 && (t.ɵɵelementStart(0, "div", 3)(1, "div", 13), t.ɵɵtext(2), t.ɵɵelementEnd(), t.ɵɵconditionalCreate(3, D, 6, 7, "mat-form-field", 14), t.ɵɵconditionalCreate(4, M, 2, 1, "div", 15), t.ɵɵelementEnd()), a & 2) {
+        let e = t.ɵɵnextContext();
+        t.ɵɵadvance(), t.ɵɵattribute("id", e._pageSizeLabelId), t.ɵɵadvance(), t.ɵɵtextInterpolate1(" ", e._intl.itemsPerPageLabel, " "), t.ɵɵadvance(), t.ɵɵconditional(e._displayedPageSizeOptions.length > 1 ? 3 : -1), t.ɵɵadvance(), t.ɵɵconditional(e._displayedPageSizeOptions.length <= 1 ? 4 : -1);
+    }
+}
+function w(a, r) {
+    if (a & 1) {
+        let e = t.ɵɵgetCurrentView();
+        t.ɵɵelementStart(0, "button", 19), t.ɵɵlistener("click", function () { t.ɵɵrestoreView(e); let i = t.ɵɵnextContext(); return t.ɵɵresetView(i._buttonClicked(0, i._previousButtonsDisabled())); }), t.ɵɵnamespaceSVG(), t.ɵɵelementStart(1, "svg", 8), t.ɵɵelement(2, "path", 20), t.ɵɵelementEnd()();
+    }
+    if (a & 2) {
+        let e = t.ɵɵnextContext();
+        t.ɵɵproperty("matTooltip", e._intl.firstPageLabel)("matTooltipDisabled", e._previousButtonsDisabled())("disabled", e._previousButtonsDisabled())("tabindex", e._previousButtonsDisabled() ? -1 : null), t.ɵɵattribute("aria-label", e._intl.firstPageLabel);
+    }
+}
+function k(a, r) {
+    if (a & 1) {
+        let e = t.ɵɵgetCurrentView();
+        t.ɵɵelementStart(0, "button", 21), t.ɵɵlistener("click", function () { t.ɵɵrestoreView(e); let i = t.ɵɵnextContext(); return t.ɵɵresetView(i._buttonClicked(i.getNumberOfPages() - 1, i._nextButtonsDisabled())); }), t.ɵɵnamespaceSVG(), t.ɵɵelementStart(1, "svg", 8), t.ɵɵelement(2, "path", 22), t.ɵɵelementEnd()();
+    }
+    if (a & 2) {
+        let e = t.ɵɵnextContext();
+        t.ɵɵproperty("matTooltip", e._intl.lastPageLabel)("matTooltipDisabled", e._nextButtonsDisabled())("disabled", e._nextButtonsDisabled())("tabindex", e._nextButtonsDisabled() ? -1 : null), t.ɵɵattribute("aria-label", e._intl.lastPageLabel);
+    }
+}
+var L = (() => {
+    class a {
+        changes = new I;
+        itemsPerPageLabel = "Items per page:";
+        nextPageLabel = "Next page";
+        previousPageLabel = "Previous page";
+        firstPageLabel = "First page";
+        lastPageLabel = "Last page";
+        getRangeLabel = (e, n, i) => {
+            if (i == 0 || n == 0)
+                return `0 of ${i}`;
+            i = Math.max(i, 0);
+            let o = e * n, s = o < i ? Math.min(o + n, i) : o + n;
+            return `${o + 1} \u2013 ${s} of ${i}`;
+        };
+        static ɵfac = function (n) { return new (n || a); };
+        static ɵprov = t.ɵɵdefineInjectable({ token: a, factory: a.ɵfac, providedIn: "root" });
+    }
+    return a;
+})(), B = 50, x = class {
     pageIndex;
     previousPageIndex;
     pageSize;
@@ -108,10 +131,14 @@ var L = (() => { class a {
         page = new P;
         _displayedPageSizeOptions;
         initialized = this._initializedStream;
-        constructor() { let e = this._intl, n = l(F, { optional: !0 }); if (this._intlChanges = e.changes.subscribe(() => this._changeDetectorRef.markForCheck()), n) {
-            let { pageSize: i, pageSizeOptions: o, hidePageSize: s, showFirstLastButtons: g } = n;
-            i != null && (this._pageSize = i), o != null && (this._pageSizeOptions = o), s != null && (this.hidePageSize = s), g != null && (this.showFirstLastButtons = g);
-        } this._formFieldAppearance = n?.formFieldAppearance || "outline"; }
+        constructor() {
+            let e = this._intl, n = l(F, { optional: !0 });
+            if (this._intlChanges = e.changes.subscribe(() => this._changeDetectorRef.markForCheck()), n) {
+                let { pageSize: i, pageSizeOptions: o, hidePageSize: s, showFirstLastButtons: g } = n;
+                i != null && (this._pageSize = i), o != null && (this._pageSizeOptions = o), s != null && (this.hidePageSize = s), g != null && (this.showFirstLastButtons = g);
+            }
+            this._formFieldAppearance = n?.formFieldAppearance || "outline";
+        }
         ngOnInit() { this._isInitialized = !0, this._updateDisplayedPageSizeOptions(), this._initializedStream.next(); }
         ngOnDestroy() { this._initializedStream.complete(), this._intlChanges.unsubscribe(); }
         nextPage() { this.hasNextPage() && this._navigate(this.pageIndex + 1); }
@@ -133,9 +160,12 @@ var L = (() => { class a {
 `], encapsulation: 2, changeDetection: 0 });
     }
     return a;
-})(), ht = (() => { class a {
-    static ɵfac = function (n) { return new (n || a); };
-    static ɵmod = t.ɵɵdefineNgModule({ type: a });
-    static ɵinj = t.ɵɵdefineInjector({ imports: [c, b, v, E] });
-} return a; })();
+})(), ht = (() => {
+    class a {
+        static ɵfac = function (n) { return new (n || a); };
+        static ɵmod = t.ɵɵdefineNgModule({ type: a });
+        static ɵinj = t.ɵɵdefineInjector({ imports: [c, b, v, E] });
+    }
+    return a;
+})();
 export { F as MAT_PAGINATOR_DEFAULT_OPTIONS, E as MatPaginator, L as MatPaginatorIntl, ht as MatPaginatorModule, x as PageEvent };

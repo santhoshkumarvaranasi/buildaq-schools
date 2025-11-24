@@ -12,38 +12,48 @@ import "@angular/cdk/layout";
 var A = ["mat-sort-header", ""], H = ["*", [["", "matSortHeaderIcon", ""]]], I = ["*", "[matSortHeaderIcon]"];
 function O(r, d) { r & 1 && (t.ɵɵnamespaceSVG(), t.ɵɵdomElementStart(0, "svg", 3), t.ɵɵdomElement(1, "path", 4), t.ɵɵdomElementEnd()); }
 function k(r, d) { r & 1 && (t.ɵɵdomElementStart(0, "div", 2), t.ɵɵprojection(1, 1, null, O, 2, 0), t.ɵɵdomElementEnd()); }
-var m = new _("MAT_SORT_DEFAULT_OPTIONS"), x = (() => { class r {
-    _defaultOptions;
-    _initializedStream = new C(1);
-    sortables = new Map;
-    _stateChanges = new h;
-    active;
-    start = "asc";
-    get direction() { return this._direction; }
-    set direction(e) { this._direction = e; }
-    _direction = "";
-    disableClear;
-    disabled = !1;
-    sortChange = new p;
-    initialized = this._initializedStream;
-    constructor(e) { this._defaultOptions = e; }
-    register(e) { this.sortables.set(e.id, e); }
-    deregister(e) { this.sortables.delete(e.id); }
-    sort(e) { this.active != e.id ? (this.active = e.id, this.direction = e.start ? e.start : this.start) : this.direction = this.getNextSortDirection(e), this.sortChange.emit({ active: this.active, direction: this.direction }); }
-    getNextSortDirection(e) { if (!e)
-        return ""; let o = e?.disableClear ?? this.disableClear ?? !!this._defaultOptions?.disableClear, i = P(e.start || this.start, o), n = i.indexOf(this.direction) + 1; return n >= i.length && (n = 0), i[n]; }
-    ngOnInit() { this._initializedStream.next(); }
-    ngOnChanges() { this._stateChanges.next(); }
-    ngOnDestroy() { this._stateChanges.complete(), this._initializedStream.complete(); }
-    static ɵfac = function (o) { return new (o || r)(t.ɵɵdirectiveInject(m, 8)); };
-    static ɵdir = t.ɵɵdefineDirective({ type: r, selectors: [["", "matSort", ""]], hostAttrs: [1, "mat-sort"], inputs: { active: [0, "matSortActive", "active"], start: [0, "matSortStart", "start"], direction: [0, "matSortDirection", "direction"], disableClear: [2, "matSortDisableClear", "disableClear", s], disabled: [2, "matSortDisabled", "disabled", s] }, outputs: { sortChange: "matSortChange" }, exportAs: ["matSort"], features: [t.ɵɵNgOnChangesFeature] });
-} return r; })();
+var m = new _("MAT_SORT_DEFAULT_OPTIONS"), x = (() => {
+    class r {
+        _defaultOptions;
+        _initializedStream = new C(1);
+        sortables = new Map;
+        _stateChanges = new h;
+        active;
+        start = "asc";
+        get direction() { return this._direction; }
+        set direction(e) { this._direction = e; }
+        _direction = "";
+        disableClear;
+        disabled = !1;
+        sortChange = new p;
+        initialized = this._initializedStream;
+        constructor(e) { this._defaultOptions = e; }
+        register(e) { this.sortables.set(e.id, e); }
+        deregister(e) { this.sortables.delete(e.id); }
+        sort(e) { this.active != e.id ? (this.active = e.id, this.direction = e.start ? e.start : this.start) : this.direction = this.getNextSortDirection(e), this.sortChange.emit({ active: this.active, direction: this.direction }); }
+        getNextSortDirection(e) {
+            if (!e)
+                return "";
+            let o = e?.disableClear ?? this.disableClear ?? !!this._defaultOptions?.disableClear, i = P(e.start || this.start, o), n = i.indexOf(this.direction) + 1;
+            return n >= i.length && (n = 0), i[n];
+        }
+        ngOnInit() { this._initializedStream.next(); }
+        ngOnChanges() { this._stateChanges.next(); }
+        ngOnDestroy() { this._stateChanges.complete(), this._initializedStream.complete(); }
+        static ɵfac = function (o) { return new (o || r)(t.ɵɵdirectiveInject(m, 8)); };
+        static ɵdir = t.ɵɵdefineDirective({ type: r, selectors: [["", "matSort", ""]], hostAttrs: [1, "mat-sort"], inputs: { active: [0, "matSortActive", "active"], start: [0, "matSortStart", "start"], direction: [0, "matSortDirection", "direction"], disableClear: [2, "matSortDisableClear", "disableClear", s], disabled: [2, "matSortDisabled", "disabled", s] }, outputs: { sortChange: "matSortChange" }, exportAs: ["matSort"], features: [t.ɵɵNgOnChangesFeature] });
+    }
+    return r;
+})();
 function P(r, d) { let e = ["asc", "desc"]; return r == "desc" && e.reverse(), d || e.push(""), e; }
-var T = (() => { class r {
-    changes = new h;
-    static ɵfac = function (o) { return new (o || r); };
-    static ɵprov = t.ɵɵdefineInjectable({ token: r, factory: r.ɵfac, providedIn: "root" });
-} return r; })(), tt = (() => {
+var T = (() => {
+    class r {
+        changes = new h;
+        static ɵfac = function (o) { return new (o || r); };
+        static ɵprov = t.ɵɵdefineInjectable({ token: r, factory: r.ɵfac, providedIn: "root" });
+    }
+    return r;
+})(), tt = (() => {
     class r {
         _intl = a(T);
         _sort = a(x, { optional: !0 });
@@ -68,10 +78,12 @@ var T = (() => { class r {
         ngOnInit() { !this.id && this._columnDef && (this.id = this._columnDef.name), this._sort.register(this), this._renderChanges = M(this._sort._stateChanges, this._sort.sortChange).subscribe(() => this._changeDetectorRef.markForCheck()), this._sortButton = this._elementRef.nativeElement.querySelector(".mat-sort-header-container"), this._updateSortActionDescription(this._sortActionDescription); }
         ngAfterViewInit() { this._focusMonitor.monitor(this._elementRef, !0).subscribe(() => { Promise.resolve().then(() => this._recentlyCleared.set(null)); }); }
         ngOnDestroy() { this._focusMonitor.stopMonitoring(this._elementRef), this._sort.deregister(this), this._renderChanges?.unsubscribe(), this._sortButton && this._ariaDescriber?.removeDescription(this._sortButton, this._sortActionDescription); }
-        _toggleOnInteraction() { if (!this._isDisabled()) {
-            let e = this._isSorted(), o = this._sort.direction;
-            this._sort.sort(this), this._recentlyCleared.set(e && !this._isSorted() ? o : null);
-        } }
+        _toggleOnInteraction() {
+            if (!this._isDisabled()) {
+                let e = this._isSorted(), o = this._sort.direction;
+                this._sort.sort(this), this._recentlyCleared.set(e && !this._isSorted() ? o : null);
+            }
+        }
         _handleKeydown(e) { (e.keyCode === y || e.keyCode === w) && (e.preventDefault(), this._toggleOnInteraction()); }
         _isSorted() { return this._sort.active == this.id && (this._sort.direction === "asc" || this._sort.direction === "desc"); }
         _isDisabled() { return this._sort.disabled || this.disabled; }
@@ -83,9 +95,12 @@ var T = (() => { class r {
 `], encapsulation: 2, changeDetection: 0 });
     }
     return r;
-})(), et = (() => { class r {
-    static ɵfac = function (o) { return new (o || r); };
-    static ɵmod = t.ɵɵdefineNgModule({ type: r });
-    static ɵinj = t.ɵɵdefineInjector({ imports: [f] });
-} return r; })();
+})(), et = (() => {
+    class r {
+        static ɵfac = function (o) { return new (o || r); };
+        static ɵmod = t.ɵɵdefineNgModule({ type: r });
+        static ɵinj = t.ɵɵdefineInjector({ imports: [f] });
+    }
+    return r;
+})();
 export { m as MAT_SORT_DEFAULT_OPTIONS, x as MatSort, tt as MatSortHeader, T as MatSortHeaderIntl, et as MatSortModule };

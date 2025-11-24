@@ -41,9 +41,12 @@ var v = new c("MAT_PROGRESS_BAR_DEFAULT_OPTIONS"), T = new c("mat-progress-bar-l
     return a;
 })();
 function l(a, t = 0, e = 100) { return Math.max(t, Math.min(e, a)); }
-var w = (() => { class a {
-    static ɵfac = function (i) { return new (i || a); };
-    static ɵmod = r.ɵɵdefineNgModule({ type: a });
-    static ɵinj = r.ɵɵdefineInjector({ imports: [_] });
-} return a; })();
+var w = (() => {
+    class a {
+        static ɵfac = function (i) { return new (i || a); };
+        static ɵmod = r.ɵɵdefineNgModule({ type: a });
+        static ɵinj = r.ɵɵdefineInjector({ imports: [_] });
+    }
+    return a;
+})();
 export { v as MAT_PROGRESS_BAR_DEFAULT_OPTIONS, T as MAT_PROGRESS_BAR_LOCATION, P as MatProgressBar, w as MatProgressBarModule };

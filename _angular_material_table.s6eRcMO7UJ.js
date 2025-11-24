@@ -11,18 +11,25 @@ var J = [[["caption"]], [["colgroup"], ["col"]], "*"], Q = ["caption", "colgroup
 function Z(e, o) { e & 1 && t.ɵɵprojection(0, 2); }
 function ee(e, o) { e & 1 && (t.ɵɵelementStart(0, "thead", 0), t.ɵɵelementContainer(1, 1), t.ɵɵelementEnd(), t.ɵɵelementStart(2, "tbody", 2), t.ɵɵelementContainer(3, 3)(4, 4), t.ɵɵelementEnd(), t.ɵɵelementStart(5, "tfoot", 0), t.ɵɵelementContainer(6, 5), t.ɵɵelementEnd()); }
 function te(e, o) { e & 1 && t.ɵɵelementContainer(0, 1)(1, 3)(2, 4)(3, 5); }
-function ae(e, o) { if (e & 1 && (t.ɵɵelementStart(0, "th", 3), t.ɵɵtext(1), t.ɵɵelementEnd()), e & 2) {
-    let a = t.ɵɵnextContext();
-    t.ɵɵstyleProp("text-align", a.justify), t.ɵɵadvance(), t.ɵɵtextInterpolate1(" ", a.headerText, " ");
-} }
-function ie(e, o) { if (e & 1 && (t.ɵɵelementStart(0, "td", 4), t.ɵɵtext(1), t.ɵɵelementEnd()), e & 2) {
-    let a = o.$implicit, i = t.ɵɵnextContext();
-    t.ɵɵstyleProp("text-align", i.justify), t.ɵɵadvance(), t.ɵɵtextInterpolate1(" ", i.dataAccessor(a, i.name), " ");
-} }
-var Ce = (() => { class e {
-    static ɵfac = function (i) { return new (i || e); };
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["mat-table", "recycleRows", ""], ["table", "mat-table", "", "recycleRows", ""]], features: [t.ɵɵProvidersFeature([{ provide: P, useClass: $ }])] });
-} return e; })(), _e = (() => {
+function ae(e, o) {
+    if (e & 1 && (t.ɵɵelementStart(0, "th", 3), t.ɵɵtext(1), t.ɵɵelementEnd()), e & 2) {
+        let a = t.ɵɵnextContext();
+        t.ɵɵstyleProp("text-align", a.justify), t.ɵɵadvance(), t.ɵɵtextInterpolate1(" ", a.headerText, " ");
+    }
+}
+function ie(e, o) {
+    if (e & 1 && (t.ɵɵelementStart(0, "td", 4), t.ɵɵtext(1), t.ɵɵelementEnd()), e & 2) {
+        let a = o.$implicit, i = t.ɵɵnextContext();
+        t.ɵɵstyleProp("text-align", i.justify), t.ɵɵadvance(), t.ɵɵtextInterpolate1(" ", i.dataAccessor(a, i.name), " ");
+    }
+}
+var Ce = (() => {
+    class e {
+        static ɵfac = function (i) { return new (i || e); };
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["mat-table", "recycleRows", ""], ["table", "mat-table", "", "recycleRows", ""]], features: [t.ɵɵProvidersFeature([{ provide: P, useClass: $ }])] });
+    }
+    return e;
+})(), _e = (() => {
     class e extends y {
         stickyCssClass = "mat-mdc-table-sticky";
         needsPositionStickyOnElement = !1;
@@ -31,63 +38,111 @@ var Ce = (() => { class e {
 `], encapsulation: 2 });
     }
     return e;
-})(), re = (() => { class e extends v {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matCellDef", ""]], features: [t.ɵɵProvidersFeature([{ provide: v, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
-} return e; })(), oe = (() => { class e extends b {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matHeaderCellDef", ""]], features: [t.ɵɵProvidersFeature([{ provide: b, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
-} return e; })(), Fe = (() => { class e extends w {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matFooterCellDef", ""]], features: [t.ɵɵProvidersFeature([{ provide: w, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
-} return e; })(), ne = (() => { class e extends x {
-    get name() { return this._name; }
-    set name(a) { this._setNameInput(a); }
-    _updateColumnCssClassName() { super._updateColumnCssClassName(), this._columnCssClassName.push(`mat-column-${this.cssClassFriendlyName}`); }
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matColumnDef", ""]], inputs: { name: [0, "matColumnDef", "name"] }, features: [t.ɵɵProvidersFeature([{ provide: x, useExisting: e }, { provide: "MAT_SORT_HEADER_COLUMN_DEF", useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
-} return e; })(), le = (() => { class e extends j {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["mat-header-cell"], ["th", "mat-header-cell", ""]], hostAttrs: ["role", "columnheader", 1, "mat-mdc-header-cell", "mdc-data-table__header-cell"], features: [t.ɵɵInheritDefinitionFeature] });
-} return e; })(), Me = (() => { class e extends L {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["mat-footer-cell"], ["td", "mat-footer-cell", ""]], hostAttrs: [1, "mat-mdc-footer-cell", "mdc-data-table__cell"], features: [t.ɵɵInheritDefinitionFeature] });
-} return e; })(), se = (() => { class e extends V {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["mat-cell"], ["td", "mat-cell", ""]], hostAttrs: [1, "mat-mdc-cell", "mdc-data-table__cell"], features: [t.ɵɵInheritDefinitionFeature] });
-} return e; })();
-var Ie = (() => { class e extends D {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matHeaderRowDef", ""]], inputs: { columns: [0, "matHeaderRowDef", "columns"], sticky: [2, "matHeaderRowDefSticky", "sticky", T] }, features: [t.ɵɵProvidersFeature([{ provide: D, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
-} return e; })(), Re = (() => { class e extends C {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matFooterRowDef", ""]], inputs: { columns: [0, "matFooterRowDef", "columns"], sticky: [2, "matFooterRowDefSticky", "sticky", T] }, features: [t.ɵɵProvidersFeature([{ provide: C, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
-} return e; })(), ke = (() => { class e extends _ {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matRowDef", ""]], inputs: { columns: [0, "matRowDefColumns", "columns"], when: [0, "matRowDefWhen", "when"] }, features: [t.ɵɵProvidersFeature([{ provide: _, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
-} return e; })(), Ee = (() => { class e extends F {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵcmp = t.ɵɵdefineComponent({ type: e, selectors: [["mat-header-row"], ["tr", "mat-header-row", ""]], hostAttrs: ["role", "row", 1, "mat-mdc-header-row", "mdc-data-table__header-row"], exportAs: ["matHeaderRow"], features: [t.ɵɵProvidersFeature([{ provide: F, useExisting: e }]), t.ɵɵInheritDefinitionFeature], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (i, r) { i & 1 && t.ɵɵelementContainer(0, 0); }, dependencies: [h], encapsulation: 2 });
-} return e; })(), Se = (() => { class e extends M {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵcmp = t.ɵɵdefineComponent({ type: e, selectors: [["mat-footer-row"], ["tr", "mat-footer-row", ""]], hostAttrs: ["role", "row", 1, "mat-mdc-footer-row", "mdc-data-table__row"], exportAs: ["matFooterRow"], features: [t.ɵɵProvidersFeature([{ provide: M, useExisting: e }]), t.ɵɵInheritDefinitionFeature], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (i, r) { i & 1 && t.ɵɵelementContainer(0, 0); }, dependencies: [h], encapsulation: 2 });
-} return e; })(), Te = (() => { class e extends I {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵcmp = t.ɵɵdefineComponent({ type: e, selectors: [["mat-row"], ["tr", "mat-row", ""]], hostAttrs: ["role", "row", 1, "mat-mdc-row", "mdc-data-table__row"], exportAs: ["matRow"], features: [t.ɵɵProvidersFeature([{ provide: I, useExisting: e }]), t.ɵɵInheritDefinitionFeature], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (i, r) { i & 1 && t.ɵɵelementContainer(0, 0); }, dependencies: [h], encapsulation: 2 });
-} return e; })(), Pe = (() => { class e extends R {
-    _cellSelector = "td, mat-cell, [mat-cell], .mat-cell";
-    constructor() { super(), this._contentClassNames.push("mat-mdc-no-data-row", "mat-mdc-row", "mdc-data-table__row"), this._cellClassNames.push("mat-mdc-cell", "mdc-data-table__cell", "mat-no-data-cell"); }
-    static ɵfac = function (i) { return new (i || e); };
-    static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["ng-template", "matNoDataRow", ""]], features: [t.ɵɵProvidersFeature([{ provide: R, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
-} return e; })(), Ae = (() => { class e extends G {
-    static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
-    static ɵcmp = t.ɵɵdefineComponent({ type: e, selectors: [["mat-text-column"]], features: [t.ɵɵInheritDefinitionFeature], decls: 3, vars: 0, consts: [["matColumnDef", ""], ["mat-header-cell", "", 3, "text-align", 4, "matHeaderCellDef"], ["mat-cell", "", 3, "text-align", 4, "matCellDef"], ["mat-header-cell", ""], ["mat-cell", ""]], template: function (i, r) { i & 1 && (t.ɵɵelementContainerStart(0, 0), t.ɵɵtemplate(1, ae, 2, 3, "th", 1)(2, ie, 2, 3, "td", 2), t.ɵɵelementContainerEnd()); }, dependencies: [ne, oe, le, re, se], encapsulation: 2 });
-} return e; })();
-var Be = (() => { class e {
-    static ɵfac = function (i) { return new (i || e); };
-    static ɵmod = t.ɵɵdefineNgModule({ type: e });
-    static ɵinj = t.ɵɵdefineInjector({ imports: [W, Y] });
-} return e; })(), de = 9007199254740991, S = class extends X {
+})(), re = (() => {
+    class e extends v {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matCellDef", ""]], features: [t.ɵɵProvidersFeature([{ provide: v, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})(), oe = (() => {
+    class e extends b {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matHeaderCellDef", ""]], features: [t.ɵɵProvidersFeature([{ provide: b, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})(), Fe = (() => {
+    class e extends w {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matFooterCellDef", ""]], features: [t.ɵɵProvidersFeature([{ provide: w, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})(), ne = (() => {
+    class e extends x {
+        get name() { return this._name; }
+        set name(a) { this._setNameInput(a); }
+        _updateColumnCssClassName() { super._updateColumnCssClassName(), this._columnCssClassName.push(`mat-column-${this.cssClassFriendlyName}`); }
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matColumnDef", ""]], inputs: { name: [0, "matColumnDef", "name"] }, features: [t.ɵɵProvidersFeature([{ provide: x, useExisting: e }, { provide: "MAT_SORT_HEADER_COLUMN_DEF", useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})(), le = (() => {
+    class e extends j {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["mat-header-cell"], ["th", "mat-header-cell", ""]], hostAttrs: ["role", "columnheader", 1, "mat-mdc-header-cell", "mdc-data-table__header-cell"], features: [t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})(), Me = (() => {
+    class e extends L {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["mat-footer-cell"], ["td", "mat-footer-cell", ""]], hostAttrs: [1, "mat-mdc-footer-cell", "mdc-data-table__cell"], features: [t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})(), se = (() => {
+    class e extends V {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["mat-cell"], ["td", "mat-cell", ""]], hostAttrs: [1, "mat-mdc-cell", "mdc-data-table__cell"], features: [t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})();
+var Ie = (() => {
+    class e extends D {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matHeaderRowDef", ""]], inputs: { columns: [0, "matHeaderRowDef", "columns"], sticky: [2, "matHeaderRowDefSticky", "sticky", T] }, features: [t.ɵɵProvidersFeature([{ provide: D, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})(), Re = (() => {
+    class e extends C {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matFooterRowDef", ""]], inputs: { columns: [0, "matFooterRowDef", "columns"], sticky: [2, "matFooterRowDefSticky", "sticky", T] }, features: [t.ɵɵProvidersFeature([{ provide: C, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})(), ke = (() => {
+    class e extends _ {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["", "matRowDef", ""]], inputs: { columns: [0, "matRowDefColumns", "columns"], when: [0, "matRowDefWhen", "when"] }, features: [t.ɵɵProvidersFeature([{ provide: _, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})(), Ee = (() => {
+    class e extends F {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵcmp = t.ɵɵdefineComponent({ type: e, selectors: [["mat-header-row"], ["tr", "mat-header-row", ""]], hostAttrs: ["role", "row", 1, "mat-mdc-header-row", "mdc-data-table__header-row"], exportAs: ["matHeaderRow"], features: [t.ɵɵProvidersFeature([{ provide: F, useExisting: e }]), t.ɵɵInheritDefinitionFeature], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (i, r) { i & 1 && t.ɵɵelementContainer(0, 0); }, dependencies: [h], encapsulation: 2 });
+    }
+    return e;
+})(), Se = (() => {
+    class e extends M {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵcmp = t.ɵɵdefineComponent({ type: e, selectors: [["mat-footer-row"], ["tr", "mat-footer-row", ""]], hostAttrs: ["role", "row", 1, "mat-mdc-footer-row", "mdc-data-table__row"], exportAs: ["matFooterRow"], features: [t.ɵɵProvidersFeature([{ provide: M, useExisting: e }]), t.ɵɵInheritDefinitionFeature], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (i, r) { i & 1 && t.ɵɵelementContainer(0, 0); }, dependencies: [h], encapsulation: 2 });
+    }
+    return e;
+})(), Te = (() => {
+    class e extends I {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵcmp = t.ɵɵdefineComponent({ type: e, selectors: [["mat-row"], ["tr", "mat-row", ""]], hostAttrs: ["role", "row", 1, "mat-mdc-row", "mdc-data-table__row"], exportAs: ["matRow"], features: [t.ɵɵProvidersFeature([{ provide: I, useExisting: e }]), t.ɵɵInheritDefinitionFeature], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (i, r) { i & 1 && t.ɵɵelementContainer(0, 0); }, dependencies: [h], encapsulation: 2 });
+    }
+    return e;
+})(), Pe = (() => {
+    class e extends R {
+        _cellSelector = "td, mat-cell, [mat-cell], .mat-cell";
+        constructor() { super(), this._contentClassNames.push("mat-mdc-no-data-row", "mat-mdc-row", "mdc-data-table__row"), this._cellClassNames.push("mat-mdc-cell", "mdc-data-table__cell", "mat-no-data-cell"); }
+        static ɵfac = function (i) { return new (i || e); };
+        static ɵdir = t.ɵɵdefineDirective({ type: e, selectors: [["ng-template", "matNoDataRow", ""]], features: [t.ɵɵProvidersFeature([{ provide: R, useExisting: e }]), t.ɵɵInheritDefinitionFeature] });
+    }
+    return e;
+})(), Ae = (() => {
+    class e extends G {
+        static ɵfac = (() => { let a; return function (r) { return (a || (a = t.ɵɵgetInheritedFactory(e)))(r || e); }; })();
+        static ɵcmp = t.ɵɵdefineComponent({ type: e, selectors: [["mat-text-column"]], features: [t.ɵɵInheritDefinitionFeature], decls: 3, vars: 0, consts: [["matColumnDef", ""], ["mat-header-cell", "", 3, "text-align", 4, "matHeaderCellDef"], ["mat-cell", "", 3, "text-align", 4, "matCellDef"], ["mat-header-cell", ""], ["mat-cell", ""]], template: function (i, r) { i & 1 && (t.ɵɵelementContainerStart(0, 0), t.ɵɵtemplate(1, ae, 2, 3, "th", 1)(2, ie, 2, 3, "td", 2), t.ɵɵelementContainerEnd()); }, dependencies: [ne, oe, le, re, se], encapsulation: 2 });
+    }
+    return e;
+})();
+var Be = (() => {
+    class e {
+        static ɵfac = function (i) { return new (i || e); };
+        static ɵmod = t.ɵɵdefineNgModule({ type: e });
+        static ɵinj = t.ɵɵdefineInjector({ imports: [W, Y] });
+    }
+    return e;
+})(), de = 9007199254740991, S = class extends X {
     _data;
     _renderData = new m([]);
     _filter = new m("");
@@ -104,22 +159,35 @@ var Be = (() => { class e {
     get paginator() { return this._paginator; }
     set paginator(o) { this._paginator = o, this._updateChangeSubscription(); }
     _paginator;
-    sortingDataAccessor = (o, a) => { let i = o[a]; if (q(i)) {
-        let r = Number(i);
-        return r < de ? r : i;
-    } return i; };
+    sortingDataAccessor = (o, a) => {
+        let i = o[a];
+        if (q(i)) {
+            let r = Number(i);
+            return r < de ? r : i;
+        }
+        return i;
+    };
     sortData = (o, a) => { let i = a.active, r = a.direction; return !i || r == "" ? o : o.sort((d, c) => { let n = this.sortingDataAccessor(d, i), l = this.sortingDataAccessor(c, i), p = typeof n, g = typeof l; p !== g && (p === "number" && (n += ""), g === "number" && (l += "")); let s = 0; return n != null && l != null ? n > l ? s = 1 : n < l && (s = -1) : n != null ? s = 1 : l != null && (s = -1), s * (r == "asc" ? 1 : -1); }); };
     filterPredicate = (o, a) => { let i = a.trim().toLowerCase(); return Object.values(o).some(r => `${r}`.toLowerCase().includes(i)); };
     constructor(o = []) { super(), this._data = new m(o), this._updateChangeSubscription(); }
     _updateChangeSubscription() { let o = this._sort ? k(this._sort.sortChange, this._sort.initialized) : E(null), a = this._paginator ? k(this._paginator.page, this._internalPageChanges, this._paginator.initialized) : E(null), i = this._data, r = u([i, this._filter]).pipe(f(([n]) => this._filterData(n))), d = u([r, o]).pipe(f(([n]) => this._orderData(n))), c = u([d, a]).pipe(f(([n]) => this._pageData(n))); this._renderChangesSubscription?.unsubscribe(), this._renderChangesSubscription = c.subscribe(n => this._renderData.next(n)); }
     _filterData(o) { return this.filteredData = this.filter == null || this.filter === "" ? o : o.filter(a => this.filterPredicate(a, this.filter)), this.paginator && this._updatePaginator(this.filteredData.length), this.filteredData; }
     _orderData(o) { return this.sort ? this.sortData(o.slice(), this.sort) : o; }
-    _pageData(o) { if (!this.paginator)
-        return o; let a = this.paginator.pageIndex * this.paginator.pageSize; return o.slice(a, a + this.paginator.pageSize); }
-    _updatePaginator(o) { Promise.resolve().then(() => { let a = this.paginator; if (a && (a.length = o, a.pageIndex > 0)) {
-        let i = Math.ceil(a.length / a.pageSize) - 1 || 0, r = Math.min(a.pageIndex, i);
-        r !== a.pageIndex && (a.pageIndex = r, this._internalPageChanges.next());
-    } }); }
+    _pageData(o) {
+        if (!this.paginator)
+            return o;
+        let a = this.paginator.pageIndex * this.paginator.pageSize;
+        return o.slice(a, a + this.paginator.pageSize);
+    }
+    _updatePaginator(o) {
+        Promise.resolve().then(() => {
+            let a = this.paginator;
+            if (a && (a.length = o, a.pageIndex > 0)) {
+                let i = Math.ceil(a.length / a.pageSize) - 1 || 0, r = Math.min(a.pageIndex, i);
+                r !== a.pageIndex && (a.pageIndex = r, this._internalPageChanges.next());
+            }
+        });
+    }
     connect() { return this._renderChangesSubscription || this._updateChangeSubscription(), this._renderData; }
     disconnect() { this._renderChangesSubscription?.unsubscribe(), this._renderChangesSubscription = null; }
 };

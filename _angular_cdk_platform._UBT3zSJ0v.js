@@ -7,12 +7,20 @@ import "@nf-internal/chunk-4CLCTAJ7";
 import * as o from "@angular/core";
 import "@angular/core";
 import "@angular/common";
-var w = (() => { class e {
-    static ɵfac = function (i) { return new (i || e); };
-    static ɵmod = o.ɵɵdefineNgModule({ type: e });
-    static ɵinj = o.ɵɵdefineInjector({});
-} return e; })(), t, n = ["color", "button", "checkbox", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number", "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week"];
-function T() { if (t)
-    return t; if (typeof document != "object" || !document)
-    return t = new Set(n), t; let e = document.createElement("input"); return t = new Set(n.filter(r => (e.setAttribute("type", r), e.type === r))), t; }
+var w = (() => {
+    class e {
+        static ɵfac = function (i) { return new (i || e); };
+        static ɵmod = o.ɵɵdefineNgModule({ type: e });
+        static ɵinj = o.ɵɵdefineInjector({});
+    }
+    return e;
+})(), t, n = ["color", "button", "checkbox", "date", "datetime-local", "email", "file", "hidden", "image", "month", "number", "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week"];
+function T() {
+    if (t)
+        return t;
+    if (typeof document != "object" || !document)
+        return t = new Set(n), t;
+    let e = document.createElement("input");
+    return t = new Set(n.filter(r => (e.setAttribute("type", r), e.type === r))), t;
+}
 export { m as Platform, w as PlatformModule, f as RtlScrollAxisType, a as _getEventTarget, u as _getFocusedElementPierceShadowDom, p as _getShadowRoot, c as _isTestEnvironment, s as _supportsShadowDom, y as getRtlScrollAxisType, T as getSupportedInputTypes, l as normalizePassiveListenerOptions, d as supportsPassiveEventListeners, g as supportsScrollBehavior };

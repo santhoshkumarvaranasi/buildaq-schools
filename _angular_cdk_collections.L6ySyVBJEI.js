@@ -3,15 +3,20 @@ import { a as l, b as c, c as a, d as _, e as d, f as m } from "@nf-internal/chu
 import "@nf-internal/chunk-4CLCTAJ7";
 import * as o from "@angular/core";
 import "@angular/core";
-var g = (() => { class r {
-    _listeners = [];
-    notify(t, i) { for (let n of this._listeners)
-        n(t, i); }
-    listen(t) { return this._listeners.push(t), () => { this._listeners = this._listeners.filter(i => t !== i); }; }
-    ngOnDestroy() { this._listeners = []; }
-    static ɵfac = function (i) { return new (i || r); };
-    static ɵprov = o.ɵɵdefineInjectable({ token: r, factory: r.ɵfac, providedIn: "root" });
-} return r; })();
+var g = (() => {
+    class r {
+        _listeners = [];
+        notify(t, i) {
+            for (let n of this._listeners)
+                n(t, i);
+        }
+        listen(t) { return this._listeners.push(t), () => { this._listeners = this._listeners.filter(i => t !== i); }; }
+        ngOnDestroy() { this._listeners = []; }
+        static ɵfac = function (i) { return new (i || r); };
+        static ɵprov = o.ɵɵdefineInjectable({ token: r, factory: r.ɵfac, providedIn: "root" });
+    }
+    return r;
+})();
 import { Subject as f } from "rxjs";
 var h = class {
     _multiple;
@@ -40,15 +45,17 @@ var h = class {
     _unmarkAll() { this.isEmpty() || this._selection.forEach(e => this._unmarkSelected(e)); }
     _verifyValueAssignment(e) { e.length > 1 && this._multiple; }
     _hasQueuedChanges() { return !!(this._deselectedToEmit.length || this._selectedToEmit.length); }
-    _getConcreteValue(e, t) { if (this.compareWith) {
-        t = t ?? this._selection;
-        for (let i of t)
-            if (this.compareWith(e, i))
-                return i;
-        return e;
+    _getConcreteValue(e, t) {
+        if (this.compareWith) {
+            t = t ?? this._selection;
+            for (let i of t)
+                if (this.compareWith(e, i))
+                    return i;
+            return e;
+        }
+        else
+            return e;
     }
-    else
-        return e; }
 };
 function p() { return Error("Cannot pass multiple values into SelectionModel with single-value mode."); }
 import "@angular/core";

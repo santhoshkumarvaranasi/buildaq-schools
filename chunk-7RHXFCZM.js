@@ -8,19 +8,22 @@ try {
 catch {
     e = !1;
 }
-var h = (() => { class t {
-    _platformId = s(o);
-    isBrowser = this._platformId ? n(this._platformId) : typeof document == "object" && !!document;
-    EDGE = this.isBrowser && /(edge)/i.test(navigator.userAgent);
-    TRIDENT = this.isBrowser && /(msie|trident)/i.test(navigator.userAgent);
-    BLINK = this.isBrowser && !!(window.chrome || e) && typeof CSS < "u" && !this.EDGE && !this.TRIDENT;
-    WEBKIT = this.isBrowser && /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT;
-    IOS = this.isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
-    FIREFOX = this.isBrowser && /(firefox|minefield)/i.test(navigator.userAgent);
-    ANDROID = this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT;
-    SAFARI = this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT;
-    constructor() { }
-    static ɵfac = function (r) { return new (r || t); };
-    static ɵprov = i.ɵɵdefineInjectable({ token: t, factory: t.ɵfac, providedIn: "root" });
-} return t; })();
+var h = (() => {
+    class t {
+        _platformId = s(o);
+        isBrowser = this._platformId ? n(this._platformId) : typeof document == "object" && !!document;
+        EDGE = this.isBrowser && /(edge)/i.test(navigator.userAgent);
+        TRIDENT = this.isBrowser && /(msie|trident)/i.test(navigator.userAgent);
+        BLINK = this.isBrowser && !!(window.chrome || e) && typeof CSS < "u" && !this.EDGE && !this.TRIDENT;
+        WEBKIT = this.isBrowser && /AppleWebKit/i.test(navigator.userAgent) && !this.BLINK && !this.EDGE && !this.TRIDENT;
+        IOS = this.isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !("MSStream" in window);
+        FIREFOX = this.isBrowser && /(firefox|minefield)/i.test(navigator.userAgent);
+        ANDROID = this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT;
+        SAFARI = this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT;
+        constructor() { }
+        static ɵfac = function (r) { return new (r || t); };
+        static ɵprov = i.ɵɵdefineInjectable({ token: t, factory: t.ɵfac, providedIn: "root" });
+    }
+    return t;
+})();
 export { h as a };

@@ -4,11 +4,15 @@ import { a as f } from "@nf-internal/chunk-XID2BBVI";
 import "@nf-internal/chunk-4CLCTAJ7";
 import "@angular/core";
 function p(r) { return r != null && `${r}` != "false"; }
-function a(r, t = /\s+/) { let e = []; if (r != null) {
-    let c = Array.isArray(r) ? r : `${r}`.split(t);
-    for (let n of c) {
-        let o = `${n}`.trim();
-        o && e.push(o);
+function a(r, t = /\s+/) {
+    let e = [];
+    if (r != null) {
+        let c = Array.isArray(r) ? r : `${r}`.split(t);
+        for (let n of c) {
+            let o = `${n}`.trim();
+            o && e.push(o);
+        }
     }
-} return e; }
+    return e;
+}
 export { i as _isNumberValue, f as coerceArray, p as coerceBooleanProperty, l as coerceCssPixelValue, u as coerceElement, s as coerceNumberProperty, a as coerceStringArray };

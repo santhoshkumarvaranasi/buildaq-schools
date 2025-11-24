@@ -103,78 +103,106 @@ var m = function (t) { return t[t.OPEN = 0] = "OPEN", t[t.CLOSING = 1] = "CLOSIN
     _finishDialogClose() { this._state = m.CLOSED, this._ref.close(this._result, { focusOrigin: this._closeInteractionType }), this.componentInstance = null; }
 };
 function E(t, o, e) { return t._closeInteractionType = o, t.close(e); }
-var it = new _("MatMdcDialogData"), at = new _("mat-mdc-dialog-default-options"), nt = new _("mat-mdc-dialog-scroll-strategy", { providedIn: "root", factory: () => { let t = s(I); return () => N(t); } }), b = (() => { class t {
-    _defaultOptions = s(at, { optional: !0 });
-    _scrollStrategy = s(nt);
-    _parentDialog = s(t, { optional: !0, skipSelf: !0 });
-    _idGenerator = s(S);
-    _injector = s(I);
-    _dialog = s(V);
-    _animationsDisabled = u();
-    _openDialogsAtThisLevel = [];
-    _afterAllClosedAtThisLevel = new A;
-    _afterOpenedAtThisLevel = new A;
-    dialogConfigClass = g;
-    _dialogRefConstructor;
-    _dialogContainerType;
-    _dialogDataToken;
-    get openDialogs() { return this._parentDialog ? this._parentDialog.openDialogs : this._openDialogsAtThisLevel; }
-    get afterOpened() { return this._parentDialog ? this._parentDialog.afterOpened : this._afterOpenedAtThisLevel; }
-    _getAfterAllClosed() { let e = this._parentDialog; return e ? e._getAfterAllClosed() : this._afterAllClosedAtThisLevel; }
-    afterAllClosed = Y(() => this.openDialogs.length ? this._getAfterAllClosed() : this._getAfterAllClosed().pipe($(void 0)));
-    constructor() { this._dialogRefConstructor = l, this._dialogContainerType = et, this._dialogDataToken = it; }
-    open(e, i) { let a; i = d(d({}, this._defaultOptions || new g), i), i.id = i.id || this._idGenerator.getId("mat-mdc-dialog-"), i.scrollStrategy = i.scrollStrategy || this._scrollStrategy(); let h = this._dialog.open(e, D(d({}, i), { positionStrategy: B(this._injector).centerHorizontally().centerVertically(), disableClose: !0, closePredicate: void 0, closeOnDestroy: !1, closeOnOverlayDetachments: !1, disableAnimations: this._animationsDisabled || i.enterAnimationDuration?.toLocaleString() === "0" || i.exitAnimationDuration?.toString() === "0", container: { type: this._dialogContainerType, providers: () => [{ provide: this.dialogConfigClass, useValue: i }, { provide: G, useValue: i }] }, templateContext: () => ({ dialogRef: a }), providers: (r, M, y) => (a = new this._dialogRefConstructor(r, i, y), a.updatePosition(i?.position), [{ provide: this._dialogContainerType, useValue: y }, { provide: this._dialogDataToken, useValue: M.data }, { provide: this._dialogRefConstructor, useValue: a }]) })); return a.componentRef = h.componentRef, a.componentInstance = h.componentInstance, this.openDialogs.push(a), this.afterOpened.next(a), a.afterClosed().subscribe(() => { let r = this.openDialogs.indexOf(a); r > -1 && (this.openDialogs.splice(r, 1), this.openDialogs.length || this._getAfterAllClosed().next()); }), a; }
-    closeAll() { this._closeDialogs(this.openDialogs); }
-    getDialogById(e) { return this.openDialogs.find(i => i.id === e); }
-    ngOnDestroy() { this._closeDialogs(this._openDialogsAtThisLevel), this._afterAllClosedAtThisLevel.complete(), this._afterOpenedAtThisLevel.complete(); }
-    _closeDialogs(e) { let i = e.length; for (; i--;)
-        e[i].close(); }
-    static ɵfac = function (i) { return new (i || t); };
-    static ɵprov = n.ɵɵdefineInjectable({ token: t, factory: t.ɵfac, providedIn: "root" });
-} return t; })(), wt = (() => { class t {
-    dialogRef = s(l, { optional: !0 });
-    _elementRef = s(k);
-    _dialog = s(b);
-    ariaLabel;
-    type = "button";
-    dialogResult;
-    _matDialogClose;
-    constructor() { }
-    ngOnInit() { this.dialogRef || (this.dialogRef = F(this._elementRef, this._dialog.openDialogs)); }
-    ngOnChanges(e) { let i = e._matDialogClose || e._matDialogCloseResult; i && (this.dialogResult = i.currentValue); }
-    _onButtonClick(e) { E(this.dialogRef, e.screenX === 0 && e.screenY === 0 ? "keyboard" : "mouse", this.dialogResult); }
-    static ɵfac = function (i) { return new (i || t); };
-    static ɵdir = n.ɵɵdefineDirective({ type: t, selectors: [["", "mat-dialog-close", ""], ["", "matDialogClose", ""]], hostVars: 2, hostBindings: function (i, a) { i & 1 && n.ɵɵlistener("click", function (r) { return a._onButtonClick(r); }), i & 2 && n.ɵɵattribute("aria-label", a.ariaLabel || null)("type", a.type); }, inputs: { ariaLabel: [0, "aria-label", "ariaLabel"], type: "type", dialogResult: [0, "mat-dialog-close", "dialogResult"], _matDialogClose: [0, "matDialogClose", "_matDialogClose"] }, exportAs: ["matDialogClose"], features: [n.ɵɵNgOnChangesFeature] });
-} return t; })(), L = (() => { class t {
-    _dialogRef = s(l, { optional: !0 });
-    _elementRef = s(k);
-    _dialog = s(b);
-    constructor() { }
-    ngOnInit() { this._dialogRef || (this._dialogRef = F(this._elementRef, this._dialog.openDialogs)), this._dialogRef && Promise.resolve().then(() => { this._onAdd(); }); }
-    ngOnDestroy() { this._dialogRef?._containerInstance && Promise.resolve().then(() => { this._onRemove(); }); }
-    static ɵfac = function (i) { return new (i || t); };
-    static ɵdir = n.ɵɵdefineDirective({ type: t });
-} return t; })(), Ot = (() => { class t extends L {
-    id = s(S).getId("mat-mdc-dialog-title-");
-    _onAdd() { this._dialogRef._containerInstance?._addAriaLabelledBy?.(this.id); }
-    _onRemove() { this._dialogRef?._containerInstance?._removeAriaLabelledBy?.(this.id); }
-    static ɵfac = (() => { let e; return function (a) { return (e || (e = n.ɵɵgetInheritedFactory(t)))(a || t); }; })();
-    static ɵdir = n.ɵɵdefineDirective({ type: t, selectors: [["", "mat-dialog-title", ""], ["", "matDialogTitle", ""]], hostAttrs: [1, "mat-mdc-dialog-title", "mdc-dialog__title"], hostVars: 1, hostBindings: function (i, a) { i & 2 && n.ɵɵdomProperty("id", a.id); }, inputs: { id: "id" }, exportAs: ["matDialogTitle"], features: [n.ɵɵInheritDefinitionFeature] });
-} return t; })(), It = (() => { class t {
-    static ɵfac = function (i) { return new (i || t); };
-    static ɵdir = n.ɵɵdefineDirective({ type: t, selectors: [["", "mat-dialog-content", ""], ["mat-dialog-content"], ["", "matDialogContent", ""]], hostAttrs: [1, "mat-mdc-dialog-content", "mdc-dialog__content"], features: [n.ɵɵHostDirectivesFeature([R.CdkScrollable])] });
-} return t; })(), kt = (() => { class t extends L {
-    align;
-    _onAdd() { this._dialogRef._containerInstance?._updateActionSectionCount?.(1); }
-    _onRemove() { this._dialogRef._containerInstance?._updateActionSectionCount?.(-1); }
-    static ɵfac = (() => { let e; return function (a) { return (e || (e = n.ɵɵgetInheritedFactory(t)))(a || t); }; })();
-    static ɵdir = n.ɵɵdefineDirective({ type: t, selectors: [["", "mat-dialog-actions", ""], ["mat-dialog-actions"], ["", "matDialogActions", ""]], hostAttrs: [1, "mat-mdc-dialog-actions", "mdc-dialog__actions"], hostVars: 6, hostBindings: function (i, a) { i & 2 && n.ɵɵclassProp("mat-mdc-dialog-actions-align-start", a.align === "start")("mat-mdc-dialog-actions-align-center", a.align === "center")("mat-mdc-dialog-actions-align-end", a.align === "end"); }, inputs: { align: "align" }, features: [n.ɵɵInheritDefinitionFeature] });
-} return t; })();
-function F(t, o) { let e = t.nativeElement.parentElement; for (; e && !e.classList.contains("mat-mdc-dialog-container");)
-    e = e.parentElement; return e ? o.find(i => i.id === e.id) : null; }
-var St = (() => { class t {
-    static ɵfac = function (i) { return new (i || t); };
-    static ɵmod = n.ɵɵdefineNgModule({ type: t });
-    static ɵinj = n.ɵɵdefineInjector({ providers: [b], imports: [H, j, W, X] });
-} return t; })();
+var it = new _("MatMdcDialogData"), at = new _("mat-mdc-dialog-default-options"), nt = new _("mat-mdc-dialog-scroll-strategy", { providedIn: "root", factory: () => { let t = s(I); return () => N(t); } }), b = (() => {
+    class t {
+        _defaultOptions = s(at, { optional: !0 });
+        _scrollStrategy = s(nt);
+        _parentDialog = s(t, { optional: !0, skipSelf: !0 });
+        _idGenerator = s(S);
+        _injector = s(I);
+        _dialog = s(V);
+        _animationsDisabled = u();
+        _openDialogsAtThisLevel = [];
+        _afterAllClosedAtThisLevel = new A;
+        _afterOpenedAtThisLevel = new A;
+        dialogConfigClass = g;
+        _dialogRefConstructor;
+        _dialogContainerType;
+        _dialogDataToken;
+        get openDialogs() { return this._parentDialog ? this._parentDialog.openDialogs : this._openDialogsAtThisLevel; }
+        get afterOpened() { return this._parentDialog ? this._parentDialog.afterOpened : this._afterOpenedAtThisLevel; }
+        _getAfterAllClosed() { let e = this._parentDialog; return e ? e._getAfterAllClosed() : this._afterAllClosedAtThisLevel; }
+        afterAllClosed = Y(() => this.openDialogs.length ? this._getAfterAllClosed() : this._getAfterAllClosed().pipe($(void 0)));
+        constructor() { this._dialogRefConstructor = l, this._dialogContainerType = et, this._dialogDataToken = it; }
+        open(e, i) { let a; i = d(d({}, this._defaultOptions || new g), i), i.id = i.id || this._idGenerator.getId("mat-mdc-dialog-"), i.scrollStrategy = i.scrollStrategy || this._scrollStrategy(); let h = this._dialog.open(e, D(d({}, i), { positionStrategy: B(this._injector).centerHorizontally().centerVertically(), disableClose: !0, closePredicate: void 0, closeOnDestroy: !1, closeOnOverlayDetachments: !1, disableAnimations: this._animationsDisabled || i.enterAnimationDuration?.toLocaleString() === "0" || i.exitAnimationDuration?.toString() === "0", container: { type: this._dialogContainerType, providers: () => [{ provide: this.dialogConfigClass, useValue: i }, { provide: G, useValue: i }] }, templateContext: () => ({ dialogRef: a }), providers: (r, M, y) => (a = new this._dialogRefConstructor(r, i, y), a.updatePosition(i?.position), [{ provide: this._dialogContainerType, useValue: y }, { provide: this._dialogDataToken, useValue: M.data }, { provide: this._dialogRefConstructor, useValue: a }]) })); return a.componentRef = h.componentRef, a.componentInstance = h.componentInstance, this.openDialogs.push(a), this.afterOpened.next(a), a.afterClosed().subscribe(() => { let r = this.openDialogs.indexOf(a); r > -1 && (this.openDialogs.splice(r, 1), this.openDialogs.length || this._getAfterAllClosed().next()); }), a; }
+        closeAll() { this._closeDialogs(this.openDialogs); }
+        getDialogById(e) { return this.openDialogs.find(i => i.id === e); }
+        ngOnDestroy() { this._closeDialogs(this._openDialogsAtThisLevel), this._afterAllClosedAtThisLevel.complete(), this._afterOpenedAtThisLevel.complete(); }
+        _closeDialogs(e) {
+            let i = e.length;
+            for (; i--;)
+                e[i].close();
+        }
+        static ɵfac = function (i) { return new (i || t); };
+        static ɵprov = n.ɵɵdefineInjectable({ token: t, factory: t.ɵfac, providedIn: "root" });
+    }
+    return t;
+})(), wt = (() => {
+    class t {
+        dialogRef = s(l, { optional: !0 });
+        _elementRef = s(k);
+        _dialog = s(b);
+        ariaLabel;
+        type = "button";
+        dialogResult;
+        _matDialogClose;
+        constructor() { }
+        ngOnInit() { this.dialogRef || (this.dialogRef = F(this._elementRef, this._dialog.openDialogs)); }
+        ngOnChanges(e) { let i = e._matDialogClose || e._matDialogCloseResult; i && (this.dialogResult = i.currentValue); }
+        _onButtonClick(e) { E(this.dialogRef, e.screenX === 0 && e.screenY === 0 ? "keyboard" : "mouse", this.dialogResult); }
+        static ɵfac = function (i) { return new (i || t); };
+        static ɵdir = n.ɵɵdefineDirective({ type: t, selectors: [["", "mat-dialog-close", ""], ["", "matDialogClose", ""]], hostVars: 2, hostBindings: function (i, a) { i & 1 && n.ɵɵlistener("click", function (r) { return a._onButtonClick(r); }), i & 2 && n.ɵɵattribute("aria-label", a.ariaLabel || null)("type", a.type); }, inputs: { ariaLabel: [0, "aria-label", "ariaLabel"], type: "type", dialogResult: [0, "mat-dialog-close", "dialogResult"], _matDialogClose: [0, "matDialogClose", "_matDialogClose"] }, exportAs: ["matDialogClose"], features: [n.ɵɵNgOnChangesFeature] });
+    }
+    return t;
+})(), L = (() => {
+    class t {
+        _dialogRef = s(l, { optional: !0 });
+        _elementRef = s(k);
+        _dialog = s(b);
+        constructor() { }
+        ngOnInit() { this._dialogRef || (this._dialogRef = F(this._elementRef, this._dialog.openDialogs)), this._dialogRef && Promise.resolve().then(() => { this._onAdd(); }); }
+        ngOnDestroy() { this._dialogRef?._containerInstance && Promise.resolve().then(() => { this._onRemove(); }); }
+        static ɵfac = function (i) { return new (i || t); };
+        static ɵdir = n.ɵɵdefineDirective({ type: t });
+    }
+    return t;
+})(), Ot = (() => {
+    class t extends L {
+        id = s(S).getId("mat-mdc-dialog-title-");
+        _onAdd() { this._dialogRef._containerInstance?._addAriaLabelledBy?.(this.id); }
+        _onRemove() { this._dialogRef?._containerInstance?._removeAriaLabelledBy?.(this.id); }
+        static ɵfac = (() => { let e; return function (a) { return (e || (e = n.ɵɵgetInheritedFactory(t)))(a || t); }; })();
+        static ɵdir = n.ɵɵdefineDirective({ type: t, selectors: [["", "mat-dialog-title", ""], ["", "matDialogTitle", ""]], hostAttrs: [1, "mat-mdc-dialog-title", "mdc-dialog__title"], hostVars: 1, hostBindings: function (i, a) { i & 2 && n.ɵɵdomProperty("id", a.id); }, inputs: { id: "id" }, exportAs: ["matDialogTitle"], features: [n.ɵɵInheritDefinitionFeature] });
+    }
+    return t;
+})(), It = (() => {
+    class t {
+        static ɵfac = function (i) { return new (i || t); };
+        static ɵdir = n.ɵɵdefineDirective({ type: t, selectors: [["", "mat-dialog-content", ""], ["mat-dialog-content"], ["", "matDialogContent", ""]], hostAttrs: [1, "mat-mdc-dialog-content", "mdc-dialog__content"], features: [n.ɵɵHostDirectivesFeature([R.CdkScrollable])] });
+    }
+    return t;
+})(), kt = (() => {
+    class t extends L {
+        align;
+        _onAdd() { this._dialogRef._containerInstance?._updateActionSectionCount?.(1); }
+        _onRemove() { this._dialogRef._containerInstance?._updateActionSectionCount?.(-1); }
+        static ɵfac = (() => { let e; return function (a) { return (e || (e = n.ɵɵgetInheritedFactory(t)))(a || t); }; })();
+        static ɵdir = n.ɵɵdefineDirective({ type: t, selectors: [["", "mat-dialog-actions", ""], ["mat-dialog-actions"], ["", "matDialogActions", ""]], hostAttrs: [1, "mat-mdc-dialog-actions", "mdc-dialog__actions"], hostVars: 6, hostBindings: function (i, a) { i & 2 && n.ɵɵclassProp("mat-mdc-dialog-actions-align-start", a.align === "start")("mat-mdc-dialog-actions-align-center", a.align === "center")("mat-mdc-dialog-actions-align-end", a.align === "end"); }, inputs: { align: "align" }, features: [n.ɵɵInheritDefinitionFeature] });
+    }
+    return t;
+})();
+function F(t, o) {
+    let e = t.nativeElement.parentElement;
+    for (; e && !e.classList.contains("mat-mdc-dialog-container");)
+        e = e.parentElement;
+    return e ? o.find(i => i.id === e.id) : null;
+}
+var St = (() => {
+    class t {
+        static ɵfac = function (i) { return new (i || t); };
+        static ɵmod = n.ɵɵdefineNgModule({ type: t });
+        static ɵinj = n.ɵɵdefineInjector({ providers: [b], imports: [H, j, W, X] });
+    }
+    return t;
+})();
 export { it as MAT_DIALOG_DATA, at as MAT_DIALOG_DEFAULT_OPTIONS, nt as MAT_DIALOG_SCROLL_STRATEGY, b as MatDialog, kt as MatDialogActions, wt as MatDialogClose, g as MatDialogConfig, et as MatDialogContainer, It as MatDialogContent, St as MatDialogModule, l as MatDialogRef, m as MatDialogState, Ot as MatDialogTitle, E as _closeDialogVia };

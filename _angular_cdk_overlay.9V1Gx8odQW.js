@@ -19,20 +19,26 @@ import { inject as H, RendererFactory2 as J } from "@angular/core";
 import "@angular/common";
 import "rxjs";
 import "rxjs/operators";
-var te = (() => { class t extends l {
-    _renderer = H(J).createRenderer(null, null);
-    _fullScreenEventName;
-    _cleanupFullScreenListener;
-    constructor() { super(); }
-    ngOnDestroy() { super.ngOnDestroy(), this._cleanupFullScreenListener?.(); }
-    _createContainer() { let e = this._getEventName(); super._createContainer(), this._adjustParentForFullscreenChange(), e && (this._cleanupFullScreenListener?.(), this._cleanupFullScreenListener = this._renderer.listen("document", e, () => { this._adjustParentForFullscreenChange(); })); }
-    _adjustParentForFullscreenChange() { this._containerElement && (this.getFullscreenElement() || this._document.body).appendChild(this._containerElement); }
-    _getEventName() { if (!this._fullScreenEventName) {
-        let e = this._document;
-        e.fullscreenEnabled ? this._fullScreenEventName = "fullscreenchange" : e.webkitFullscreenEnabled ? this._fullScreenEventName = "webkitfullscreenchange" : e.mozFullScreenEnabled ? this._fullScreenEventName = "mozfullscreenchange" : e.msFullscreenEnabled && (this._fullScreenEventName = "MSFullscreenChange");
-    } return this._fullScreenEventName; }
-    getFullscreenElement() { let e = this._document; return e.fullscreenElement || e.webkitFullscreenElement || e.mozFullScreenElement || e.msFullscreenElement || null; }
-    static ɵfac = function (r) { return new (r || t); };
-    static ɵprov = n.ɵɵdefineInjectable({ token: t, factory: t.ɵfac, providedIn: "root" });
-} return t; })();
+var te = (() => {
+    class t extends l {
+        _renderer = H(J).createRenderer(null, null);
+        _fullScreenEventName;
+        _cleanupFullScreenListener;
+        constructor() { super(); }
+        ngOnDestroy() { super.ngOnDestroy(), this._cleanupFullScreenListener?.(); }
+        _createContainer() { let e = this._getEventName(); super._createContainer(), this._adjustParentForFullscreenChange(), e && (this._cleanupFullScreenListener?.(), this._cleanupFullScreenListener = this._renderer.listen("document", e, () => { this._adjustParentForFullscreenChange(); })); }
+        _adjustParentForFullscreenChange() { this._containerElement && (this.getFullscreenElement() || this._document.body).appendChild(this._containerElement); }
+        _getEventName() {
+            if (!this._fullScreenEventName) {
+                let e = this._document;
+                e.fullscreenEnabled ? this._fullScreenEventName = "fullscreenchange" : e.webkitFullscreenEnabled ? this._fullScreenEventName = "webkitfullscreenchange" : e.mozFullScreenEnabled ? this._fullScreenEventName = "mozfullscreenchange" : e.msFullscreenEnabled && (this._fullScreenEventName = "MSFullscreenChange");
+            }
+            return this._fullScreenEventName;
+        }
+        getFullscreenElement() { let e = this._document; return e.fullscreenElement || e.webkitFullscreenElement || e.mozFullScreenElement || e.msFullscreenElement || null; }
+        static ɵfac = function (r) { return new (r || t); };
+        static ɵprov = n.ɵɵdefineInjectable({ token: t, factory: t.ɵfac, providedIn: "root" });
+    }
+    return t;
+})();
 export { C as BlockScrollStrategy, K as CDK_CONNECTED_OVERLAY_DEFAULT_CONFIG, U as CdkConnectedOverlay, G as CdkOverlayOrigin, c as CdkScrollable, y as CloseScrollStrategy, k as ConnectedOverlayPositionChange, b as ConnectionPositionPair, x as FlexibleConnectedPositionStrategy, te as FullscreenOverlayContainer, j as GlobalPositionStrategy, O as NoopScrollStrategy, M as OVERLAY_DEFAULT_CONFIG, B as Overlay, v as OverlayConfig, l as OverlayContainer, V as OverlayKeyboardDispatcher, Y as OverlayModule, R as OverlayOutsideClickDispatcher, z as OverlayPositionBuilder, A as OverlayRef, h as RepositionScrollStrategy, L as STANDARD_DROPDOWN_ADJACENT_POSITIONS, I as STANDARD_DROPDOWN_BELOW_POSITIONS, a as ScrollDispatcher, F as ScrollStrategyOptions, N as ScrollingVisibility, s as ViewportRuler, f as createBlockScrollStrategy, _ as createCloseScrollStrategy, w as createFlexibleConnectedPositionStrategy, T as createGlobalPositionStrategy, E as createNoopScrollStrategy, W as createOverlayRef, g as createRepositionScrollStrategy, P as validateHorizontalPosition, D as validateVerticalPosition, i as ɵɵCdkFixedSizeVirtualScroll, p as ɵɵCdkScrollableModule, d as ɵɵCdkVirtualForOf, u as ɵɵCdkVirtualScrollViewport, m as ɵɵCdkVirtualScrollableElement, S as ɵɵCdkVirtualScrollableWindow, o as ɵɵDir };

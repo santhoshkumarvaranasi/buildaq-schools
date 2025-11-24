@@ -17,9 +17,12 @@ var b = (() => {
 import { BidiModule as s } from "@angular/cdk/bidi";
 import * as c from "@angular/core";
 import "@angular/core";
-var g = (() => { class e {
-    static ɵfac = function (t) { return new (t || e); };
-    static ɵmod = c.ɵɵdefineNgModule({ type: e });
-    static ɵinj = c.ɵɵdefineInjector({ imports: [s] });
-} return e; })();
+var g = (() => {
+    class e {
+        static ɵfac = function (t) { return new (t || e); };
+        static ɵmod = c.ɵɵdefineNgModule({ type: e });
+        static ɵinj = c.ɵɵdefineInjector({ imports: [s] });
+    }
+    return e;
+})();
 export { b as a, g as b };
