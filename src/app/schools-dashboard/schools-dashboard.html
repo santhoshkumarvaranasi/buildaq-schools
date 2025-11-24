@@ -1,54 +1,34 @@
 <div class="dashboard-container">
-  <h1>{{ tenant?.displayName || 'School Management System' }}</h1>
-
-  <div class="tenant-info" *ngIf="tenant">
-    <mat-card>
-      <mat-card-title>Welcome to {{ tenant.displayName }}</mat-card-title>
-      <mat-card-content>
-        <p><strong>School ID:</strong> {{ tenant.id }}</p>
-        <p><strong>Status:</strong> {{ tenant.status }}</p>
-        <p><strong>Plan:</strong> {{ tenant.subscription.plan }}</p>
-      </mat-card-content>
-    </mat-card>
+  <div class="hero mat-elevation-z2">
+    <div>
+      <div class="eyebrow">School Management</div>
+      <h1>{{ tenant?.displayName || 'School Management System' }}</h1>
+    </div>
+    <div class="quick-links">
+      <button *ngFor="let link of quickLinks" mat-stroked-button color="primary" [routerLink]="getLink(link.path)">{{ link.label }}</button>
+    </div>
   </div>
 
-  <nav class="dashboard-navigation">
-    <button mat-button [routerLink]="getLink('students')">👨‍🎓 Students</button>
-    <button mat-button [routerLink]="getLink('teachers')">👩‍🏫 Teachers</button>
-    <button mat-button [routerLink]="getLink('classes')">📚 Classes</button>
-    <button mat-flat-button color="primary" [routerLink]="getLink('dashboard')">🏠 Dashboard</button>
-  </nav>
-
-  <div class="dashboard-cards">
-    <mat-card class="dashboard-card">
-      <mat-card-title>Students</mat-card-title>
-      <mat-card-content>
-        <p>{{ (tenant?.subscription?.usage?.students || 0) }} / {{ (tenant?.subscription?.limits?.maxStudents || 0) }}</p>
-      </mat-card-content>
+  <div class="metrics">
+    <mat-card class="metric-card mat-elevation-z2">
+      <div class="metric-label">Students</div>
+      <div class="metric-value">{{ metrics.students }}</div>
     </mat-card>
-
-    <mat-card class="dashboard-card">
-      <mat-card-title>Teachers</mat-card-title>
-      <mat-card-content>
-        <p>{{ (tenant?.subscription?.usage?.teachers || 0) }} / {{ (tenant?.subscription?.limits?.maxTeachers || 0) }}</p>
-      </mat-card-content>
+    <mat-card class="metric-card mat-elevation-z2">
+      <div class="metric-label">Active</div>
+      <div class="metric-value">{{ metrics.activeStudents }}</div>
     </mat-card>
-
-    <mat-card class="dashboard-card">
-      <mat-card-title>Classes</mat-card-title>
-      <mat-card-content>
-        <p>{{ (tenant?.subscription?.usage?.classes || 0) }} / {{ (tenant?.subscription?.limits?.maxClasses || 0) }}</p>
-      </mat-card-content>
+    <mat-card class="metric-card mat-elevation-z2">
+      <div class="metric-label">Teachers</div>
+      <div class="metric-value">{{ metrics.teachers }}</div>
     </mat-card>
-  </div>
-
-  <div class="features" *ngIf="tenant">
-    <h3>Available Features</h3>
-    <mat-list>
-      <mat-list-item *ngIf="tenant.features.gradebook">Gradebook</mat-list-item>
-      <mat-list-item *ngIf="tenant.features.reports">Reports</mat-list-item>
-      <mat-list-item *ngIf="tenant.features.analytics">Analytics</mat-list-item>
-      <mat-list-item *ngIf="tenant.features.notifications">Notifications</mat-list-item>
-    </mat-list>
+    <mat-card class="metric-card mat-elevation-z2">
+      <div class="metric-label">Present today</div>
+      <div class="metric-value">{{ metrics.attendanceToday }}</div>
+    </mat-card>
+    <mat-card class="metric-card mat-elevation-z2">
+      <div class="metric-label">Fees outstanding</div>
+      <div class="metric-value">{{ metrics.feesOutstanding | currency }}</div>
+    </mat-card>
   </div>
 </div>
