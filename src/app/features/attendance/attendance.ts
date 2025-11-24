@@ -88,6 +88,10 @@ type AttendanceRow = {
             <mat-chip-option value="present">Present</mat-chip-option>
             <mat-chip-option value="absent">Absent</mat-chip-option>
           </mat-chip-listbox>
+
+          <button mat-stroked-button color="primary" class="ghost-button" (click)="exportCsv()">
+            Export CSV
+          </button>
         </div>
       </mat-card>
 
@@ -270,5 +274,25 @@ export class AttendanceComponent implements AfterViewInit {
     this.summary.present = this.rows.filter(r => r.status === 'present').length;
     this.summary.absent = this.rows.filter(r => r.status === 'absent').length;
     this.summary.total = this.students.length;
+  }
+
+  exportCsv() {
+    const rows = this.dataSource.data;
+    const headers = ['Id','Student','Class','Date','Status'];
+    const lines = rows.map(r => [
+      r.id,
+      `"${(r.studentName || '').replace(/"/g, '""')}"`,
+      r.class || '',
+      r.date,
+      r.status
+    ].join(','));
+    const csv = [headers.join(','), ...lines].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'attendance.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 }
