@@ -5,7 +5,7 @@ var r = new WeakMap, m = (() => { class n {
     _injector = a(c);
     _environmentInjector = a(p);
     load(o) { let e = this._appRef = this._appRef || this._injector.get(f), t = r.get(e); t || (t = { loaders: new Set, refs: [] }, r.set(e, t), e.onDestroy(() => { r.get(e)?.refs.forEach(s => s.destroy()), r.delete(e); })), t.loaders.has(o) || (t.loaders.add(o), t.refs.push(d(o, { environmentInjector: this._environmentInjector }))); }
-    static \u0275fac = function (e) { return new (e || n); };
-    static \u0275prov = i.\u0275\u0275defineInjectable({ token: n, factory: n.\u0275fac, providedIn: "root" });
+    static ɵfac = function (e) { return new (e || n); };
+    static ɵprov = i.ɵɵdefineInjectable({ token: n, factory: n.ɵfac, providedIn: "root" });
 } return n; })();
 export { m as a };

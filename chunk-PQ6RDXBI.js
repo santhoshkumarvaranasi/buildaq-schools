@@ -24,7 +24,7 @@ var y = { capture: !0 }, I = ["focus", "mousedown", "mouseenter", "touchstart"],
     _createRipple(e) { if (!this._document || this._hosts.has(e))
         return; e.querySelector(".mat-ripple")?.remove(); let t = this._document.createElement("span"); t.classList.add("mat-ripple", e.getAttribute(l)), e.append(t); let i = this._globalRippleOptions, g = this._animationsDisabled ? 0 : i?.animation?.enterDuration ?? o.enterDuration, h = this._animationsDisabled ? 0 : i?.animation?.exitDuration ?? o.exitDuration, a = { rippleDisabled: this._animationsDisabled || i?.disabled || e.hasAttribute(s), rippleConfig: { centered: e.hasAttribute(f), terminateOnPointerUp: i?.terminateOnPointerUp, animation: { enterDuration: g, exitDuration: h } } }, c = new u(a, this._ngZone, t, this._platform, this._injector), m = !a.rippleDisabled; m && c.setupTriggerEvents(e), this._hosts.set(e, { target: a, renderer: c, hasSetUpEvents: m }), e.removeAttribute(p); }
     destroyRipple(e) { let t = this._hosts.get(e); t && (t.renderer._removeTriggerEvents(), this._hosts.delete(e)); }
-    static \u0275fac = function (t) { return new (t || r); };
-    static \u0275prov = b.\u0275\u0275defineInjectable({ token: r, factory: r.\u0275fac, providedIn: "root" });
+    static ɵfac = function (t) { return new (t || r); };
+    static ɵprov = b.ɵɵdefineInjectable({ token: r, factory: r.ɵfac, providedIn: "root" });
 } return r; })();
 export { M as a };

@@ -20,7 +20,7 @@ var n = class {
     ngOnDestroy() { for (let [, e] of this._observers)
         e.destroy(); this._observers.clear(), this._cleanupErrorListener?.(); }
     observe(e, s) { let o = s?.box || "content-box"; return this._observers.has(o) || this._observers.set(o, new n(o)), this._observers.get(o).observe(e); }
-    static \u0275fac = function (s) { return new (s || t); };
-    static \u0275prov = b.\u0275\u0275defineInjectable({ token: t, factory: t.\u0275fac, providedIn: "root" });
+    static ɵfac = function (s) { return new (s || t); };
+    static ɵprov = b.ɵɵdefineInjectable({ token: t, factory: t.ɵfac, providedIn: "root" });
 } return t; })();
 export { y as SharedResizeObserver };

@@ -292,8 +292,8 @@ var gt = "cdk-describedby-message-container", K = "cdk-describedby-message", _ =
         return !1; if (i && typeof i == "object")
         return !0; let s = i == null ? "" : `${i}`.trim(), n = t.getAttribute("aria-label"); return s ? !n || n.trim() !== s : !1; }
     _isElementNode(t) { return t.nodeType === this._document.ELEMENT_NODE; }
-    static \u0275fac = function (i) { return new (i || r); };
-    static \u0275prov = l.\u0275\u0275defineInjectable({ token: r, factory: r.\u0275fac, providedIn: "root" });
+    static ɵfac = function (i) { return new (i || r); };
+    static ɵprov = l.ɵɵdefineInjectable({ token: r, factory: r.ɵfac, providedIn: "root" });
 } return r; })();
 function p(r, e) { return typeof r == "string" ? `${e || ""}/${r}` : r; }
 function P(r, e) { r.id || (r.id = `${K}-${e}-${v++}`); }
@@ -323,8 +323,8 @@ var y = class {
     _focusTrapStack = [];
     register(t) { this._focusTrapStack = this._focusTrapStack.filter(s => s !== t); let i = this._focusTrapStack; i.length && i[i.length - 1]._disable(), i.push(t), t._enable(); }
     deregister(t) { t._disable(); let i = this._focusTrapStack, s = i.indexOf(t); s !== -1 && (i.splice(s, 1), i.length && i[i.length - 1]._enable()); }
-    static \u0275fac = function (i) { return new (i || r); };
-    static \u0275prov = l.\u0275\u0275defineInjectable({ token: r, factory: r.\u0275fac, providedIn: "root" });
+    static ɵfac = function (i) { return new (i || r); };
+    static ɵprov = l.ɵɵdefineInjectable({ token: r, factory: r.ɵfac, providedIn: "root" });
 } return r; })(), xt = (() => { class r {
     _checker = o(k);
     _ngZone = o(Ne);
@@ -334,7 +334,7 @@ var y = class {
     _injector = o(Ke);
     constructor() { let t = o(ze, { optional: !0 }); this._inertStrategy = t || new b; }
     create(t, i = { defer: !1 }) { let s; return typeof i == "boolean" ? s = { defer: i } : s = i, new g(t, this._checker, this._ngZone, this._document, this._focusTrapManager, this._inertStrategy, s, this._injector); }
-    static \u0275fac = function (i) { return new (i || r); };
-    static \u0275prov = l.\u0275\u0275defineInjectable({ token: r, factory: r.\u0275fac, providedIn: "root" });
+    static ɵfac = function (i) { return new (i || r); };
+    static ɵprov = l.ɵɵdefineInjectable({ token: r, factory: r.ɵfac, providedIn: "root" });
 } return r; })();
 export { ve as A11yModule, u as ActiveDescendantKeyManager, bt as AriaDescriber, _ as CDK_DESCRIBEDBY_HOST_ATTRIBUTE, K as CDK_DESCRIBEDBY_ID_PREFIX, Ie as CdkAriaLive, ce as CdkMonitorFocus, _e as CdkTrapFocus, g as ConfigurableFocusTrap, xt as ConfigurableFocusTrapFactory, b as EventListenerFocusTrapInertStrategy, ae as FOCUS_MONITOR_DEFAULT_OPTIONS, ze as FOCUS_TRAP_INERT_STRATEGY, I as FocusKeyManager, oe as FocusMonitor, ne as FocusMonitorDetectionMode, C as FocusTrap, de as FocusTrapFactory, fe as HighContrastMode, pe as HighContrastModeDetector, se as INPUT_MODALITY_DETECTOR_DEFAULT_OPTIONS, ie as INPUT_MODALITY_DETECTOR_OPTIONS, re as InputModalityDetector, k as InteractivityChecker, he as IsFocusableConfig, le as LIVE_ANNOUNCER_DEFAULT_OPTIONS, me as LIVE_ANNOUNCER_ELEMENT_TOKEN, c as ListKeyManager, ue as LiveAnnouncer, gt as MESSAGES_CONTAINER_ID, At as NOOP_TREE_KEY_MANAGER_FACTORY_PROVIDER, y as NoopTreeKeyManager, O as TREE_KEY_MANAGER, d as TreeKeyManager, ye as _IdGenerator, Ue as addAriaReferencedId, m as getAriaReferenceIds, j as isFakeMousedownFromScreenReader, z as isFakeTouchstartFromScreenReader, je as removeAriaReferencedId };

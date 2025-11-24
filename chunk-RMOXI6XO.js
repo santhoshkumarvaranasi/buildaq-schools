@@ -4,7 +4,7 @@ var a = {}, e = class o {
     _appId = r(c);
     static _infix = `a${Math.floor(Math.random() * 1e5).toString()}`;
     getId(t, n = !1) { return this._appId !== "ng" && (t += this._appId), a.hasOwnProperty(t) || (a[t] = 0), `${t}${n ? o._infix + "-" : ""}${a[t]++}`; }
-    static \u0275fac = function (n) { return new (n || o); };
-    static \u0275prov = i.\u0275\u0275defineInjectable({ token: o, factory: o.\u0275fac, providedIn: "root" });
+    static ɵfac = function (n) { return new (n || o); };
+    static ɵprov = i.ɵɵdefineInjectable({ token: o, factory: o.ɵfac, providedIn: "root" });
 };
 export { e as a };

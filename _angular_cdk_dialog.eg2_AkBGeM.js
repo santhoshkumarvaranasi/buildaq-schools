@@ -102,7 +102,7 @@ var te = (() => {
                 this._focusTrap?.focusInitialElement(e) || this._focusDialogContainer(e);
                 break;
             case "first-heading":
-                this._focusByCssSelector('h1, h2, h3, h4, h5, h6, [role="heading"]', e);
+                this._focusByCssSelector("h1, h2, h3, h4, h5, h6, [role=\"heading\"]", e);
                 break;
             default:
                 this._focusByCssSelector(this._config.autoFocus, e);
@@ -115,11 +115,11 @@ var te = (() => {
         _focusDialogContainer(e) { this._elementRef.nativeElement.focus?.(e); }
         _containsFocus() { let e = this._elementRef.nativeElement, t = _(); return e === t || e.contains(t); }
         _initializeFocusTrap() { this._platform.isBrowser && (this._focusTrap = this._focusTrapFactory.create(this._elementRef.nativeElement), this._document && (this._elementFocusedBeforeDialogWasOpened = _())); }
-        static \u0275fac = function (t) { return new (t || n); };
-        static \u0275cmp = r.\u0275\u0275defineComponent({ type: n, selectors: [["cdk-dialog-container"]], viewQuery: function (t, i) { if (t & 1 && r.\u0275\u0275viewQuery(C, 7), t & 2) {
+        static ɵfac = function (t) { return new (t || n); };
+        static ɵcmp = r.ɵɵdefineComponent({ type: n, selectors: [["cdk-dialog-container"]], viewQuery: function (t, i) { if (t & 1 && r.ɵɵviewQuery(C, 7), t & 2) {
                 let o;
-                r.\u0275\u0275queryRefresh(o = r.\u0275\u0275loadQuery()) && (i._portalOutlet = o.first);
-            } }, hostAttrs: ["tabindex", "-1", 1, "cdk-dialog-container"], hostVars: 6, hostBindings: function (t, i) { t & 2 && r.\u0275\u0275attribute("id", i._config.id || null)("role", i._config.role)("aria-modal", i._config.ariaModal)("aria-labelledby", i._config.ariaLabel ? null : i._ariaLabelledByQueue[0])("aria-label", i._config.ariaLabel)("aria-describedby", i._config.ariaDescribedBy || null); }, features: [r.\u0275\u0275InheritDefinitionFeature], decls: 1, vars: 0, consts: [["cdkPortalOutlet", ""]], template: function (t, i) { t & 1 && r.\u0275\u0275template(0, J, 0, 0, "ng-template", 0); }, dependencies: [C], styles: [`.cdk-dialog-container{display:block;width:100%;height:100%;min-height:inherit;max-height:inherit}
+                r.ɵɵqueryRefresh(o = r.ɵɵloadQuery()) && (i._portalOutlet = o.first);
+            } }, hostAttrs: ["tabindex", "-1", 1, "cdk-dialog-container"], hostVars: 6, hostBindings: function (t, i) { t & 2 && r.ɵɵattribute("id", i._config.id || null)("role", i._config.role)("aria-modal", i._config.ariaModal)("aria-labelledby", i._config.ariaLabel ? null : i._ariaLabelledByQueue[0])("aria-label", i._config.ariaLabel)("aria-describedby", i._config.ariaDescribedBy || null); }, features: [r.ɵɵInheritDefinitionFeature], decls: 1, vars: 0, consts: [["cdkPortalOutlet", ""]], template: function (t, i) { t & 1 && r.ɵɵtemplate(0, J, 0, 0, "ng-template", 0); }, dependencies: [C], styles: [`.cdk-dialog-container{display:block;width:100%;height:100%;min-height:inherit;max-height:inherit}
 `], encapsulation: 2 });
     }
     return n;
@@ -190,14 +190,14 @@ var ae = (() => { class n {
         }
     } }
     _getAfterAllClosed() { let e = this._parentDialog; return e ? e._getAfterAllClosed() : this._afterAllClosedAtThisLevel; }
-    static \u0275fac = function (t) { return new (t || n); };
-    static \u0275prov = r.\u0275\u0275defineInjectable({ token: n, factory: n.\u0275fac, providedIn: "root" });
+    static ɵfac = function (t) { return new (t || n); };
+    static ɵprov = r.ɵɵdefineInjectable({ token: n, factory: n.ɵfac, providedIn: "root" });
 } return n; })();
 function b(n, a) { let e = n.length; for (; e--;)
     a(n[e]); }
 var we = (() => { class n {
-    static \u0275fac = function (t) { return new (t || n); };
-    static \u0275mod = r.\u0275\u0275defineNgModule({ type: n });
-    static \u0275inj = r.\u0275\u0275defineInjector({ providers: [ae], imports: [N, D, F, D] });
+    static ɵfac = function (t) { return new (t || n); };
+    static ɵmod = r.ɵɵdefineNgModule({ type: n });
+    static ɵinj = r.ɵɵdefineInjector({ providers: [ae], imports: [N, D, F, D] });
 } return n; })();
-export { te as CdkDialogContainer, ne as DEFAULT_DIALOG_CONFIG, oe as DIALOG_DATA, ie as DIALOG_SCROLL_STRATEGY, ae as Dialog, h as DialogConfig, we as DialogModule, f as DialogRef, Te as throwDialogContentAlreadyAttachedError, Q as \u0275\u0275CdkPortal, C as \u0275\u0275CdkPortalOutlet };
+export { te as CdkDialogContainer, ne as DEFAULT_DIALOG_CONFIG, oe as DIALOG_DATA, ie as DIALOG_SCROLL_STRATEGY, ae as Dialog, h as DialogConfig, we as DialogModule, f as DialogRef, Te as throwDialogContentAlreadyAttachedError, Q as ɵɵCdkPortal, C as ɵɵCdkPortalOutlet };

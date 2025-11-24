@@ -10,8 +10,8 @@ var f = new Set, a, Q = (() => { class e {
     _matchMedia;
     constructor() { this._matchMedia = this._platform.isBrowser && window.matchMedia ? window.matchMedia.bind(window) : E; }
     matchMedia(t) { return (this._platform.WEBKIT || this._platform.BLINK) && D(t, this._nonce), this._matchMedia(t); }
-    static \u0275fac = function (r) { return new (r || e); };
-    static \u0275prov = p.\u0275\u0275defineInjectable({ token: e, factory: e.\u0275fac, providedIn: "root" });
+    static ɵfac = function (r) { return new (r || e); };
+    static ɵprov = p.ɵɵdefineInjectable({ token: e, factory: e.ɵfac, providedIn: "root" });
 } return e; })();
 function D(e, i) { if (!f.has(e))
     try {
@@ -32,8 +32,8 @@ var F = (() => { class e {
     observe(t) { let c = b(u(t)).map(s => this._registerQuery(s).observable), o = w(c); return o = g(o.pipe(S(1)), o.pipe(k(1), I(0))), o.pipe(l(s => { let n = { matches: !1, breakpoints: {} }; return s.forEach(({ matches: d, query: _ }) => { n.matches = n.matches || d, n.breakpoints[_] = d; }), n; })); }
     _registerQuery(t) { if (this._queries.has(t))
         return this._queries.get(t); let r = this._mediaMatcher.matchMedia(t), o = { observable: new j(s => { let n = d => this._zone.run(() => s.next(d)); return r.addListener(n), () => { r.removeListener(n); }; }).pipe(L(r), l(({ matches: s }) => ({ query: t, matches: s })), O(this._destroySubject)), mql: r }; return this._queries.set(t, o), o; }
-    static \u0275fac = function (r) { return new (r || e); };
-    static \u0275prov = p.\u0275\u0275defineInjectable({ token: e, factory: e.\u0275fac, providedIn: "root" });
+    static ɵfac = function (r) { return new (r || e); };
+    static ɵprov = p.ɵɵdefineInjectable({ token: e, factory: e.ɵfac, providedIn: "root" });
 } return e; })();
 function b(e) { return e.map(i => i.split(",")).reduce((i, t) => i.concat(t)).map(i => i.trim()); }
 export { Q as a, F as b };

@@ -6,7 +6,7 @@ import { InjectionToken as k, inject as h, ElementRef as H, NgZone as x, Injecto
 import { isFakeMousedownFromScreenReader as B, isFakeTouchstartFromScreenReader as z } from "@angular/cdk/a11y";
 import { coerceElement as y } from "@angular/cdk/coercion";
 import { _CdkPrivateStyleLoader as Z } from "@angular/cdk/private";
-var l = (function (s) { return s[s.FADING_IN = 0] = "FADING_IN", s[s.VISIBLE = 1] = "VISIBLE", s[s.FADING_OUT = 2] = "FADING_OUT", s[s.HIDDEN = 3] = "HIDDEN", s; })(l || {}), f = class {
+var l = function (s) { return s[s.FADING_IN = 0] = "FADING_IN", s[s.VISIBLE = 1] = "VISIBLE", s[s.FADING_OUT = 2] = "FADING_OUT", s[s.HIDDEN = 3] = "HIDDEN", s; }(l || {}), f = class {
     _renderer;
     element;
     config;
@@ -27,8 +27,8 @@ var l = (function (s) { return s[s.FADING_IN = 0] = "FADING_IN", s[s.VISIBLE = 1
     _delegateEventHandler = t => { let e = U(t); e && this._events.get(t.type)?.forEach((i, n) => { (n === e || n.contains(e)) && i.forEach(r => r.handleEvent(t)); }); };
 }, w = { enterDuration: 225, exitDuration: 150 }, V = 800, A = M({ passive: !0, capture: !0 }), F = ["mousedown", "touchstart"], C = ["mouseup", "mouseleave", "touchend", "touchcancel"], $ = (() => {
     class s {
-        static \u0275fac = function (i) { return new (i || s); };
-        static \u0275cmp = p.\u0275\u0275defineComponent({ type: s, selectors: [["ng-component"]], hostAttrs: ["mat-ripple-style-loader", ""], decls: 0, vars: 0, template: function (i, n) { }, styles: [`.mat-ripple{overflow:hidden;position:relative}.mat-ripple:not(:empty){transform:translateZ(0)}.mat-ripple.mat-ripple-unbounded{overflow:visible}.mat-ripple-element{position:absolute;border-radius:50%;pointer-events:none;transition:opacity,transform 0ms cubic-bezier(0, 0, 0.2, 1);transform:scale3d(0, 0, 0);background-color:var(--mat-ripple-color, color-mix(in srgb, var(--mat-sys-on-surface) 10%, transparent))}@media(forced-colors: active){.mat-ripple-element{display:none}}.cdk-drag-preview .mat-ripple-element,.cdk-drag-placeholder .mat-ripple-element{display:none}
+        static ɵfac = function (i) { return new (i || s); };
+        static ɵcmp = p.ɵɵdefineComponent({ type: s, selectors: [["ng-component"]], hostAttrs: ["mat-ripple-style-loader", ""], decls: 0, vars: 0, template: function (i, n) { }, styles: [`.mat-ripple{overflow:hidden;position:relative}.mat-ripple:not(:empty){transform:translateZ(0)}.mat-ripple.mat-ripple-unbounded{overflow:visible}.mat-ripple-element{position:absolute;border-radius:50%;pointer-events:none;transition:opacity,transform 0ms cubic-bezier(0, 0, 0.2, 1);transform:scale3d(0, 0, 0);background-color:var(--mat-ripple-color, color-mix(in srgb, var(--mat-sys-on-surface) 10%, transparent))}@media(forced-colors: active){.mat-ripple-element{display:none}}.cdk-drag-preview .mat-ripple-element,.cdk-drag-placeholder .mat-ripple-element{display:none}
 `], encapsulation: 2, changeDetection: 0 });
     }
     return s;
@@ -95,7 +95,7 @@ var j = new k("mat-ripple-global-options"), rt = (() => { class s {
     get rippleDisabled() { return this.disabled || !!this._globalOptions.disabled; }
     _setupTriggerEventsIfEnabled() { !this.disabled && this._isInitialized && this._rippleRenderer.setupTriggerEvents(this.trigger); }
     launch(e, i = 0, n) { return typeof e == "number" ? this._rippleRenderer.fadeInRipple(e, i, a(a({}, this.rippleConfig), n)) : this._rippleRenderer.fadeInRipple(0, 0, a(a({}, this.rippleConfig), e)); }
-    static \u0275fac = function (i) { return new (i || s); };
-    static \u0275dir = p.\u0275\u0275defineDirective({ type: s, selectors: [["", "mat-ripple", ""], ["", "matRipple", ""]], hostAttrs: [1, "mat-ripple"], hostVars: 2, hostBindings: function (i, n) { i & 2 && p.\u0275\u0275classProp("mat-ripple-unbounded", n.unbounded); }, inputs: { color: [0, "matRippleColor", "color"], unbounded: [0, "matRippleUnbounded", "unbounded"], centered: [0, "matRippleCentered", "centered"], radius: [0, "matRippleRadius", "radius"], animation: [0, "matRippleAnimation", "animation"], disabled: [0, "matRippleDisabled", "disabled"], trigger: [0, "matRippleTrigger", "trigger"] }, exportAs: ["matRipple"] });
+    static ɵfac = function (i) { return new (i || s); };
+    static ɵdir = p.ɵɵdefineDirective({ type: s, selectors: [["", "mat-ripple", ""], ["", "matRipple", ""]], hostAttrs: [1, "mat-ripple"], hostVars: 2, hostBindings: function (i, n) { i & 2 && p.ɵɵclassProp("mat-ripple-unbounded", n.unbounded); }, inputs: { color: [0, "matRippleColor", "color"], unbounded: [0, "matRippleUnbounded", "unbounded"], centered: [0, "matRippleCentered", "centered"], radius: [0, "matRippleRadius", "radius"], animation: [0, "matRippleAnimation", "animation"], disabled: [0, "matRippleDisabled", "disabled"], trigger: [0, "matRippleTrigger", "trigger"] }, exportAs: ["matRipple"] });
 } return s; })();
 export { w as a, E as b, j as c, rt as d };

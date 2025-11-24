@@ -1,4 +1,4 @@
-var o = (function (e) { return e[e.NORMAL = 0] = "NORMAL", e[e.NEGATED = 1] = "NEGATED", e[e.INVERTED = 2] = "INVERTED", e; })(o || {}), l, t;
+var o = function (e) { return e[e.NORMAL = 0] = "NORMAL", e[e.NEGATED = 1] = "NEGATED", e[e.INVERTED = 2] = "INVERTED", e; }(o || {}), l, t;
 function i() { if (t == null) {
     if (typeof document != "object" || !document || typeof Element != "function" || !Element)
         return t = !1, t;

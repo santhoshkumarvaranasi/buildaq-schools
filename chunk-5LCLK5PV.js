@@ -12,8 +12,8 @@ import "rxjs/operators";
 import "@angular/cdk/observers/private";
 import "@angular/cdk/layout";
 var b = (() => { class r {
-    static \u0275fac = function (i) { return new (i || r); };
-    static \u0275mod = o.\u0275\u0275defineNgModule({ type: r });
-    static \u0275inj = o.\u0275\u0275defineInjector({ imports: [m, t, e] });
+    static ɵfac = function (i) { return new (i || r); };
+    static ɵmod = o.ɵɵdefineNgModule({ type: r });
+    static ɵinj = o.ɵɵdefineInjector({ imports: [m, t, e] });
 } return r; })();
 export { b as a };

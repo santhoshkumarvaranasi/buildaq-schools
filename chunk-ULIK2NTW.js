@@ -2,8 +2,8 @@ import * as s from "@angular/core";
 import "@angular/core";
 var h = (() => { class r {
     isErrorState(t, e) { return !!(t && t.invalid && (t.touched || e && e.submitted)); }
-    static \u0275fac = function (e) { return new (e || r); };
-    static \u0275prov = s.\u0275\u0275defineInjectable({ token: r, factory: r.\u0275fac, providedIn: "root" });
+    static ɵfac = function (e) { return new (e || r); };
+    static ɵprov = s.ɵɵdefineInjectable({ token: r, factory: r.ɵfac, providedIn: "root" });
 } return r; })();
 var i = class {
     _defaultMatcher;

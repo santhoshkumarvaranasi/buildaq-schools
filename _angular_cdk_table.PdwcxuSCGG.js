@@ -12,32 +12,32 @@ import { Subject as fe, BehaviorSubject as he, isObservable as _e, of as q } fro
 import { takeUntil as x } from "rxjs/operators";
 import "@angular/common";
 var ee = [[["caption"]], [["colgroup"], ["col"]], "*"], te = ["caption", "colgroup, col", "*"];
-function ie(o, r) { o & 1 && s.\u0275\u0275projection(0, 2); }
-function oe(o, r) { o & 1 && (s.\u0275\u0275elementStart(0, "thead", 0), s.\u0275\u0275elementContainer(1, 1), s.\u0275\u0275elementEnd(), s.\u0275\u0275elementStart(2, "tbody", 0), s.\u0275\u0275elementContainer(3, 2)(4, 3), s.\u0275\u0275elementEnd(), s.\u0275\u0275elementStart(5, "tfoot", 0), s.\u0275\u0275elementContainer(6, 4), s.\u0275\u0275elementEnd()); }
-function se(o, r) { o & 1 && s.\u0275\u0275elementContainer(0, 1)(1, 2)(2, 3)(3, 4); }
-function ne(o, r) { if (o & 1 && (s.\u0275\u0275elementStart(0, "th", 3), s.\u0275\u0275text(1), s.\u0275\u0275elementEnd()), o & 2) {
-    let e = s.\u0275\u0275nextContext();
-    s.\u0275\u0275styleProp("text-align", e.justify), s.\u0275\u0275advance(), s.\u0275\u0275textInterpolate1(" ", e.headerText, " ");
+function ie(o, r) { o & 1 && s.ɵɵprojection(0, 2); }
+function oe(o, r) { o & 1 && (s.ɵɵelementStart(0, "thead", 0), s.ɵɵelementContainer(1, 1), s.ɵɵelementEnd(), s.ɵɵelementStart(2, "tbody", 0), s.ɵɵelementContainer(3, 2)(4, 3), s.ɵɵelementEnd(), s.ɵɵelementStart(5, "tfoot", 0), s.ɵɵelementContainer(6, 4), s.ɵɵelementEnd()); }
+function se(o, r) { o & 1 && s.ɵɵelementContainer(0, 1)(1, 2)(2, 3)(3, 4); }
+function ne(o, r) { if (o & 1 && (s.ɵɵelementStart(0, "th", 3), s.ɵɵtext(1), s.ɵɵelementEnd()), o & 2) {
+    let e = s.ɵɵnextContext();
+    s.ɵɵstyleProp("text-align", e.justify), s.ɵɵadvance(), s.ɵɵtextInterpolate1(" ", e.headerText, " ");
 } }
-function re(o, r) { if (o & 1 && (s.\u0275\u0275elementStart(0, "td", 4), s.\u0275\u0275text(1), s.\u0275\u0275elementEnd()), o & 2) {
-    let e = r.$implicit, t = s.\u0275\u0275nextContext();
-    s.\u0275\u0275styleProp("text-align", t.justify), s.\u0275\u0275advance(), s.\u0275\u0275textInterpolate1(" ", t.dataAccessor(e, t.name), " ");
+function re(o, r) { if (o & 1 && (s.ɵɵelementStart(0, "td", 4), s.ɵɵtext(1), s.ɵɵelementEnd()), o & 2) {
+    let e = r.$implicit, t = s.ɵɵnextContext();
+    s.ɵɵstyleProp("text-align", t.justify), s.ɵɵadvance(), s.ɵɵtextInterpolate1(" ", t.dataAccessor(e, t.name), " ");
 } }
 var w = new A("CDK_TABLE"), me = new A("text-column-options"), N = (() => { class o {
     template = l(p);
     constructor() { }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "cdkCellDef", ""]] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "cdkCellDef", ""]] });
 } return o; })(), F = (() => { class o {
     template = l(p);
     constructor() { }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "cdkHeaderCellDef", ""]] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "cdkHeaderCellDef", ""]] });
 } return o; })(), ye = (() => { class o {
     template = l(p);
     constructor() { }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "cdkFooterCellDef", ""]] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "cdkFooterCellDef", ""]] });
 } return o; })(), g = (() => { class o {
     _table = l(w, { optional: !0 });
     _hasStickyChanged = !1;
@@ -60,25 +60,25 @@ var w = new A("CDK_TABLE"), me = new A("text-column-options"), N = (() => { clas
     resetStickyChanged() { this._hasStickyChanged = !1; }
     _updateColumnCssClassName() { this._columnCssClassName = [`cdk-column-${this.cssClassFriendlyName}`]; }
     _setNameInput(e) { e && (this._name = e, this.cssClassFriendlyName = e.replace(/[^a-z0-9_-]/gi, "-"), this._updateColumnCssClassName()); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "cdkColumnDef", ""]], contentQueries: function (t, i, n) { if (t & 1 && (s.\u0275\u0275contentQuery(n, N, 5), s.\u0275\u0275contentQuery(n, F, 5), s.\u0275\u0275contentQuery(n, ye, 5)), t & 2) {
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "cdkColumnDef", ""]], contentQueries: function (t, i, n) { if (t & 1 && (s.ɵɵcontentQuery(n, N, 5), s.ɵɵcontentQuery(n, F, 5), s.ɵɵcontentQuery(n, ye, 5)), t & 2) {
             let a;
-            s.\u0275\u0275queryRefresh(a = s.\u0275\u0275loadQuery()) && (i.cell = a.first), s.\u0275\u0275queryRefresh(a = s.\u0275\u0275loadQuery()) && (i.headerCell = a.first), s.\u0275\u0275queryRefresh(a = s.\u0275\u0275loadQuery()) && (i.footerCell = a.first);
-        } }, inputs: { name: [0, "cdkColumnDef", "name"], sticky: [2, "sticky", "sticky", D], stickyEnd: [2, "stickyEnd", "stickyEnd", D] }, features: [s.\u0275\u0275ProvidersFeature([{ provide: "MAT_SORT_HEADER_COLUMN_DEF", useExisting: o }])] });
+            s.ɵɵqueryRefresh(a = s.ɵɵloadQuery()) && (i.cell = a.first), s.ɵɵqueryRefresh(a = s.ɵɵloadQuery()) && (i.headerCell = a.first), s.ɵɵqueryRefresh(a = s.ɵɵloadQuery()) && (i.footerCell = a.first);
+        } }, inputs: { name: [0, "cdkColumnDef", "name"], sticky: [2, "sticky", "sticky", D], stickyEnd: [2, "stickyEnd", "stickyEnd", D] }, features: [s.ɵɵProvidersFeature([{ provide: "MAT_SORT_HEADER_COLUMN_DEF", useExisting: o }])] });
 } return o; })(), k = class {
     constructor(r, e) { e.nativeElement.classList.add(...r._columnCssClassName); }
 }, we = (() => { class o extends k {
     constructor() { super(l(g), l(R)); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["cdk-header-cell"], ["th", "cdk-header-cell", ""]], hostAttrs: ["role", "columnheader", 1, "cdk-header-cell"], features: [s.\u0275\u0275InheritDefinitionFeature] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["cdk-header-cell"], ["th", "cdk-header-cell", ""]], hostAttrs: ["role", "columnheader", 1, "cdk-header-cell"], features: [s.ɵɵInheritDefinitionFeature] });
 } return o; })(), qe = (() => { class o extends k {
     constructor() { let e = l(g), t = l(R); super(e, t); let i = e._table?._getCellRole(); i && t.nativeElement.setAttribute("role", i); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["cdk-footer-cell"], ["td", "cdk-footer-cell", ""]], hostAttrs: [1, "cdk-footer-cell"], features: [s.\u0275\u0275InheritDefinitionFeature] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["cdk-footer-cell"], ["td", "cdk-footer-cell", ""]], hostAttrs: [1, "cdk-footer-cell"], features: [s.ɵɵInheritDefinitionFeature] });
 } return o; })(), Ce = (() => { class o extends k {
     constructor() { let e = l(g), t = l(R); super(e, t); let i = e._table?._getCellRole(); i && t.nativeElement.setAttribute("role", i); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["cdk-cell"], ["td", "cdk-cell", ""]], hostAttrs: [1, "cdk-cell"], features: [s.\u0275\u0275InheritDefinitionFeature] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["cdk-cell"], ["td", "cdk-cell", ""]], hostAttrs: [1, "cdk-cell"], features: [s.ɵɵInheritDefinitionFeature] });
 } return o; })(), Ke = "<ng-container cdkCellOutlet></ng-container>", H = (() => { class o {
     template = l(p);
     _differs = l(v);
@@ -91,8 +91,8 @@ var w = new A("CDK_TABLE"), me = new A("text-column-options"), N = (() => { clas
     } }
     getColumnsDiff() { return this._columnsDiffer.diff(this.columns); }
     extractCellTemplate(e) { return this instanceof Z ? e.headerCell.template : this instanceof G ? e.footerCell.template : e.cell.template; }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, features: [s.\u0275\u0275NgOnChangesFeature] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, features: [s.ɵɵNgOnChangesFeature] });
 } return o; })(), Z = (() => { class o extends H {
     _table = l(w, { optional: !0 });
     _hasStickyChanged = !1;
@@ -103,8 +103,8 @@ var w = new A("CDK_TABLE"), me = new A("text-column-options"), N = (() => { clas
     ngOnChanges(e) { super.ngOnChanges(e); }
     hasStickyChanged() { let e = this._hasStickyChanged; return this.resetStickyChanged(), e; }
     resetStickyChanged() { this._hasStickyChanged = !1; }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "cdkHeaderRowDef", ""]], inputs: { columns: [0, "cdkHeaderRowDef", "columns"], sticky: [2, "cdkHeaderRowDefSticky", "sticky", D] }, features: [s.\u0275\u0275InheritDefinitionFeature, s.\u0275\u0275NgOnChangesFeature] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "cdkHeaderRowDef", ""]], inputs: { columns: [0, "cdkHeaderRowDef", "columns"], sticky: [2, "cdkHeaderRowDefSticky", "sticky", D] }, features: [s.ɵɵInheritDefinitionFeature, s.ɵɵNgOnChangesFeature] });
 } return o; })(), G = (() => { class o extends H {
     _table = l(w, { optional: !0 });
     _hasStickyChanged = !1;
@@ -115,14 +115,14 @@ var w = new A("CDK_TABLE"), me = new A("text-column-options"), N = (() => { clas
     ngOnChanges(e) { super.ngOnChanges(e); }
     hasStickyChanged() { let e = this._hasStickyChanged; return this.resetStickyChanged(), e; }
     resetStickyChanged() { this._hasStickyChanged = !1; }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "cdkFooterRowDef", ""]], inputs: { columns: [0, "cdkFooterRowDef", "columns"], sticky: [2, "cdkFooterRowDefSticky", "sticky", D] }, features: [s.\u0275\u0275InheritDefinitionFeature, s.\u0275\u0275NgOnChangesFeature] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "cdkFooterRowDef", ""]], inputs: { columns: [0, "cdkFooterRowDef", "columns"], sticky: [2, "cdkFooterRowDefSticky", "sticky", D] }, features: [s.ɵɵInheritDefinitionFeature, s.ɵɵNgOnChangesFeature] });
 } return o; })(), pe = (() => { class o extends H {
     _table = l(w, { optional: !0 });
     when;
     constructor() { super(l(p), l(v)); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "cdkRowDef", ""]], inputs: { columns: [0, "cdkRowDefColumns", "columns"], when: [0, "cdkRowDefWhen", "when"] }, features: [s.\u0275\u0275InheritDefinitionFeature] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "cdkRowDef", ""]], inputs: { columns: [0, "cdkRowDefColumns", "columns"], when: [0, "cdkRowDefWhen", "when"] }, features: [s.ɵɵInheritDefinitionFeature] });
 } return o; })(), S = (() => { class o {
     _viewContainer = l(b);
     cells;
@@ -130,25 +130,25 @@ var w = new A("CDK_TABLE"), me = new A("text-column-options"), N = (() => { clas
     static mostRecentCellOutlet = null;
     constructor() { o.mostRecentCellOutlet = this; }
     ngOnDestroy() { o.mostRecentCellOutlet === this && (o.mostRecentCellOutlet = null); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "cdkCellOutlet", ""]] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "cdkCellOutlet", ""]] });
 } return o; })(), Xe = (() => { class o {
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275cmp = s.\u0275\u0275defineComponent({ type: o, selectors: [["cdk-header-row"], ["tr", "cdk-header-row", ""]], hostAttrs: ["role", "row", 1, "cdk-header-row"], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (t, i) { t & 1 && s.\u0275\u0275elementContainer(0, 0); }, dependencies: [S], encapsulation: 2 });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵcmp = s.ɵɵdefineComponent({ type: o, selectors: [["cdk-header-row"], ["tr", "cdk-header-row", ""]], hostAttrs: ["role", "row", 1, "cdk-header-row"], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (t, i) { t & 1 && s.ɵɵelementContainer(0, 0); }, dependencies: [S], encapsulation: 2 });
 } return o; })(), Ye = (() => { class o {
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275cmp = s.\u0275\u0275defineComponent({ type: o, selectors: [["cdk-footer-row"], ["tr", "cdk-footer-row", ""]], hostAttrs: ["role", "row", 1, "cdk-footer-row"], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (t, i) { t & 1 && s.\u0275\u0275elementContainer(0, 0); }, dependencies: [S], encapsulation: 2 });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵcmp = s.ɵɵdefineComponent({ type: o, selectors: [["cdk-footer-row"], ["tr", "cdk-footer-row", ""]], hostAttrs: ["role", "row", 1, "cdk-footer-row"], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (t, i) { t & 1 && s.ɵɵelementContainer(0, 0); }, dependencies: [S], encapsulation: 2 });
 } return o; })(), Ze = (() => { class o {
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275cmp = s.\u0275\u0275defineComponent({ type: o, selectors: [["cdk-row"], ["tr", "cdk-row", ""]], hostAttrs: ["role", "row", 1, "cdk-row"], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (t, i) { t & 1 && s.\u0275\u0275elementContainer(0, 0); }, dependencies: [S], encapsulation: 2 });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵcmp = s.ɵɵdefineComponent({ type: o, selectors: [["cdk-row"], ["tr", "cdk-row", ""]], hostAttrs: ["role", "row", 1, "cdk-row"], decls: 1, vars: 0, consts: [["cdkCellOutlet", ""]], template: function (t, i) { t & 1 && s.ɵɵelementContainer(0, 0); }, dependencies: [S], encapsulation: 2 });
 } return o; })(), Re = (() => { class o {
     templateRef = l(p);
     _contentClassNames = ["cdk-no-data-row", "cdk-row"];
     _cellClassNames = ["cdk-cell", "cdk-no-data-cell"];
     _cellSelector = "td, cdk-cell, [cdk-cell], .cdk-cell";
     constructor() { }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["ng-template", "cdkNoDataRow", ""]] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["ng-template", "cdkNoDataRow", ""]] });
 } return o; })(), K = ["top", "bottom", "left", "right"], I = class {
     _isNativeHtmlTable;
     _stickCellCss;
@@ -225,32 +225,32 @@ var w = new A("CDK_TABLE"), me = new A("text-column-options"), N = (() => { clas
 };
 function De(o) { return ["cdk-cell", "cdk-header-cell", "cdk-footer-cell"].some(r => o.classList.contains(r)); }
 var X = new A("CDK_SPL"), Ge = (() => { class o {
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["cdk-table", "recycleRows", ""], ["table", "cdk-table", "", "recycleRows", ""]], features: [s.\u0275\u0275ProvidersFeature([{ provide: O, useClass: U }])] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["cdk-table", "recycleRows", ""], ["table", "cdk-table", "", "recycleRows", ""]], features: [s.ɵɵProvidersFeature([{ provide: O, useClass: U }])] });
 } return o; })(), ge = (() => { class o {
     viewContainer = l(b);
     elementRef = l(R);
     constructor() { let e = l(w); e._rowOutlet = this, e._outletAssigned(); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "rowOutlet", ""]] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "rowOutlet", ""]] });
 } return o; })(), ke = (() => { class o {
     viewContainer = l(b);
     elementRef = l(R);
     constructor() { let e = l(w); e._headerRowOutlet = this, e._outletAssigned(); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "headerRowOutlet", ""]] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "headerRowOutlet", ""]] });
 } return o; })(), Se = (() => { class o {
     viewContainer = l(b);
     elementRef = l(R);
     constructor() { let e = l(w); e._footerRowOutlet = this, e._outletAssigned(); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "footerRowOutlet", ""]] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "footerRowOutlet", ""]] });
 } return o; })(), ve = (() => { class o {
     viewContainer = l(b);
     elementRef = l(R);
     constructor() { let e = l(w); e._noDataRowOutlet = this, e._outletAssigned(); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: o, selectors: [["", "noDataRowOutlet", ""]] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵdir = s.ɵɵdefineDirective({ type: o, selectors: [["", "noDataRowOutlet", ""]] });
 } return o; })(), be = (() => {
     class o {
         _differs = l(v);
@@ -411,11 +411,11 @@ var X = new A("CDK_SPL"), Ge = (() => { class o {
         }
         else
             i.clear(); this._isShowingNoDataRow = t, this._changeDetectorRef.markForCheck(); }
-        static \u0275fac = function (t) { return new (t || o); };
-        static \u0275cmp = s.\u0275\u0275defineComponent({ type: o, selectors: [["cdk-table"], ["table", "cdk-table", ""]], contentQueries: function (t, i, n) { if (t & 1 && (s.\u0275\u0275contentQuery(n, Re, 5), s.\u0275\u0275contentQuery(n, g, 5), s.\u0275\u0275contentQuery(n, pe, 5), s.\u0275\u0275contentQuery(n, Z, 5), s.\u0275\u0275contentQuery(n, G, 5)), t & 2) {
+        static ɵfac = function (t) { return new (t || o); };
+        static ɵcmp = s.ɵɵdefineComponent({ type: o, selectors: [["cdk-table"], ["table", "cdk-table", ""]], contentQueries: function (t, i, n) { if (t & 1 && (s.ɵɵcontentQuery(n, Re, 5), s.ɵɵcontentQuery(n, g, 5), s.ɵɵcontentQuery(n, pe, 5), s.ɵɵcontentQuery(n, Z, 5), s.ɵɵcontentQuery(n, G, 5)), t & 2) {
                 let a;
-                s.\u0275\u0275queryRefresh(a = s.\u0275\u0275loadQuery()) && (i._noDataRow = a.first), s.\u0275\u0275queryRefresh(a = s.\u0275\u0275loadQuery()) && (i._contentColumnDefs = a), s.\u0275\u0275queryRefresh(a = s.\u0275\u0275loadQuery()) && (i._contentRowDefs = a), s.\u0275\u0275queryRefresh(a = s.\u0275\u0275loadQuery()) && (i._contentHeaderRowDefs = a), s.\u0275\u0275queryRefresh(a = s.\u0275\u0275loadQuery()) && (i._contentFooterRowDefs = a);
-            } }, hostAttrs: [1, "cdk-table"], hostVars: 2, hostBindings: function (t, i) { t & 2 && s.\u0275\u0275classProp("cdk-table-fixed-layout", i.fixedLayout); }, inputs: { trackBy: "trackBy", dataSource: "dataSource", multiTemplateDataRows: [2, "multiTemplateDataRows", "multiTemplateDataRows", D], fixedLayout: [2, "fixedLayout", "fixedLayout", D] }, outputs: { contentChanged: "contentChanged" }, exportAs: ["cdkTable"], features: [s.\u0275\u0275ProvidersFeature([{ provide: w, useExisting: o }, { provide: O, useClass: V }, { provide: X, useValue: null }])], ngContentSelectors: te, decls: 5, vars: 2, consts: [["role", "rowgroup"], ["headerRowOutlet", ""], ["rowOutlet", ""], ["noDataRowOutlet", ""], ["footerRowOutlet", ""]], template: function (t, i) { t & 1 && (s.\u0275\u0275projectionDef(ee), s.\u0275\u0275projection(0), s.\u0275\u0275projection(1, 1), s.\u0275\u0275conditionalCreate(2, ie, 1, 0), s.\u0275\u0275conditionalCreate(3, oe, 7, 0)(4, se, 4, 0)), t & 2 && (s.\u0275\u0275advance(2), s.\u0275\u0275conditional(i._isServer ? 2 : -1), s.\u0275\u0275advance(), s.\u0275\u0275conditional(i._isNativeHtmlTable ? 3 : 4)); }, dependencies: [ke, ge, ve, Se], styles: [`.cdk-table-fixed-layout{table-layout:fixed}
+                s.ɵɵqueryRefresh(a = s.ɵɵloadQuery()) && (i._noDataRow = a.first), s.ɵɵqueryRefresh(a = s.ɵɵloadQuery()) && (i._contentColumnDefs = a), s.ɵɵqueryRefresh(a = s.ɵɵloadQuery()) && (i._contentRowDefs = a), s.ɵɵqueryRefresh(a = s.ɵɵloadQuery()) && (i._contentHeaderRowDefs = a), s.ɵɵqueryRefresh(a = s.ɵɵloadQuery()) && (i._contentFooterRowDefs = a);
+            } }, hostAttrs: [1, "cdk-table"], hostVars: 2, hostBindings: function (t, i) { t & 2 && s.ɵɵclassProp("cdk-table-fixed-layout", i.fixedLayout); }, inputs: { trackBy: "trackBy", dataSource: "dataSource", multiTemplateDataRows: [2, "multiTemplateDataRows", "multiTemplateDataRows", D], fixedLayout: [2, "fixedLayout", "fixedLayout", D] }, outputs: { contentChanged: "contentChanged" }, exportAs: ["cdkTable"], features: [s.ɵɵProvidersFeature([{ provide: w, useExisting: o }, { provide: O, useClass: V }, { provide: X, useValue: null }])], ngContentSelectors: te, decls: 5, vars: 2, consts: [["role", "rowgroup"], ["headerRowOutlet", ""], ["rowOutlet", ""], ["noDataRowOutlet", ""], ["footerRowOutlet", ""]], template: function (t, i) { t & 1 && (s.ɵɵprojectionDef(ee), s.ɵɵprojection(0), s.ɵɵprojection(1, 1), s.ɵɵconditionalCreate(2, ie, 1, 0), s.ɵɵconditionalCreate(3, oe, 7, 0)(4, se, 4, 0)), t & 2 && (s.ɵɵadvance(2), s.ɵɵconditional(i._isServer ? 2 : -1), s.ɵɵadvance(), s.ɵɵconditional(i._isNativeHtmlTable ? 3 : 4)); }, dependencies: [ke, ge, ve, Se], styles: [`.cdk-table-fixed-layout{table-layout:fixed}
 `], encapsulation: 2 });
     }
     return o;
@@ -446,15 +446,15 @@ var Je = (() => { class o {
     ngOnDestroy() { this._table && this._table.removeColumnDef(this.columnDef); }
     _createDefaultHeaderText() { let e = this.name; return this._options && this._options.defaultHeaderTextTransform ? this._options.defaultHeaderTextTransform(e) : e[0].toUpperCase() + e.slice(1); }
     _syncColumnDefName() { this.columnDef && (this.columnDef.name = this.name); }
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275cmp = s.\u0275\u0275defineComponent({ type: o, selectors: [["cdk-text-column"]], viewQuery: function (t, i) { if (t & 1 && (s.\u0275\u0275viewQuery(g, 7), s.\u0275\u0275viewQuery(N, 7), s.\u0275\u0275viewQuery(F, 7)), t & 2) {
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵcmp = s.ɵɵdefineComponent({ type: o, selectors: [["cdk-text-column"]], viewQuery: function (t, i) { if (t & 1 && (s.ɵɵviewQuery(g, 7), s.ɵɵviewQuery(N, 7), s.ɵɵviewQuery(F, 7)), t & 2) {
             let n;
-            s.\u0275\u0275queryRefresh(n = s.\u0275\u0275loadQuery()) && (i.columnDef = n.first), s.\u0275\u0275queryRefresh(n = s.\u0275\u0275loadQuery()) && (i.cell = n.first), s.\u0275\u0275queryRefresh(n = s.\u0275\u0275loadQuery()) && (i.headerCell = n.first);
-        } }, inputs: { name: "name", headerText: "headerText", dataAccessor: "dataAccessor", justify: "justify" }, decls: 3, vars: 0, consts: [["cdkColumnDef", ""], ["cdk-header-cell", "", 3, "text-align", 4, "cdkHeaderCellDef"], ["cdk-cell", "", 3, "text-align", 4, "cdkCellDef"], ["cdk-header-cell", ""], ["cdk-cell", ""]], template: function (t, i) { t & 1 && (s.\u0275\u0275elementContainerStart(0, 0), s.\u0275\u0275template(1, ne, 2, 3, "th", 1)(2, re, 2, 3, "td", 2), s.\u0275\u0275elementContainerEnd()); }, dependencies: [g, F, we, N, Ce], encapsulation: 2 });
+            s.ɵɵqueryRefresh(n = s.ɵɵloadQuery()) && (i.columnDef = n.first), s.ɵɵqueryRefresh(n = s.ɵɵloadQuery()) && (i.cell = n.first), s.ɵɵqueryRefresh(n = s.ɵɵloadQuery()) && (i.headerCell = n.first);
+        } }, inputs: { name: "name", headerText: "headerText", dataAccessor: "dataAccessor", justify: "justify" }, decls: 3, vars: 0, consts: [["cdkColumnDef", ""], ["cdk-header-cell", "", 3, "text-align", 4, "cdkHeaderCellDef"], ["cdk-cell", "", 3, "text-align", 4, "cdkCellDef"], ["cdk-header-cell", ""], ["cdk-cell", ""]], template: function (t, i) { t & 1 && (s.ɵɵelementContainerStart(0, 0), s.ɵɵtemplate(1, ne, 2, 3, "th", 1)(2, re, 2, 3, "td", 2), s.ɵɵelementContainerEnd()); }, dependencies: [g, F, we, N, Ce], encapsulation: 2 });
 } return o; })();
 var et = (() => { class o {
-    static \u0275fac = function (t) { return new (t || o); };
-    static \u0275mod = s.\u0275\u0275defineNgModule({ type: o });
-    static \u0275inj = s.\u0275\u0275defineInjector({ imports: [$] });
+    static ɵfac = function (t) { return new (t || o); };
+    static ɵmod = s.ɵɵdefineNgModule({ type: o });
+    static ɵinj = s.ɵɵdefineInjector({ imports: [$] });
 } return o; })();
 export { k as BaseCdkCell, H as BaseRowDef, Ke as CDK_ROW_TEMPLATE, w as CDK_TABLE, Ce as CdkCell, N as CdkCellDef, S as CdkCellOutlet, g as CdkColumnDef, qe as CdkFooterCell, ye as CdkFooterCellDef, Ye as CdkFooterRow, G as CdkFooterRowDef, we as CdkHeaderCell, F as CdkHeaderCellDef, Xe as CdkHeaderRow, Z as CdkHeaderRowDef, Re as CdkNoDataRow, Ge as CdkRecycleRows, Ze as CdkRow, pe as CdkRowDef, be as CdkTable, et as CdkTableModule, Je as CdkTextColumn, ge as DataRowOutlet, J as DataSource, Se as FooterRowOutlet, ke as HeaderRowOutlet, ve as NoDataRowOutlet, X as STICKY_POSITIONING_LISTENER, me as TEXT_COLUMN_OPTIONS };

@@ -9,8 +9,8 @@ import { auditTime as R } from "rxjs/operators";
 import "@angular/common";
 var p = (() => {
     class i {
-        static \u0275fac = function (t) { return new (t || i); };
-        static \u0275cmp = s.\u0275\u0275defineComponent({ type: i, selectors: [["ng-component"]], hostAttrs: ["cdk-text-field-style-loader", ""], decls: 0, vars: 0, template: function (t, n) { }, styles: [`textarea.cdk-textarea-autosize{resize:none}textarea.cdk-textarea-autosize-measuring{padding:2px 0 !important;box-sizing:content-box !important;height:auto !important;overflow:hidden !important}textarea.cdk-textarea-autosize-measuring-firefox{padding:2px 0 !important;box-sizing:content-box !important;height:0 !important}@keyframes cdk-text-field-autofill-start{/*!*/}@keyframes cdk-text-field-autofill-end{/*!*/}.cdk-text-field-autofill-monitored:-webkit-autofill{animation:cdk-text-field-autofill-start 0s 1ms}.cdk-text-field-autofill-monitored:not(:-webkit-autofill){animation:cdk-text-field-autofill-end 0s 1ms}
+        static ɵfac = function (t) { return new (t || i); };
+        static ɵcmp = s.ɵɵdefineComponent({ type: i, selectors: [["ng-component"]], hostAttrs: ["cdk-text-field-style-loader", ""], decls: 0, vars: 0, template: function (t, n) { }, styles: [`textarea.cdk-textarea-autosize{resize:none}textarea.cdk-textarea-autosize-measuring{padding:2px 0 !important;box-sizing:content-box !important;height:auto !important;overflow:hidden !important}textarea.cdk-textarea-autosize-measuring-firefox{padding:2px 0 !important;box-sizing:content-box !important;height:0 !important}@keyframes cdk-text-field-autofill-start{/*!*/}@keyframes cdk-text-field-autofill-end{/*!*/}.cdk-text-field-autofill-monitored:-webkit-autofill{animation:cdk-text-field-autofill-start 0s 1ms}.cdk-text-field-autofill-monitored:not(:-webkit-autofill){animation:cdk-text-field-autofill-end 0s 1ms}
 `], encapsulation: 2, changeDetection: 0 });
     }
     return i;
@@ -26,8 +26,8 @@ var p = (() => {
         return n.subject; let r = new f, a = "cdk-text-field-autofilled", c = l => { l.animationName === "cdk-text-field-autofill-start" && !t.classList.contains(a) ? (t.classList.add(a), this._ngZone.run(() => r.next({ target: l.target, isAutofilled: !0 }))) : l.animationName === "cdk-text-field-autofill-end" && t.classList.contains(a) && (t.classList.remove(a), this._ngZone.run(() => r.next({ target: l.target, isAutofilled: !1 }))); }, x = this._ngZone.runOutsideAngular(() => (t.classList.add("cdk-text-field-autofill-monitored"), this._renderer.listen(t, "animationstart", c, M))); return this._monitoredElements.set(t, { subject: r, unlisten: x }), r; }
     stopMonitoring(e) { let t = u(e), n = this._monitoredElements.get(t); n && (n.unlisten(), n.subject.complete(), t.classList.remove("cdk-text-field-autofill-monitored"), t.classList.remove("cdk-text-field-autofilled"), this._monitoredElements.delete(t)); }
     ngOnDestroy() { this._monitoredElements.forEach((e, t) => this.stopMonitoring(t)); }
-    static \u0275fac = function (t) { return new (t || i); };
-    static \u0275prov = s.\u0275\u0275defineInjectable({ token: i, factory: i.\u0275fac, providedIn: "root" });
+    static ɵfac = function (t) { return new (t || i); };
+    static ɵprov = s.ɵɵdefineInjectable({ token: i, factory: i.ɵfac, providedIn: "root" });
 } return i; })(), Z = (() => { class i {
     _elementRef = o(g);
     _autofillMonitor = o(b);
@@ -35,8 +35,8 @@ var p = (() => {
     constructor() { }
     ngOnInit() { this._autofillMonitor.monitor(this._elementRef).subscribe(e => this.cdkAutofill.emit(e)); }
     ngOnDestroy() { this._autofillMonitor.stopMonitoring(this._elementRef); }
-    static \u0275fac = function (t) { return new (t || i); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: i, selectors: [["", "cdkAutofill", ""]], outputs: { cdkAutofill: "cdkAutofill" } });
+    static ɵfac = function (t) { return new (t || i); };
+    static ɵdir = s.ɵɵdefineDirective({ type: i, selectors: [["", "cdkAutofill", ""]], outputs: { cdkAutofill: "cdkAutofill" } });
 } return i; })(), $ = (() => { class i {
     _elementRef = o(g);
     _platform = o(d);
@@ -86,11 +86,11 @@ var p = (() => {
     reset() { this._initialHeight !== void 0 && (this._textareaElement.style.height = this._initialHeight); }
     _noopInputHandler() { }
     _scrollToCaretPosition(e) { let { selectionStart: t, selectionEnd: n } = e; !this._destroyed.isStopped && this._hasFocus && e.setSelectionRange(t, n); }
-    static \u0275fac = function (t) { return new (t || i); };
-    static \u0275dir = s.\u0275\u0275defineDirective({ type: i, selectors: [["textarea", "cdkTextareaAutosize", ""]], hostAttrs: ["rows", "1", 1, "cdk-textarea-autosize"], hostBindings: function (t, n) { t & 1 && s.\u0275\u0275listener("input", function () { return n._noopInputHandler(); }); }, inputs: { minRows: [0, "cdkAutosizeMinRows", "minRows"], maxRows: [0, "cdkAutosizeMaxRows", "maxRows"], enabled: [2, "cdkTextareaAutosize", "enabled", E], placeholder: "placeholder" }, exportAs: ["cdkTextareaAutosize"] });
+    static ɵfac = function (t) { return new (t || i); };
+    static ɵdir = s.ɵɵdefineDirective({ type: i, selectors: [["textarea", "cdkTextareaAutosize", ""]], hostAttrs: ["rows", "1", 1, "cdk-textarea-autosize"], hostBindings: function (t, n) { t & 1 && s.ɵɵlistener("input", function () { return n._noopInputHandler(); }); }, inputs: { minRows: [0, "cdkAutosizeMinRows", "minRows"], maxRows: [0, "cdkAutosizeMaxRows", "maxRows"], enabled: [2, "cdkTextareaAutosize", "enabled", E], placeholder: "placeholder" }, exportAs: ["cdkTextareaAutosize"] });
 } return i; })(), q = (() => { class i {
-    static \u0275fac = function (t) { return new (t || i); };
-    static \u0275mod = s.\u0275\u0275defineNgModule({ type: i });
-    static \u0275inj = s.\u0275\u0275defineInjector({});
+    static ɵfac = function (t) { return new (t || i); };
+    static ɵmod = s.ɵɵdefineNgModule({ type: i });
+    static ɵinj = s.ɵɵdefineInjector({});
 } return i; })();
 export { b as AutofillMonitor, Z as CdkAutofill, $ as CdkTextareaAutosize, q as TextFieldModule };

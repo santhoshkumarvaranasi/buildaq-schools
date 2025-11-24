@@ -9,8 +9,8 @@ var g = (() => { class r {
         n(t, i); }
     listen(t) { return this._listeners.push(t), () => { this._listeners = this._listeners.filter(i => t !== i); }; }
     ngOnDestroy() { this._listeners = []; }
-    static \u0275fac = function (i) { return new (i || r); };
-    static \u0275prov = o.\u0275\u0275defineInjectable({ token: r, factory: r.\u0275fac, providedIn: "root" });
+    static ɵfac = function (i) { return new (i || r); };
+    static ɵprov = o.ɵɵdefineInjectable({ token: r, factory: r.ɵfac, providedIn: "root" });
 } return r; })();
 import { Subject as f } from "rxjs";
 var h = class {

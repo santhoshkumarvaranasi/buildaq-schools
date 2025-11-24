@@ -15,8 +15,8 @@ function D(t) { if (t.type === "characterData" && t.target instanceof Comment)
 } return !1; }
 var a = (() => { class t {
     create(e) { return typeof MutationObserver > "u" ? null : new MutationObserver(e); }
-    static \u0275fac = function (s) { return new (s || t); };
-    static \u0275prov = n.\u0275\u0275defineInjectable({ token: t, factory: t.\u0275fac, providedIn: "root" });
+    static ɵfac = function (s) { return new (s || t); };
+    static ɵprov = n.ɵɵdefineInjectable({ token: t, factory: t.ɵfac, providedIn: "root" });
 } return t; })(), M = (() => { class t {
     _mutationObserverFactory = c(a);
     _observedElements = new Map;
@@ -35,8 +35,8 @@ var a = (() => { class t {
         let { observer: s, stream: i } = this._observedElements.get(e);
         s && s.disconnect(), i.complete(), this._observedElements.delete(e);
     } }
-    static \u0275fac = function (s) { return new (s || t); };
-    static \u0275prov = n.\u0275\u0275defineInjectable({ token: t, factory: t.\u0275fac, providedIn: "root" });
+    static ɵfac = function (s) { return new (s || t); };
+    static ɵprov = n.ɵɵdefineInjectable({ token: t, factory: t.ɵfac, providedIn: "root" });
 } return t; })(), A = (() => { class t {
     _contentObserver = c(M);
     _elementRef = c(h);
@@ -53,11 +53,11 @@ var a = (() => { class t {
     ngOnDestroy() { this._unsubscribe(); }
     _subscribe() { this._unsubscribe(); let e = this._contentObserver.observe(this._elementRef); this._currentSubscription = (this.debounce ? e.pipe(O(this.debounce)) : e).subscribe(this.event); }
     _unsubscribe() { this._currentSubscription?.unsubscribe(); }
-    static \u0275fac = function (s) { return new (s || t); };
-    static \u0275dir = n.\u0275\u0275defineDirective({ type: t, selectors: [["", "cdkObserveContent", ""]], inputs: { disabled: [2, "cdkObserveContentDisabled", "disabled", _], debounce: "debounce" }, outputs: { event: "cdkObserveContent" }, exportAs: ["cdkObserveContent"] });
+    static ɵfac = function (s) { return new (s || t); };
+    static ɵdir = n.ɵɵdefineDirective({ type: t, selectors: [["", "cdkObserveContent", ""]], inputs: { disabled: [2, "cdkObserveContentDisabled", "disabled", _], debounce: "debounce" }, outputs: { event: "cdkObserveContent" }, exportAs: ["cdkObserveContent"] });
 } return t; })(), R = (() => { class t {
-    static \u0275fac = function (s) { return new (s || t); };
-    static \u0275mod = n.\u0275\u0275defineNgModule({ type: t });
-    static \u0275inj = n.\u0275\u0275defineInjector({ providers: [a] });
+    static ɵfac = function (s) { return new (s || t); };
+    static ɵmod = n.ɵɵdefineNgModule({ type: t });
+    static ɵinj = n.ɵɵdefineInjector({ providers: [a] });
 } return t; })();
 export { a, M as b, A as c, R as d };

@@ -20,7 +20,7 @@ var h = (() => { class t {
     ANDROID = this.isBrowser && /android/i.test(navigator.userAgent) && !this.TRIDENT;
     SAFARI = this.isBrowser && /safari/i.test(navigator.userAgent) && this.WEBKIT;
     constructor() { }
-    static \u0275fac = function (r) { return new (r || t); };
-    static \u0275prov = i.\u0275\u0275defineInjectable({ token: t, factory: t.\u0275fac, providedIn: "root" });
+    static ɵfac = function (r) { return new (r || t); };
+    static ɵprov = i.ɵɵdefineInjectable({ token: t, factory: t.ɵfac, providedIn: "root" });
 } return t; })();
 export { h as a };
