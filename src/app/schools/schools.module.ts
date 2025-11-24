@@ -23,6 +23,7 @@ import { ExamsComponent } from '../features/exams/exams';
 import { AdmissionsComponent } from '../features/admissions/admissions';
 import { BehaviorComponent } from '../features/behavior/behavior';
 import { AnnouncementsComponent } from '../features/announcements/announcements';
+import { LibraryComponent } from '../features/library/library';
 
 // Define routes for the schools module
 const routes: Routes = [
@@ -46,6 +47,7 @@ const routes: Routes = [
   { path: 'admissions', component: AdmissionsComponent },
   { path: 'announcements', component: AnnouncementsComponent },
   { path: 'behavior', component: BehaviorComponent },
+  { path: 'library', component: LibraryComponent },
   { path: 'timetable', component: TimetableComponent },
   { path: 'exams', component: ExamsComponent }
 ];
@@ -72,6 +74,7 @@ const routes: Routes = [
     AdmissionsComponent,
     AnnouncementsComponent,
     BehaviorComponent,
+    LibraryComponent,
     TimetableComponent,
     ExamsComponent
   ],

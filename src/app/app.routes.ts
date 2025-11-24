@@ -10,6 +10,7 @@ import { ExamsComponent } from './features/exams/exams';
 import { AdmissionsComponent } from './features/admissions/admissions';
 import { BehaviorComponent } from './features/behavior/behavior';
 import { AnnouncementsComponent } from './features/announcements/announcements';
+import { LibraryComponent } from './features/library/library';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
@@ -24,5 +25,6 @@ export const routes: Routes = [
   { path: 'exams', component: ExamsComponent },
   { path: 'behavior', component: BehaviorComponent },
   { path: 'announcements', component: AnnouncementsComponent },
+  { path: 'library', component: LibraryComponent },
   { path: '**', redirectTo: '' }
 ];

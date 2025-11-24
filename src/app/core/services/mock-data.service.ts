@@ -48,6 +48,16 @@ export interface Announcement {
   body: string;
 }
 
+export interface LibraryItem {
+  id: number;
+  title: string;
+  author: string;
+  category: string;
+  status: 'available' | 'checked-out';
+  borrower?: string;
+  dueDate?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -113,6 +123,13 @@ export class MockDataService {
     { id: 3, title: 'Workshop Invite', audience: 'teachers', priority: 'low', date: '2025-11-28', author: 'Academics', body: 'Teaching with AI tools workshop in Lab 2.' }
   ];
 
+  library: LibraryItem[] = [
+    { id: 1, title: 'Algebra Essentials', author: 'K. Sharma', category: 'Mathematics', status: 'available' },
+    { id: 2, title: 'World History', author: 'L. Peters', category: 'History', status: 'checked-out', borrower: 'Jane Doe', dueDate: '2025-12-05' },
+    { id: 3, title: 'Chemistry Basics', author: 'R. Gupta', category: 'Science', status: 'available' },
+    { id: 4, title: 'English Grammar', author: 'S. White', category: 'Language', status: 'checked-out', borrower: 'John Smith', dueDate: '2025-12-02' }
+  ];
+
   getStudents() { return this.students; }
   getStaff() { return this.staff; }
   getClasses() { return this.classes; }
@@ -160,6 +177,23 @@ export class MockDataService {
     });
     this.announcements.unshift(created);
     return created;
+  }
+  getLibraryItems() { return this.library; }
+  checkoutBook(id: number, borrower: string, dueDate: string) {
+    const item = this.library.find(b => b.id === id);
+    if (!item) return null;
+    item.status = 'checked-out';
+    item.borrower = borrower;
+    item.dueDate = dueDate;
+    return item;
+  }
+  returnBook(id: number) {
+    const item = this.library.find(b => b.id === id);
+    if (!item) return null;
+    item.status = 'available';
+    item.borrower = undefined;
+    item.dueDate = undefined;
+    return item;
   }
   addDiscount(entry: any) {
     const created = Object.assign({ id: `D-${(this.discounts.length + 1).toString().padStart(3,'0')}`, status: 'active' }, entry);
