@@ -106,6 +106,7 @@ type TimetableRow = {
             </mat-select>
           </mat-form-field>
           <mat-checkbox [(ngModel)]="showConflictsOnly" (change)="applyFilters()">Show conflicts only</mat-checkbox>
+          <button mat-stroked-button color="primary" class="ghost-button" (click)="exportCsv()">Export CSV</button>
         </div>
       </mat-card>
 
@@ -303,5 +304,26 @@ export class TimetableComponent implements AfterViewInit {
     };
     classMap.forEach(v => mark(v, 'Class overlap'));
     teacherMap.forEach(v => mark(v, 'Teacher overlap'));
+  }
+
+  exportCsv() {
+    const headers = ['Class','Subject','Teacher','Day','Time','Conflict','Reason'];
+    const lines = this.dataSource.data.map(r => [
+      r.classId,
+      `"${(r.subject || '').replace(/"/g, '""')}"`,
+      `"${(r.teacher || '').replace(/"/g, '""')}"`,
+      r.day,
+      r.time,
+      r.conflict ? 'Yes' : 'No',
+      r.conflictReason || ''
+    ].join(','));
+    const csv = [headers.join(','), ...lines].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'timetable.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 }
