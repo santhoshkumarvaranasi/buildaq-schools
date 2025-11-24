@@ -22,6 +22,7 @@ import { TimetableComponent } from '../features/timetable/timetable';
 import { ExamsComponent } from '../features/exams/exams';
 import { AdmissionsComponent } from '../features/admissions/admissions';
 import { BehaviorComponent } from '../features/behavior/behavior';
+import { AnnouncementsComponent } from '../features/announcements/announcements';
 
 // Define routes for the schools module
 const routes: Routes = [
@@ -43,6 +44,7 @@ const routes: Routes = [
     { path: 'my-fees', component: MyFeesComponent }
   ] },
   { path: 'admissions', component: AdmissionsComponent },
+  { path: 'announcements', component: AnnouncementsComponent },
   { path: 'behavior', component: BehaviorComponent },
   { path: 'timetable', component: TimetableComponent },
   { path: 'exams', component: ExamsComponent }
@@ -68,6 +70,7 @@ const routes: Routes = [
     FeeReceiptsComponent,
     FeeRemindersComponent,
     AdmissionsComponent,
+    AnnouncementsComponent,
     BehaviorComponent,
     TimetableComponent,
     ExamsComponent

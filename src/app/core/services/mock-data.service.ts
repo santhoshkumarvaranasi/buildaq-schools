@@ -38,6 +38,16 @@ export interface BehaviorIncident {
   parentNotified?: boolean;
 }
 
+export interface Announcement {
+  id: number;
+  title: string;
+  audience: 'all' | 'students' | 'teachers';
+  priority: 'low' | 'normal' | 'high';
+  date: string;
+  author: string;
+  body: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -97,6 +107,12 @@ export class MockDataService {
     { id: 4, studentId: 3, studentName: 'Priya Kumar', class: '11A', date: '2025-10-28', type: 'Cheating', severity: 'high', actionTaken: 'Incident report filed', staff: 'Robert Green', followUpDate: '2025-11-05', parentNotified: true }
   ];
 
+  announcements: Announcement[] = [
+    { id: 1, title: 'PTA Meeting', audience: 'all', priority: 'normal', date: '2025-12-05', author: 'Principal', body: 'Parent Teacher meeting at 4 PM in auditorium.' },
+    { id: 2, title: 'Exam Schedule', audience: 'students', priority: 'high', date: '2025-12-10', author: 'Exam Cell', body: 'Midterm schedule released. Check Exams page.' },
+    { id: 3, title: 'Workshop Invite', audience: 'teachers', priority: 'low', date: '2025-11-28', author: 'Academics', body: 'Teaching with AI tools workshop in Lab 2.' }
+  ];
+
   getStudents() { return this.students; }
   getStaff() { return this.staff; }
   getClasses() { return this.classes; }
@@ -128,6 +144,21 @@ export class MockDataService {
       parentNotified: !!entry.parentNotified
     });
     this.behaviorIncidents.unshift(created);
+    return created;
+  }
+  getAnnouncements() { return this.announcements; }
+  addAnnouncement(entry: Partial<Announcement>) {
+    const nextId = (this.announcements.reduce((m, a) => Math.max(m, a.id), 0) || 0) + 1;
+    const created: Announcement = Object.assign({
+      id: nextId,
+      title: entry.title || 'Untitled',
+      audience: (entry.audience as any) || 'all',
+      priority: (entry.priority as any) || 'normal',
+      date: entry.date || new Date().toISOString().slice(0, 10),
+      author: entry.author || 'Admin',
+      body: entry.body || ''
+    });
+    this.announcements.unshift(created);
     return created;
   }
   addDiscount(entry: any) {

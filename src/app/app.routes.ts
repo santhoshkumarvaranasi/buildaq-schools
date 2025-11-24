@@ -9,6 +9,7 @@ import { TimetableComponent } from './features/timetable/timetable';
 import { ExamsComponent } from './features/exams/exams';
 import { AdmissionsComponent } from './features/admissions/admissions';
 import { BehaviorComponent } from './features/behavior/behavior';
+import { AnnouncementsComponent } from './features/announcements/announcements';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
@@ -22,5 +23,6 @@ export const routes: Routes = [
   { path: 'timetable', component: TimetableComponent },
   { path: 'exams', component: ExamsComponent },
   { path: 'behavior', component: BehaviorComponent },
+  { path: 'announcements', component: AnnouncementsComponent },
   { path: '**', redirectTo: '' }
 ];
