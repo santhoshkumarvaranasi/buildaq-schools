@@ -38,3 +38,32 @@
 .metric-card { padding: 12px; border-radius: 12px; }
 .metric-label { font-size: 12px; text-transform: uppercase; color: #6b7280; }
 .metric-value { font-size: 22px; font-weight: 700; color: #0f172a; }
+
+.top-causes {
+  padding: 12px 12px 16px;
+  border-radius: 12px;
+}
+
+.causes-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cause-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.pill {
+  background: #e5efff;
+  color: #0b63f6;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+}

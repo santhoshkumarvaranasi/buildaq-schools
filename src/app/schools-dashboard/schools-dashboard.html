@@ -30,5 +30,23 @@
       <div class="metric-label">Fees outstanding</div>
       <div class="metric-value">{{ metrics.feesOutstanding | currency }}</div>
     </mat-card>
+    <mat-card class="metric-card mat-elevation-z2">
+      <div class="metric-label">Behavior follow-ups</div>
+      <div class="metric-value">{{ metrics.behaviorFollowUps }}</div>
+    </mat-card>
+    <mat-card class="metric-card mat-elevation-z2">
+      <div class="metric-label">Incidents this month</div>
+      <div class="metric-value">{{ metrics.behaviorThisMonth }}</div>
+    </mat-card>
   </div>
+
+  <mat-card class="top-causes mat-elevation-z1" *ngIf="metrics.behaviorTopCauses.length">
+    <mat-card-title>Top behavior causes</mat-card-title>
+    <div class="causes-list">
+      <div *ngFor="let cause of metrics.behaviorTopCauses" class="cause-row">
+        <span>{{ cause.type }}</span>
+        <span class="pill">{{ cause.count }}</span>
+      </div>
+    </div>
+  </mat-card>
 </div>

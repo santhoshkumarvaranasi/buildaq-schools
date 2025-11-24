@@ -24,6 +24,20 @@ export interface MockStaff {
   phone?: string;
 }
 
+export interface BehaviorIncident {
+  id: number;
+  studentId: number;
+  studentName: string;
+  class: string;
+  date: string;
+  type: string;
+  severity: 'low' | 'medium' | 'high';
+  actionTaken: string;
+  staff: string;
+  followUpDate?: string;
+  parentNotified?: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -76,6 +90,13 @@ export class MockDataService {
     { id: 2, name: 'Sara Lee', class: '9B', status: 'verified', submitted: '2025-06-05', notes: 'All docs uploaded' }
   ];
 
+  behaviorIncidents: BehaviorIncident[] = [
+    { id: 1, studentId: 1, studentName: 'Jane Doe', class: '10A', date: '2025-11-10', type: 'Late submission', severity: 'low', actionTaken: 'Reminder sent', staff: 'Alice Brown', followUpDate: '2025-11-20', parentNotified: false },
+    { id: 2, studentId: 1, studentName: 'Jane Doe', class: '10A', date: '2025-11-18', type: 'Class disruption', severity: 'medium', actionTaken: 'Counseling scheduled', staff: 'Alice Brown', followUpDate: '2025-11-25', parentNotified: true },
+    { id: 3, studentId: 2, studentName: 'John Smith', class: '9B', date: '2025-11-05', type: 'Absence', severity: 'low', actionTaken: 'Called guardian', staff: 'Robert Green', followUpDate: '2025-11-12', parentNotified: true },
+    { id: 4, studentId: 3, studentName: 'Priya Kumar', class: '11A', date: '2025-10-28', type: 'Cheating', severity: 'high', actionTaken: 'Incident report filed', staff: 'Robert Green', followUpDate: '2025-11-05', parentNotified: true }
+  ];
+
   getStudents() { return this.students; }
   getStaff() { return this.staff; }
   getClasses() { return this.classes; }
@@ -85,6 +106,30 @@ export class MockDataService {
   getExams() { return this.exams; }
   getDiscounts() { return this.discounts; }
   getReceipts() { return this.receipts; }
+  getBehaviorIncidents(): (BehaviorIncident & { isRepeat: boolean })[] {
+    const counts: Record<number, number> = {};
+    this.behaviorIncidents.forEach(b => { counts[b.studentId] = (counts[b.studentId] || 0) + 1; });
+    return this.behaviorIncidents.map(b => Object.assign({}, b, { isRepeat: (counts[b.studentId] || 0) > 1 }));
+  }
+  addBehaviorIncident(entry: Partial<BehaviorIncident>) {
+    const nextId = (this.behaviorIncidents.reduce((m, i) => Math.max(m, i.id), 0) || 0) + 1;
+    const student = this.students.find(s => s.id === entry.studentId);
+    const created: BehaviorIncident = Object.assign({
+      id: nextId,
+      studentId: entry.studentId || 0,
+      studentName: entry.studentName || (student ? `${student.firstName} ${student.lastName}` : 'Unknown'),
+      class: entry.class || (student ? student.class || '' : ''),
+      date: entry.date || new Date().toISOString().slice(0, 10),
+      type: entry.type || 'General',
+      severity: (entry.severity as any) || 'medium',
+      actionTaken: entry.actionTaken || 'Logged',
+      staff: entry.staff || 'Counselor',
+      followUpDate: entry.followUpDate,
+      parentNotified: !!entry.parentNotified
+    });
+    this.behaviorIncidents.unshift(created);
+    return created;
+  }
   addDiscount(entry: any) {
     const created = Object.assign({ id: `D-${(this.discounts.length + 1).toString().padStart(3,'0')}`, status: 'active' }, entry);
     this.discounts.unshift(created);
