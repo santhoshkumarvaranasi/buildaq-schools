@@ -58,6 +58,18 @@ export interface LibraryItem {
   dueDate?: string;
 }
 
+export interface TransportRoute {
+  id: number;
+  routeName: string;
+  driver: string;
+  capacity: number;
+  assigned: number;
+  status: 'on-time' | 'delayed' | 'maintenance';
+  departure: string;
+  returnTime: string;
+  notes?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -130,6 +142,13 @@ export class MockDataService {
     { id: 4, title: 'English Grammar', author: 'S. White', category: 'Language', status: 'checked-out', borrower: 'John Smith', dueDate: '2025-12-02' }
   ];
 
+  transportRoutes: TransportRoute[] = [
+    { id: 1, routeName: 'Route A - North', driver: 'Daniel Carter', capacity: 40, assigned: 32, status: 'on-time', departure: '07:30', returnTime: '15:15', notes: 'Stop at Maple Ave closed Friday' },
+    { id: 2, routeName: 'Route B - East', driver: 'Emily Davis', capacity: 36, assigned: 30, status: 'delayed', departure: '07:45', returnTime: '15:30', notes: 'Detour near bridge repairs' },
+    { id: 3, routeName: 'Route C - South', driver: 'Carlos Ruiz', capacity: 42, assigned: 38, status: 'on-time', departure: '07:25', returnTime: '15:10' },
+    { id: 4, routeName: 'Route D - West', driver: 'Sofia Lee', capacity: 30, assigned: 18, status: 'maintenance', departure: '—', returnTime: '—', notes: 'Bus in service bay' }
+  ];
+
   getStudents() { return this.students; }
   getStaff() { return this.staff; }
   getClasses() { return this.classes; }
@@ -194,6 +213,13 @@ export class MockDataService {
     item.borrower = undefined;
     item.dueDate = undefined;
     return item;
+  }
+  getTransportRoutes() { return this.transportRoutes; }
+  updateRouteStatus(id: number, status: TransportRoute['status']) {
+    const route = this.transportRoutes.find(r => r.id === id);
+    if (!route) return null;
+    route.status = status;
+    return route;
   }
   addDiscount(entry: any) {
     const created = Object.assign({ id: `D-${(this.discounts.length + 1).toString().padStart(3,'0')}`, status: 'active' }, entry);
