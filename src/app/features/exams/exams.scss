@@ -7,3 +7,36 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 12px;
 }
+
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+.mobile-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  display: grid;
+  gap: 8px;
+}
+.mobile-card .card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mobile-card .cell-sub,
+.mobile-card .cell-meta {
+  color: #6b7280;
+  font-size: 12px;
+}
+.mobile-marks {
+  display: grid;
+  gap: 4px;
+}
+
+@media (max-width: 768px) {
+  .exam-grid { grid-template-columns: 1fr; }
+  .desktop-only { display: none; }
+  .mobile-only { display: grid; gap: 12px; }
+}

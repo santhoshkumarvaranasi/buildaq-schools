@@ -8,7 +8,7 @@ import { MockDataService } from '../../../core/services/mock-data.service';
   selector: 'app-fee-receipts',
   standalone: true,
   imports: [CommonModule, FormsModule, MaterialModule],
-  styleUrls: ['../fees.scss'],
+  styleUrls: ['../fees.scss', './receipts.scss'],
   template: `
     <div class="fees-page">
       <mat-toolbar color="primary" class="fees-toolbar mat-elevation-z2">
@@ -44,7 +44,7 @@ import { MockDataService } from '../../../core/services/mock-data.service';
         </div>
       </mat-card>
 
-      <mat-card class="table-card mat-elevation-z2">
+      <mat-card class="table-card mat-elevation-z2 desktop-only">
         <mat-card-title>Receipts</mat-card-title>
         <div class="table-wrap">
           <table mat-table [dataSource]="filtered" class="fees-table">
@@ -75,6 +75,17 @@ import { MockDataService } from '../../../core/services/mock-data.service';
               <td [attr.colspan]="displayedColumns.length"><div class="fee-empty">No receipts found.</div></td>
             </tr>
           </table>
+        </div>
+      </mat-card>
+
+      <mat-card class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let row of filtered">
+          <div class="card-row">
+            <div class="cell-title">{{ row.studentName }}</div>
+            <mat-chip color="primary" selected>{{ row.method }}</mat-chip>
+          </div>
+          <div class="cell-meta">Receipt {{ row.id }} · {{ row.date }}</div>
+          <div class="cell-strong">{{ row.amount | currency }}</div>
         </div>
       </mat-card>
     </div>

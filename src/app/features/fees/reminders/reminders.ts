@@ -17,7 +17,7 @@ type ReminderRow = {
   selector: 'app-fee-reminders',
   standalone: true,
   imports: [CommonModule, FormsModule, MaterialModule],
-  styleUrls: ['../fees.scss'],
+  styleUrls: ['../fees.scss', './reminders.scss'],
   template: `
     <div class="fees-page">
       <mat-toolbar color="primary" class="fees-toolbar mat-elevation-z2">
@@ -39,7 +39,7 @@ type ReminderRow = {
         </div>
       </mat-card>
 
-      <mat-card class="table-card mat-elevation-z2">
+      <mat-card class="table-card mat-elevation-z2 desktop-only">
         <mat-card-title>Outstanding fees</mat-card-title>
         <div class="table-wrap">
           <table mat-table [dataSource]="filtered" class="fees-table">
@@ -79,6 +79,22 @@ type ReminderRow = {
               <td [attr.colspan]="displayedColumns.length"><div class="fee-empty">No outstanding balances found.</div></td>
             </tr>
           </table>
+        </div>
+      </mat-card>
+
+      <mat-card class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let row of filtered">
+          <div class="card-row">
+            <div class="cell-title">{{ row.studentName }}</div>
+            <mat-chip color="warn" selected>Due</mat-chip>
+          </div>
+          <div class="cell-meta">Class {{ row.class || '--' }}</div>
+          <div class="cell-meta">Last paid: {{ row.lastPaid || '--' }}</div>
+          <div class="cell-strong">Balance: {{ row.balance | currency }}</div>
+          <div class="cell-meta">Last reminder: {{ row.lastReminder || 'Not sent' }}</div>
+          <div class="action-row">
+            <button mat-stroked-button color="primary" class="ghost-button" (click)="markReminder(row)">Mark sent</button>
+          </div>
         </div>
       </mat-card>
     </div>

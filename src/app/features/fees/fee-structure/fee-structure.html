@@ -1,5 +1,5 @@
 <div class="fees-page structure-page">
-  <mat-card class="table-card mat-elevation-z2">
+  <mat-card class="table-card mat-elevation-z2 desktop-only">
     <mat-card-title>Fee structure</mat-card-title>
     <mat-card-subtitle>Per-class heads and amounts aligned with your finance palette.</mat-card-subtitle>
 
@@ -76,6 +76,20 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
+    </div>
+  </mat-card>
+
+  <mat-card class="mobile-only mobile-card-list">
+    <div class="mobile-card" *ngFor="let row of structure; let i = index">
+      <div class="card-row">
+        <div class="cell-title">{{ row.head || 'Fee head' }}</div>
+        <mat-chip color="primary" selected>{{ row.frequency }}</mat-chip>
+      </div>
+      <div class="cell-strong">{{ row.amount | currency }}</div>
+      <div class="cell-meta">Optional: {{ row.optional ? 'Yes' : 'No' }}</div>
+      <div class="action-row">
+        <button mat-stroked-button color="warn" class="ghost-button" (click)="removeHead(i)">Remove</button>
+      </div>
     </div>
   </mat-card>
 </div>

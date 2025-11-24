@@ -8,7 +8,7 @@ import { MockDataService } from '../../../core/services/mock-data.service';
   selector: 'app-fee-discounts',
   standalone: true,
   imports: [CommonModule, FormsModule, MaterialModule],
-  styleUrls: ['../fees.scss'],
+  styleUrls: ['../fees.scss', './discounts.scss'],
   template: `
     <div class="fees-page">
       <mat-toolbar color="primary" class="fees-toolbar mat-elevation-z2">
@@ -68,7 +68,7 @@ import { MockDataService } from '../../../core/services/mock-data.service';
         </div>
       </mat-card>
 
-      <mat-card class="table-card mat-elevation-z2">
+      <mat-card class="table-card mat-elevation-z2 desktop-only">
         <mat-card-title>Discounts</mat-card-title>
         <div class="table-wrap">
           <table mat-table [dataSource]="filtered" class="fees-table">
@@ -109,6 +109,21 @@ import { MockDataService } from '../../../core/services/mock-data.service';
               </td>
             </tr>
           </table>
+        </div>
+      </mat-card>
+
+      <mat-card class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let row of filtered">
+          <div class="card-row">
+            <div class="cell-title">{{ row.studentName }}</div>
+            <mat-chip [color]="row.status === 'active' ? 'primary' : 'warn'" selected>{{ row.status }}</mat-chip>
+          </div>
+          <div class="cell-meta">ID {{ row.id }} · {{ row.type }}</div>
+          <div class="cell-strong">{{ row.amount | currency }}</div>
+          <div class="cell-meta">{{ row.reason || '' }}</div>
+          <div class="action-row">
+            <button mat-stroked-button color="warn" class="ghost-button" (click)="expire(row)">Expire</button>
+          </div>
         </div>
       </mat-card>
     </div>

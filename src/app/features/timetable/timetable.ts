@@ -143,7 +143,7 @@ type TimetableRow = {
         </div>
       </mat-card>
 
-      <mat-card class="table-card mat-elevation-z2">
+      <mat-card class="table-card mat-elevation-z2 desktop-only">
         <mat-card-title>Schedule</mat-card-title>
         <mat-card-subtitle>Class-wise sessions with filters.</mat-card-subtitle>
 
@@ -193,6 +193,23 @@ type TimetableRow = {
           </table>
         </div>
         <mat-paginator [pageSize]="8" [pageSizeOptions]="[8, 15, 25]" showFirstLastButtons></mat-paginator>
+      </mat-card>
+
+      <mat-card class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let row of dataSource.data">
+          <div class="card-row">
+            <div class="cell-title">{{ row.classId }} · {{ row.subject }}</div>
+            <mat-chip [color]="row.conflict ? 'warn' : 'primary'" selected>
+              {{ row.conflict ? 'Conflict' : 'OK' }}
+            </mat-chip>
+          </div>
+          <div class="cell-meta">{{ row.day }} · {{ row.time }}</div>
+          <div class="cell-meta">Teacher: {{ row.teacher }}</div>
+          <div class="cell-meta">Reason: {{ row.conflictReason || 'None' }}</div>
+          <div class="action-row">
+            <button mat-stroked-button color="warn" class="ghost-button" (click)="deleteEntry(row.id)">Delete</button>
+          </div>
+        </div>
       </mat-card>
     </div>
   `

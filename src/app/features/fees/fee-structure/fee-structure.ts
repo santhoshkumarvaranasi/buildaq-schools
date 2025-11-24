@@ -9,7 +9,7 @@ import { FeeService } from '../fee.service';
   standalone: true,
   imports: [CommonModule, FormsModule, MaterialModule],
   templateUrl: './fee-structure.html',
-  styleUrls: ['../fees.scss']
+  styleUrls: ['../fees.scss', './fee-structure.scss']
 })
 export class FeeStructureComponent {
   classId = '1A';

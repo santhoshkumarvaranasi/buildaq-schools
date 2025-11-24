@@ -96,10 +96,10 @@ import { MaterialModule } from '../../core/material.module';
         </div>
       </mat-card>
 
-      <div class="exam-grid">
+      <div class="exam-grid desktop-only">
         <mat-card class="table-card mat-elevation-z2" *ngFor="let e of filteredExams">
           <mat-card-title>{{ e.title }}</mat-card-title>
-          <mat-card-subtitle>{{ e.date }} • {{ e.studentMarks?.length || 0 }} students</mat-card-subtitle>
+          <mat-card-subtitle>{{ e.date }} · {{ e.studentMarks?.length || 0 }} students</mat-card-subtitle>
 
           <div class="table-wrap">
             <table class="fees-table">
@@ -130,6 +130,28 @@ import { MaterialModule } from '../../core/material.module';
             </button>
           </div>
         </mat-card>
+      </div>
+
+      <div class="mobile-only mobile-card-list">
+        <div class="mobile-card" *ngFor="let e of filteredExams">
+          <div class="card-row">
+            <div class="cell-title">{{ e.title }}</div>
+            <mat-chip color="primary" selected>{{ e.date }}</mat-chip>
+          </div>
+          <div class="cell-sub">Students: {{ e.studentMarks?.length || 0 }}</div>
+          <div class="mobile-marks" *ngFor="let sm of e.studentMarks">
+            <div class="cell-meta">{{ studentName(sm.studentId) }}</div>
+            <mat-form-field appearance="fill" class="compact-number">
+              <mat-label>Marks</mat-label>
+              <input matInput type="number" [(ngModel)]="sm.marks" />
+            </mat-form-field>
+          </div>
+          <div class="card-actions">
+            <button mat-flat-button color="accent" class="record-btn" (click)="saveMarks(e)">
+              Save marks
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   `
