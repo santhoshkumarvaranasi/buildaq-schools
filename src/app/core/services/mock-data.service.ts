@@ -50,6 +50,10 @@ export class MockDataService {
     { id: 'D-001', studentId: 1, studentName: 'Jane Doe', type: 'Scholarship', amount: 200, reason: 'Merit', validUntil: '2025-12-31', status: 'active' },
     { id: 'D-002', studentId: 2, studentName: 'John Smith', type: 'Sibling', amount: 150, reason: 'Sibling concession', validUntil: '2025-09-30', status: 'active' }
   ];
+  receipts = [
+    { id: 'R-1001', studentId: 1, studentName: 'Jane Doe', date: '2025-06-01', amount: 1200, method: 'Online' },
+    { id: 'R-1002', studentId: 2, studentName: 'John Smith', date: '2025-06-02', amount: 800, method: 'Cash' }
+  ];
 
   attendance = [
     { id: 1, studentId: 1, date: '2025-11-20', status: 'present' },
@@ -80,6 +84,7 @@ export class MockDataService {
   getTimetable() { return this.timetable; }
   getExams() { return this.exams; }
   getDiscounts() { return this.discounts; }
+  getReceipts() { return this.receipts; }
   addDiscount(entry: any) {
     const created = Object.assign({ id: `D-${(this.discounts.length + 1).toString().padStart(3,'0')}`, status: 'active' }, entry);
     this.discounts.unshift(created);
