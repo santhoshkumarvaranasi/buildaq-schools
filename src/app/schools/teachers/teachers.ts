@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { MockDataService, MockStaff } from '../../core/services/mock-data.service';
+import { MaterialModule } from '../../core/material.module';
 
 export interface Subject {
   id: string;
@@ -36,7 +37,7 @@ export interface SortConfig {
 @Component({
   selector: 'app-teachers',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, MaterialModule],
   templateUrl: './teachers.html',
   styleUrls: ['./teachers.scss']
 })

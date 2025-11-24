@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TenantService, Tenant } from '../core/services/tenant.service';
+import { MaterialModule } from '../core/material.module';
 
 @Component({
   selector: 'app-schools-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MaterialModule],
   templateUrl: './schools-dashboard.html',
   styleUrl: './schools-dashboard.scss'
 })

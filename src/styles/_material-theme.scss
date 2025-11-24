@@ -1,0 +1,29 @@
+// Material theme placeholder. Run `ng add @angular/material` to generate
+// a real theme and update this file.
+
+@use 'sass:map';
+
+// Default palette placeholders; `ng add` will create proper palettes.
+$primary: #4299e1;
+$accent: #ed8936;
+$warn: #e53e3e;
+
+// Provide small helpers for compact mode
+:root {
+  --app-space-xs: 4px;
+  --app-space-sm: 8px;
+  --app-space-md: 12px;
+  --app-space-lg: 16px;
+  --app-font-size: 14px;
+}
+
+.app-compact {
+  --app-space-xs: 2px;
+  --app-space-sm: 6px;
+  --app-space-md: 8px;
+  --app-space-lg: 10px;
+  font-size: 13px;
+}
+
+/* Minimal MAT CSS hooks (will be replaced by proper theme after ng add) */
+.mat-compact { padding: calc(var(--app-space-sm)); }

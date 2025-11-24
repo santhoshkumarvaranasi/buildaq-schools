@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AttendanceService } from './attendance.service';
 import { AttendanceRecord } from './attendance.model';
+import { MaterialModule } from '../../core/material.module';
 
 @Component({
   selector: 'app-attendance',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MaterialModule],
   template: `
     <div class="attendance-container">
       <h2>Attendance for {{ className }} ({{ date }})</h2>

@@ -1,20 +1,24 @@
 <div class="app-shell">
-	<aside class="app-sidebar">
-		<div class="brand">BuildAQ Schools</div>
-		<app-tenant-switcher></app-tenant-switcher>
-		<nav class="nav">
-			<a routerLink="/dashboard" class="nav-link">🏠 Dashboard</a>
-			<a routerLink="/students" class="nav-link">👨‍🎓 Students</a>
-			<a routerLink="/teachers" class="nav-link">👩‍🏫 Teachers</a>
-			<a routerLink="/classes" class="nav-link">🏫 Classes</a>
-			<a routerLink="/attendance" class="nav-link">🕒 Attendance</a>
-			<a routerLink="/fees" class="nav-link">💳 Fees</a>
-			<a routerLink="/timetable" class="nav-link">📅 Timetable</a>
-			<a routerLink="/exams" class="nav-link">📝 Exams</a>
-		</nav>
-	</aside>
+	<mat-sidenav-container class="app-sidenav-container">
+		<mat-sidenav mode="side" opened class="app-sidebar">
+			<mat-toolbar color="primary" class="brand">BuildAQ Schools</mat-toolbar>
+			<app-tenant-switcher></app-tenant-switcher>
+			<mat-nav-list>
+				<a mat-list-item routerLink="/dashboard">🏠 Dashboard</a>
+				<a mat-list-item routerLink="/students">👨‍🎓 Students</a>
+				<a mat-list-item routerLink="/teachers">👩‍🏫 Teachers</a>
+				<a mat-list-item routerLink="/classes">🏫 Classes</a>
+				<a mat-list-item routerLink="/attendance">🕒 Attendance</a>
+				<a mat-list-item routerLink="/fees">💳 Fees</a>
+				<a mat-list-item routerLink="/timetable">📅 Timetable</a>
+				<a mat-list-item routerLink="/exams">📝 Exams</a>
+			</mat-nav-list>
+		</mat-sidenav>
 
-	<main class="app-main">
-		<router-outlet></router-outlet>
-	</main>
+		<mat-sidenav-content>
+			<main class="app-main">
+				<router-outlet></router-outlet>
+			</main>
+		</mat-sidenav-content>
+	</mat-sidenav-container>
 </div>

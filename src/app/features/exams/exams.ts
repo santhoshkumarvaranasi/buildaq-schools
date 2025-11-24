@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService } from '../../core/services/mock-data.service';
+import { MaterialModule } from '../../core/material.module';
 
 @Component({
   selector: 'app-exams',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MaterialModule],
   styleUrls: ['./exams.scss'],
   template: `
     <div class="students-container">

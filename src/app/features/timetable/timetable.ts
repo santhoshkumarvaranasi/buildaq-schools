@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService } from '../../core/services/mock-data.service';
+import { MaterialModule } from '../../core/material.module';
 
 @Component({
   selector: 'app-timetable',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MaterialModule],
   styleUrls: ['./timetable.scss'],
   template: `
     <div class="students-container timetable-root">
@@ -16,24 +17,42 @@ import { MockDataService } from '../../core/services/mock-data.service';
       </div>
 
       <div class="filters-section timetable-form">
-        <label class="filter-group">Class
-          <select class="form-select" [(ngModel)]="newEntry.classId">
-            <option *ngFor="let c of classes" [value]="c.id">{{c.name}}</option>
-          </select>
-        </label>
-        <label class="filter-group">Subject <input class="form-input" [(ngModel)]="newEntry.subject" /></label>
-        <label class="filter-group">Teacher <input class="form-input" [(ngModel)]="newEntry.teacher" /></label>
-        <label class="filter-group">Day <input class="form-input" [(ngModel)]="newEntry.day" placeholder="Mon/Tue" /></label>
-        <label class="filter-group">Time <input class="form-input" [(ngModel)]="newEntry.time" placeholder="HH:MM" /></label>
-        <div class="filter-actions"><button class="btn btn-primary" (click)="addEntry()">Add</button></div>
+        <mat-form-field appearance="outline" class="filter-group">
+          <mat-label>Class</mat-label>
+          <mat-select [(ngModel)]="newEntry.classId">
+            <mat-option *ngFor="let c of classes" [value]="c.id">{{c.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-group">
+          <mat-label>Subject</mat-label>
+          <input matInput [(ngModel)]="newEntry.subject" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-group">
+          <mat-label>Teacher</mat-label>
+          <input matInput [(ngModel)]="newEntry.teacher" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-group">
+          <mat-label>Day</mat-label>
+          <input matInput [(ngModel)]="newEntry.day" placeholder="Mon/Tue" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-group">
+          <mat-label>Time</mat-label>
+          <input matInput [(ngModel)]="newEntry.time" placeholder="HH:MM" />
+        </mat-form-field>
+
+        <div class="filter-actions"><button mat-raised-button color="primary" (click)="addEntry()">Add</button></div>
       </div>
 
       <div class="timetable-grid">
         <div *ngFor="let t of timetable" class="timetable-card">
           <h4>{{t.classId}} • {{t.subject}}</h4>
           <div class="timetable-row"><div>{{t.day}}</div><div>{{t.time}}</div></div>
-          <div style="margin-top:0.5rem;display:flex;gap:0.5rem;justify-content:flex-end">
-            <button class="btn btn-secondary" (click)="deleteEntry(t.id)">Delete</button>
+          <div class="card-actions">
+            <button mat-stroked-button color="warn" (click)="deleteEntry(t.id)">Delete</button>
           </div>
         </div>
       </div>

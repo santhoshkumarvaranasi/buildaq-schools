@@ -3,21 +3,22 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MockDataService } from '../../core/services/mock-data.service';
+import { MaterialModule } from '../../core/material.module';
 
 @Component({
   selector: 'app-fees',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, MaterialModule],
   styleUrls: ['./fees.scss'],
   template: `
     <div class="page">
       <h2>Fee Management</h2>
-      <nav style="display:flex;gap:0.5rem;margin-bottom:0.75rem;">
-        <a routerLink="/schools/fees/collect" class="btn btn-primary">Collect</a>
-        <a routerLink="/schools/fees/categories" class="btn">Categories</a>
-        <a routerLink="/schools/fees/structure" class="btn">Structure</a>
-        <a routerLink="/schools/fees/history" class="btn">History</a>
-        <a routerLink="/schools/fees/my-fees" class="btn">My Fees</a>
+      <nav class="fees-nav">
+        <button mat-raised-button color="primary" [routerLink]="['/schools/fees/collect']">Collect</button>
+        <button mat-stroked-button [routerLink]="['/schools/fees/categories']">Categories</button>
+        <button mat-stroked-button [routerLink]="['/schools/fees/structure']">Structure</button>
+        <button mat-stroked-button [routerLink]="['/schools/fees/history']">History</button>
+        <button mat-stroked-button [routerLink]="['/schools/fees/my-fees']">My Fees</button>
       </nav>
 
       <p>Student fee balances (mock)</p>
@@ -28,22 +29,41 @@ import { MockDataService } from '../../core/services/mock-data.service';
 
       <div class="fee-summary">Total Outstanding: {{ totalOutstanding() | currency }}</div>
 
-      <table class="students-table">
-        <thead><tr><th>Student</th><th>Balance</th><th>Last Paid</th><th>Actions</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let f of filteredFees()">
-            <td>{{studentName(f.studentId)}}</td>
-            <td>{{f.balance | currency}}</td>
-            <td>{{f.lastPaid}}</td>
-            <td>
-              <input type="number" class="form-input" [(ngModel)]="paymentAmounts[f.studentId]" placeholder="amount" style="width:90px" />
-              <button class="btn btn-primary" (click)="pay(f.studentId)">Pay</button>
-            </td>
-          </tr>
-        </tbody>
+      <table mat-table [dataSource]="dataSource" class="fees-table mat-elevation-z1">
+        <!-- Student Column -->
+        <ng-container matColumnDef="student">
+          <th mat-header-cell *matHeaderCellDef> Student </th>
+          <td mat-cell *matCellDef="let f"> {{ studentName(f.studentId) }} </td>
+        </ng-container>
+
+        <!-- Balance Column -->
+        <ng-container matColumnDef="balance">
+          <th mat-header-cell *matHeaderCellDef> Balance </th>
+          <td mat-cell *matCellDef="let f"> {{ f.balance | currency }} </td>
+        </ng-container>
+
+        <!-- Last Paid Column -->
+        <ng-container matColumnDef="lastPaid">
+          <th mat-header-cell *matHeaderCellDef> Last Paid </th>
+          <td mat-cell *matCellDef="let f"> {{ f.lastPaid }} </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> Actions </th>
+          <td mat-cell *matCellDef="let f">
+            <mat-form-field appearance="outline" class="compact-number">
+              <input matInput type="number" [(ngModel)]="paymentAmounts[f.studentId]" placeholder="amount" />
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="pay(f.studentId)">Pay</button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
 
-      <div style="margin-top:1rem">
+      <div class="router-outlet-wrap">
         <router-outlet></router-outlet>
       </div>
     </div>
@@ -54,6 +74,10 @@ export class FeesComponent {
   search = '';
   paymentAmounts: Record<number, number> = {};
   students: any[] = [];
+  // Material table support
+  displayedColumns: string[] = ['student','balance','lastPaid','actions'];
+
+  get dataSource() { return this.filteredFees(); }
 
   constructor(private mock: MockDataService) {
     this.fees = mock.getFees();

@@ -6,6 +6,7 @@ import { AttendanceService } from '../attendance/attendance.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { AttendanceComponent } from '../attendance/attendance.component';
+import { MaterialModule } from '../../core/material.module';
 import { ApiService } from '../../core/services/api.service';
 
 export interface Class {
@@ -35,7 +36,7 @@ export interface Enrollment {
 @Component({
   selector: 'app-classes',
   standalone: true,
-  imports: [CommonModule, FormsModule, AttendanceComponent],
+  imports: [CommonModule, FormsModule, MaterialModule],
   templateUrl: './classes.html',
   styleUrls: ['./classes.scss']
 })
@@ -65,6 +66,8 @@ export class ClassesComponent implements OnInit, AfterViewInit {
   showMobileFilters = false;
   departments: string[] = [];
   semesters: string[] = [];
+  // Material table
+  displayedColumns: string[] = ['code','name','department','teacher','credits','capacity','schedule','status','attendance','actions'];
 
   constructor(private attendanceService: AttendanceService, private http: HttpClient, private api: ApiService, private cdr: ChangeDetectorRef, private zone: NgZone) {
     try { console.log('ClassesComponent constructor'); } catch (e) {}
@@ -236,6 +239,9 @@ export class ClassesComponent implements OnInit, AfterViewInit {
   setViewMode(mode: 'table' | 'cards') { this.viewMode = mode; }
   sortByField(field: string) { if (this.currentSort.field === field) { this.currentSort.direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc'; } else { this.currentSort.field = field; this.currentSort.direction = 'asc'; } this.applyFilters(); }
   trackByClassId(_: number, item: Class) { return item.id; }
+
+  // material data source accessor (simple array datasource)
+  get dataSource() { return this.filteredClasses; }
   isClassSelected(item: Class) { return !!this.selectedClass && this.selectedClass.id === item.id; }
   selectClass(item: Class) { this.selectedClass = item; }
   getCapacityPercentage(item: Class) { if (!item.maxStudents) return 0; return Math.round(((item.enrolledStudents || 0) / item.maxStudents) * 100); }

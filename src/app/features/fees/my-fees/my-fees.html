@@ -1,11 +1,15 @@
 <div class="students-container">
   <div class="students-header"><h2>My Fees</h2></div>
   <div class="students-table-container">
-    <div style="padding:1rem">
-      <p><strong>Outstanding:</strong> ₹ {{data.outstanding?.balance || 0}}</p>
-      <p><strong>Last Paid:</strong> {{data.outstanding?.lastPaid || 'N/A'}}</p>
-      <button class="btn btn-primary">Pay Online</button>
-    </div>
+    <mat-card class="compact-panel">
+      <mat-card-content>
+        <p><strong>Outstanding:</strong> ₹ {{data.outstanding?.balance || 0}}</p>
+        <p><strong>Last Paid:</strong> {{data.outstanding?.lastPaid || 'N/A'}}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary">Pay Online</button>
+      </mat-card-actions>
+    </mat-card>
   </div>
   <div style="margin-top:1rem">
     <h3>Previous Receipts</h3>
@@ -17,7 +21,7 @@
             <td>{{r.date}}</td>
             <td>{{r.receipt}}</td>
             <td>{{r.amount}}</td>
-            <td><button class="btn btn-primary">Download</button></td>
+            <td><button mat-stroked-button>Download</button></td>
           </tr>
         </tbody>
       </table>

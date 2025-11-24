@@ -1,44 +1,54 @@
 <div class="dashboard-container">
   <h1>{{ tenant?.displayName || 'School Management System' }}</h1>
-  
+
   <div class="tenant-info" *ngIf="tenant">
-    <h2>Welcome to {{ tenant.displayName }}</h2>
-    <p><strong>School ID:</strong> {{ tenant.id }}</p>
-    <p><strong>Status:</strong> {{ tenant.status }}</p>
-    <p><strong>Plan:</strong> {{ tenant.subscription.plan }}</p>
+    <mat-card>
+      <mat-card-title>Welcome to {{ tenant.displayName }}</mat-card-title>
+      <mat-card-content>
+        <p><strong>School ID:</strong> {{ tenant.id }}</p>
+        <p><strong>Status:</strong> {{ tenant.status }}</p>
+        <p><strong>Plan:</strong> {{ tenant.subscription.plan }}</p>
+      </mat-card-content>
+    </mat-card>
   </div>
 
   <nav class="dashboard-navigation">
-    <a [routerLink]="getLink('students')" class="nav-link">👨‍🎓 Students</a>
-    <a [routerLink]="getLink('teachers')" class="nav-link">👩‍🏫 Teachers</a>
-    <a [routerLink]="getLink('classes')" class="nav-link">📚 Classes</a>
-    <a [routerLink]="getLink('dashboard')" class="nav-link active">🏠 Dashboard</a>
+    <button mat-button [routerLink]="getLink('students')">👨‍🎓 Students</button>
+    <button mat-button [routerLink]="getLink('teachers')">👩‍🏫 Teachers</button>
+    <button mat-button [routerLink]="getLink('classes')">📚 Classes</button>
+    <button mat-flat-button color="primary" [routerLink]="getLink('dashboard')">🏠 Dashboard</button>
   </nav>
 
   <div class="dashboard-cards">
-    <div class="card">
-      <h3>Students</h3>
-      <p>{{ (tenant?.subscription?.usage?.students || 0) }} / {{ (tenant?.subscription?.limits?.maxStudents || 0) }}</p>
-    </div>
-    
-    <div class="card">
-      <h3>Teachers</h3>
-      <p>{{ (tenant?.subscription?.usage?.teachers || 0) }} / {{ (tenant?.subscription?.limits?.maxTeachers || 0) }}</p>
-    </div>
-    
-    <div class="card">
-      <h3>Classes</h3>
-      <p>{{ (tenant?.subscription?.usage?.classes || 0) }} / {{ (tenant?.subscription?.limits?.maxClasses || 0) }}</p>
-    </div>
+    <mat-card class="dashboard-card">
+      <mat-card-title>Students</mat-card-title>
+      <mat-card-content>
+        <p>{{ (tenant?.subscription?.usage?.students || 0) }} / {{ (tenant?.subscription?.limits?.maxStudents || 0) }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="dashboard-card">
+      <mat-card-title>Teachers</mat-card-title>
+      <mat-card-content>
+        <p>{{ (tenant?.subscription?.usage?.teachers || 0) }} / {{ (tenant?.subscription?.limits?.maxTeachers || 0) }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="dashboard-card">
+      <mat-card-title>Classes</mat-card-title>
+      <mat-card-content>
+        <p>{{ (tenant?.subscription?.usage?.classes || 0) }} / {{ (tenant?.subscription?.limits?.maxClasses || 0) }}</p>
+      </mat-card-content>
+    </mat-card>
   </div>
 
   <div class="features" *ngIf="tenant">
     <h3>Available Features</h3>
-    <ul>
-      <li *ngIf="tenant.features.gradebook">✓ Gradebook</li>
-      <li *ngIf="tenant.features.reports">✓ Reports</li>
-      <li *ngIf="tenant.features.analytics">✓ Analytics</li>
-      <li *ngIf="tenant.features.notifications">✓ Notifications</li>
-    </ul>
+    <mat-list>
+      <mat-list-item *ngIf="tenant.features.gradebook">Gradebook</mat-list-item>
+      <mat-list-item *ngIf="tenant.features.reports">Reports</mat-list-item>
+      <mat-list-item *ngIf="tenant.features.analytics">Analytics</mat-list-item>
+      <mat-list-item *ngIf="tenant.features.notifications">Notifications</mat-list-item>
+    </mat-list>
   </div>
 </div>

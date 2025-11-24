@@ -23,416 +23,365 @@
     </div>
   </div>
 
-  <div class="filters-section">
-    <!-- Mobile Filter Toggle -->
-    <div class="mobile-filter-toggle" (click)="toggleMobileFilters()">
-      <span>🔍 Filters & Search</span>
-      <span class="filter-icon" [class.rotated]="showMobileFilters">▼</span>
-    </div>
+            <div class="filters-section">
+              <!-- Mobile Filter Toggle -->
+              <div class="mobile-filter-toggle" (click)="toggleMobileFilters()">
+                <span>🔍 Filters & Search</span>
+                <span class="filter-icon" [class.rotated]="showMobileFilters">▼</span>
+              </div>
 
-    <div class="filter-row" [class.mobile-expanded]="showMobileFilters">
-      <div class="mobile-filter-row">
-        <div class="filter-group">
-          <label class="filter-label">Department</label>
-          <select [(ngModel)]="selectedDepartment" (change)="filterClasses()" class="form-select">
-            <option value="">All Departments</option>
-            <option *ngFor="let dept of departments" [value]="dept">{{dept}}</option>
-          </select>
-        </div>
-        
-        <div class="filter-group">
-          <label class="filter-label">Semester</label>
-          <select [(ngModel)]="selectedSemester" (change)="filterClasses()" class="form-select">
-            <option value="">All Semesters</option>
-            <option *ngFor="let semester of semesters" [value]="semester">{{semester}}</option>
-          </select>
-        </div>
-        
-        <div class="filter-group">
-          <label class="filter-label">Status</label>
-          <select [(ngModel)]="selectedStatus" (change)="filterClasses()" class="form-select">
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="completed">Completed</option>
-            <option value="draft">Draft</option>
-          </select>
-        </div>
-      </div>
-      
-      <div class="filter-actions">
-        <button class="btn btn-secondary clear-filters" (click)="clearFilters()">
-          🗑️ Clear Filters
-        </button>
-        
-        <div class="sort-options">
-          <label class="filter-label">Sort By</label>
-          <select [(ngModel)]="sortField" (change)="sortClasses()" class="form-select">
-            <option value="name">Name (A-Z)</option>
-            <option value="code">Code</option>
-            <option value="department">Department</option>
-            <option value="teacher">Teacher</option>
-            <option value="credits">Credits</option>
-            <option value="enrollment">Enrollment</option>
-            <option value="capacity">Capacity</option>
-            <option value="status">Status</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Stats -->
-    <div class="quick-stats">
-      <div class="stat-item">
-        <span class="stat-number">{{filteredClasses.length}}</span>
-        <span class="stat-label">Showing</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{getActiveCount()}}</span>
-        <span class="stat-label">Active</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{getTotalEnrollments()}}</span>
-        <span class="stat-label">Total Enrolled</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{getAverageCapacity()}}%</span>
-        <span class="stat-label">Avg. Capacity</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{getDepartmentCount()}}</span>
-        <span class="stat-label">Departments</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="classes-table-container">
-    <!-- View Controls -->
-    <div class="view-controls">
-      <div class="classes-count">
-        <p>Showing {{filteredClasses.length}} of {{classes.length}} classes</p>
-      </div>
-      
-      <div class="view-toggle-buttons">
-        <button 
-          class="view-toggle-btn"
-          [class.active]="viewMode === 'table'"
-          (click)="setViewMode('table')"
-          title="Table View">
-          📊
-        </button>
-        <button 
-          class="view-toggle-btn"
-          [class.active]="viewMode === 'cards'"
-          (click)="setViewMode('cards')"
-          title="Card View">
-          🃏
-        </button>
-      </div>
-    </div>
-    
-    <!-- Enhanced Desktop/Tablet Table View -->
-    <div class="table-wrapper" [style.display]="viewMode === 'cards' ? 'none' : 'block'">
-      <div class="table-scroll-container">
-        <table class="classes-table">
-          <thead>
-            <tr>
-              <th class="sortable" (click)="sortByField('code')">
-                Code
-                <span class="sort-indicator" [class.active]="currentSort.field === 'code'">
-                  {{currentSort.field === 'code' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th class="sortable" (click)="sortByField('name')">
-                Class Name
-                <span class="sort-indicator" [class.active]="currentSort.field === 'name'">
-                  {{currentSort.field === 'name' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th class="sortable" (click)="sortByField('department')">
-                Department
-                <span class="sort-indicator" [class.active]="currentSort.field === 'department'">
-                  {{currentSort.field === 'department' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th class="sortable" (click)="sortByField('teacher')">
-                Teacher
-                <span class="sort-indicator" [class.active]="currentSort.field === 'teacher'">
-                  {{currentSort.field === 'teacher' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th class="sortable" (click)="sortByField('credits')">
-                Credits
-                <span class="sort-indicator" [class.active]="currentSort.field === 'credits'">
-                  {{currentSort.field === 'credits' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th class="sortable" (click)="sortByField('capacity')">
-                Capacity
-                <span class="sort-indicator" [class.active]="currentSort.field === 'capacity'">
-                  {{currentSort.field === 'capacity' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th>Schedule</th>
-              <th class="sortable" (click)="sortByField('status')">
-                Status
-                <span class="sort-indicator" [class.active]="currentSort.field === 'status'">
-                  {{currentSort.field === 'status' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
-                </span>
-              </th>
-              <th>Attendance</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let class of filteredClasses; trackBy: trackByClassId" 
-                class="class-row"
-                [class.highlighted]="isClassSelected(class)"
-                (click)="selectClass(class)">
-              <td class="class-code">
-                <strong>{{class.code}}</strong>
-              </td>
-              <td class="class-name">
-                <div class="name-wrapper">
-                  <strong>{{class.name}}</strong>
-                  <small class="class-semester">{{class.semester}} {{class.year}}</small>
-                </div>
-              </td>
-              <td class="department-cell">
-                <span class="department-badge">{{class.department}}</span>
-              </td>
-              <td class="teacher-cell">{{class.teacherName}}</td>
-              <td class="credits-cell">{{class.credits}}</td>
-              <td class="capacity-cell">
-                <div class="capacity-info">
-                  <span class="capacity-numbers">{{class.enrolledStudents}}/{{class.maxStudents}}</span>
-                  <div class="capacity-bar">
-                    <div class="capacity-fill" 
-                         [ngClass]="getCapacityClass(class)"
-                         [style.width.%]="getCapacityPercentage(class)"></div>
+              <div class="filter-row" [class.mobile-expanded]="showMobileFilters">
+                <div class="mobile-filter-row">
+                  <div class="filter-group">
+                    <label class="filter-label">Department</label>
+                    <select [(ngModel)]="selectedDepartment" (change)="filterClasses()" class="form-select">
+                      <option value="">All Departments</option>
+                      <option *ngFor="let dept of departments" [value]="dept">{{dept}}</option>
+                    </select>
                   </div>
-                  <small class="capacity-percentage">{{getCapacityPercentage(class)}}%</small>
+        
+                  <div class="filter-group">
+                    <label class="filter-label">Semester</label>
+                    <select [(ngModel)]="selectedSemester" (change)="filterClasses()" class="form-select">
+                      <option value="">All Semesters</option>
+                      <option *ngFor="let semester of semesters" [value]="semester">{{semester}}</option>
+                    </select>
+                  </div>
+        
+                  <div class="filter-group">
+                    <label class="filter-label">Status</label>
+                    <select [(ngModel)]="selectedStatus" (change)="filterClasses()" class="form-select">
+                      <option value="">All Status</option>
+                      <option value="active">Active</option>
+                      <option value="cancelled">Cancelled</option>
+                      <option value="completed">Completed</option>
+                      <option value="draft">Draft</option>
+                    </select>
+                  </div>
                 </div>
-              </td>
-              <td class="schedule-cell">
-                <div class="schedule-summary">
-                  <span *ngFor="let sched of class.schedule" class="schedule-item">
-                    {{sched.day.substring(0,3)}} {{sched.startTime}}
-                  </span>
+      
+                <div class="filter-actions">
+                  <button class="btn btn-secondary clear-filters" (click)="clearFilters()">
+                    🗑️ Clear Filters
+                  </button>
+        
+                  <div class="sort-options">
+                    <label class="filter-label">Sort By</label>
+                    <select [(ngModel)]="sortField" (change)="sortClasses()" class="form-select">
+                      <option value="name">Name (A-Z)</option>
+                      <option value="code">Code</option>
+                      <option value="department">Department</option>
+                      <option value="teacher">Teacher</option>
+                      <option value="credits">Credits</option>
+                      <option value="enrollment">Enrollment</option>
+                      <option value="capacity">Capacity</option>
+                      <option value="status">Status</option>
+                    </select>
+                  </div>
                 </div>
-              </td>
-              <td class="status-cell">
-                <span class="status-badge" [ngClass]="getStatusClass(class.status)">
-                  <span class="status-icon">{{getStatusIcon(class.status)}}</span>
-                  {{class.status | titlecase}}
-                </span>
-              </td>
-              <td>
-                <button class="btn btn-sm btn-info" (click)="showAttendance(class)">Attendance</button>
-              </td>
-              <td class="actions-cell">
-<!-- Attendance Modal/Panel -->
-<div *ngIf="selectedAttendanceClass" class="attendance-modal" style="position:fixed;top:10vh;left:0;right:0;z-index:2000;background:#fff;padding:2rem 1rem 1rem 1rem;box-shadow:0 2px 16px rgba(0,0,0,0.2);max-width:600px;margin:0 auto;">
-  <app-attendance
-    [classId]="selectedAttendanceClass.id"
-    [className]="selectedAttendanceClass.name"
-    [date]="attendanceDate"
-  ></app-attendance>
-  <div style="text-align:right;margin-top:1rem;">
-    <button class="btn btn-secondary close-btn" (click)="closeAttendance()">Close</button>
-  </div>
-</div>
-                <div class="action-buttons">
-                  <button class="btn-action btn-view" 
-                          (click)="viewClass(class); $event.stopPropagation()" 
-                          title="View Details">
-                    👁️
-                  </button>
-                  <button class="btn-action btn-edit" 
-                          (click)="editClass(class); $event.stopPropagation()" 
-                          title="Edit Class">
-                    ✏️
-                  </button>
-                  <button class="btn-action btn-enrollment" 
-                          (click)="manageEnrollment(class); $event.stopPropagation()" 
-                          title="Manage Enrollment">
-                    👥
-                  </button>
-<!-- Enrollment Modal -->
-<div *ngIf="showEnrollmentModal && selectedEnrollmentClass" class="enrollment-modal" style="position:fixed;top:10vh;left:0;right:0;z-index:2000;background:#fff;padding:2rem 1rem 1rem 1rem;box-shadow:0 2px 16px rgba(0,0,0,0.2);max-width:600px;margin:0 auto;">
-  <h3>Manage Enrollment for {{ selectedEnrollmentClass.name }}</h3>
-  <div>
-    <strong>Enrolled Students:</strong>
-    <ul>
-      <li *ngFor="let e of getEnrolledStudents(selectedEnrollmentClass.id)">
-        {{ e.studentName }}
-        <button class="btn btn-sm btn-danger" (click)="removeStudentFromClass(e.id)">Remove</button>
-      </li>
-    </ul>
-  </div>
-  <div style="margin-top:1rem;">
-    <label>Add Student:</label>
-    <select [(ngModel)]="newEnrollmentStudentId">
-      <option [ngValue]="null">Select student...</option>
-      <option *ngFor="let s of allStudents" [ngValue]="s.studentId">{{ s.studentName }}</option>
-    </select>
-    <button class="btn btn-primary btn-sm" (click)="addStudentToClass()" [disabled]="!newEnrollmentStudentId">Add</button>
-  </div>
-  <div style="text-align:right;margin-top:1rem;">
-    <button class="btn btn-secondary close-btn" (click)="closeEnrollmentModal()">Close</button>
-  </div>
-</div>
-                  <button class="btn-action btn-more" 
-                          (click)="generateReport(class); $event.stopPropagation()" 
-                          title="Generate Report">
+              </div>
+
+              <!-- Quick Stats -->
+              <div class="quick-stats">
+                <div class="stat-item">
+                  <span class="stat-number">{{filteredClasses.length}}</span>
+                  <span class="stat-label">Showing</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">{{getActiveCount()}}</span>
+                  <span class="stat-label">Active</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">{{getTotalEnrollments()}}</span>
+                  <span class="stat-label">Total Enrolled</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">{{getAverageCapacity()}}%</span>
+                  <span class="stat-label">Avg. Capacity</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">{{getDepartmentCount()}}</span>
+                  <span class="stat-label">Departments</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="classes-table-container">
+              <!-- View Controls -->
+              <div class="view-controls">
+                <div class="classes-count">
+                  <p>Showing {{filteredClasses.length}} of {{classes.length}} classes</p>
+                </div>
+      
+                <div class="view-toggle-buttons">
+                  <button 
+                    class="view-toggle-btn"
+                    [class.active]="viewMode === 'table'"
+                    (click)="setViewMode('table')"
+                    title="Table View">
                     📊
                   </button>
+                  <button 
+                    class="view-toggle-btn"
+                    [class.active]="viewMode === 'cards'"
+                    (click)="setViewMode('cards')"
+                    title="Card View">
+                    🃏
+                  </button>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </div>
+    
+              <!-- Enhanced Desktop/Tablet Table View -->
+              <div class="table-wrapper" [style.display]="viewMode === 'cards' ? 'none' : 'block'">
+                <div class="table-scroll-container">
+                  <table class="classes-table">
+                    <thead>
+                      <tr>
+                        <th class="sortable" (click)="sortByField('code')">
+                          Code
+                          <span class="sort-indicator" [class.active]="currentSort.field === 'code'">
+                            {{currentSort.field === 'code' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                          </span>
+                        </th>
+                        <th class="sortable" (click)="sortByField('name')">
+                          Class Name
+                          <span class="sort-indicator" [class.active]="currentSort.field === 'name'">
+                            {{currentSort.field === 'name' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                          </span>
+                        </th>
+                        <th class="sortable" (click)="sortByField('department')">
+                          Department
+                          <span class="sort-indicator" [class.active]="currentSort.field === 'department'">
+                            {{currentSort.field === 'department' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                          </span>
+                        </th>
+                        <th class="sortable" (click)="sortByField('teacher')">
+                          Teacher
+                          <span class="sort-indicator" [class.active]="currentSort.field === 'teacher'">
+                            {{currentSort.field === 'teacher' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                          </span>
+                        </th>
+                        <th class="sortable" (click)="sortByField('credits')">
+                          Credits
+                          <span class="sort-indicator" [class.active]="currentSort.field === 'credits'">
+                            {{currentSort.field === 'credits' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                          </span>
+                        </th>
+                        <th class="sortable" (click)="sortByField('capacity')">
+                          Capacity
+                          <span class="sort-indicator" [class.active]="currentSort.field === 'capacity'">
+                            {{currentSort.field === 'capacity' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                          </span>
+                        </th>
+                        <th>Schedule</th>
+                        <th class="sortable" (click)="sortByField('status')">
+                          Status
+                          <span class="sort-indicator" [class.active]="currentSort.field === 'status'">
+                            {{currentSort.field === 'status' ? (currentSort.direction === 'asc' ? '▲' : '▼') : '↕️'}}
+                          </span>
+                        </th>
+                        <th>Attendance</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let classItem of filteredClasses; trackBy: trackByClassId" 
+                          class="class-row"
+                          [class.highlighted]="isClassSelected(classItem)"
+                          (click)="selectClass(classItem)">
+                        <td class="class-code">
+                          <strong>{{classItem.code}}</strong>
+                        </td>
+                        <td class="class-name">
+                          <div class="name-wrapper">
+                            <strong>{{classItem.name}}</strong>
+                            <small class="class-semester">{{classItem.semester}} {{classItem.year}}</small>
+                          </div>
+                        </td>
+                        <td class="department-cell">
+                          <span class="department-badge">{{classItem.department}}</span>
+                        </td>
+                        <td class="teacher-cell">{{classItem.teacherName}}</td>
+                        <td class="credits-cell">{{classItem.credits}}</td>
+                        <td class="capacity-cell">
+                          <div class="capacity-info">
+                            <span class="capacity-numbers">{{classItem.enrolledStudents}}/{{classItem.maxStudents}}</span>
+                            <div class="capacity-bar">
+                              <div class="capacity-fill" 
+                                   [ngClass]="getCapacityClass(classItem)"
+                                   [style.width.%]="getCapacityPercentage(classItem)"></div>
+                            </div>
+                            <small class="capacity-percentage">{{getCapacityPercentage(classItem)}}%</small>
+                          </div>
+                        </td>
+                        <td class="schedule-cell">
+                          <div class="schedule-summary">
+                            <span *ngFor="let sched of classItem.schedule" class="schedule-item">
+                              {{sched.day.substring(0,3)}} {{sched.startTime}}
+                            </span>
+                          </div>
+                        </td>
+                        <td class="status-cell">
+                          <span class="status-badge" [ngClass]="getStatusClass(classItem.status)">
+                            <span class="status-icon">{{getStatusIcon(classItem.status)}}</span>
+                            {{classItem.status | titlecase}}
+                          </span>
+                        </td>
+                        <td>
+                          <button class="btn btn-sm btn-info" (click)="showAttendance(classItem)">Attendance</button>
+                        </td>
+                        <td class="actions-cell">
+                          <div class="action-buttons">
+                            <button class="btn-action btn-view" (click)="viewClass(classItem); $event.stopPropagation()" title="View Details">👁️</button>
+                            <button class="btn-action btn-edit" (click)="editClass(classItem); $event.stopPropagation()" title="Edit Class">✏️</button>
+                            <button class="btn-action btn-enrollment" (click)="manageEnrollment(classItem); $event.stopPropagation()" title="Manage Enrollment">👥</button>
+                            <button class="btn-action btn-more" (click)="generateReport(classItem); $event.stopPropagation()" title="Generate Report">📊</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
       
-      <!-- Horizontal Scroll Indicator -->
-      <div class="scroll-indicator" *ngIf="showScrollIndicator">
-        <span class="scroll-text">← Scroll horizontally to see more →</span>
-      </div>
-    </div>
-
-    <!-- Enhanced Mobile Card View -->
-    <div class="mobile-cards" [style.display]="viewMode === 'cards' ? 'block' : 'none'">
-      <div *ngFor="let class of filteredClasses; trackBy: trackByClassId" 
-           class="class-card"
-           [class.selected]="isClassSelected(class)"
-           (click)="selectClass(class)">
-        
-        <!-- Card Header -->
-        <div class="class-card-header">
-          <div class="class-info">
-            <h3 class="class-card-name">{{class.name}}</h3>
-            <span class="class-card-code">{{class.code}}</span>
-          </div>
-          <div class="class-card-status">
-            <span class="status-badge" [ngClass]="getStatusClass(class.status)">
-              <span class="status-icon">{{getStatusIcon(class.status)}}</span>
-              {{class.status | titlecase}}
-            </span>
-          </div>
-        </div>
-        
-        <!-- Card Body -->
-        <div class="class-card-body">
-          <div class="card-row">
-            <div class="class-card-field">
-              <span class="class-card-label">🏫 Department</span>
-              <span class="class-card-value">
-                <span class="department-badge">{{class.department}}</span>
-              </span>
-            </div>
-          </div>
-          
-          <div class="card-row">
-            <div class="class-card-field">
-              <span class="class-card-label">👨‍🏫 Teacher</span>
-              <span class="class-card-value">{{class.teacherName}}</span>
-            </div>
-          </div>
-          
-          <div class="card-row">
-            <div class="class-card-field">
-              <span class="class-card-label">📚 Credits</span>
-              <span class="class-card-value">{{class.credits}} credits</span>
-            </div>
-            <div class="class-card-field">
-              <span class="class-card-label">📅 Semester</span>
-              <span class="class-card-value">{{class.semester}} {{class.year}}</span>
-            </div>
-          </div>
-          
-          <div class="card-row">
-            <div class="class-card-field full-width">
-              <span class="class-card-label">👥 Enrollment</span>
-              <div class="capacity-info-mobile">
-                <span class="capacity-numbers">{{class.enrolledStudents}}/{{class.maxStudents}} students</span>
-                <div class="capacity-bar-mobile">
-                  <div class="capacity-fill-mobile" 
-                       [ngClass]="getCapacityClass(class)"
-                       [style.width.%]="getCapacityPercentage(class)"></div>
+                <!-- Horizontal Scroll Indicator -->
+                <div class="scroll-indicator" *ngIf="showScrollIndicator">
+                  <span class="scroll-text">← Scroll horizontally to see more →</span>
                 </div>
-                <small class="enrollment-status">{{getEnrollmentStatus(class)}}</small>
+              </div>
+
+              <!-- Enhanced Mobile Card View -->
+              <div class="mobile-cards" [style.display]="viewMode === 'cards' ? 'block' : 'none'">
+                <div *ngFor="let classItem of filteredClasses; trackBy: trackByClassId" 
+                     class="class-card"
+                     [class.selected]="isClassSelected(classItem)"
+                     (click)="selectClass(classItem)">
+        
+                  <!-- Card Header -->
+                  <div class="class-card-header">
+                    <div class="class-info">
+                      <h3 class="class-card-name">{{classItem.name}}</h3>
+                      <span class="class-card-code">{{classItem.code}}</span>
+                    </div>
+                    <div class="class-card-status">
+                      <span class="status-badge" [ngClass]="getStatusClass(classItem.status)">
+                        <span class="status-icon">{{getStatusIcon(classItem.status)}}</span>
+                        {{classItem.status | titlecase}}
+                      </span>
+                    </div>
+                  </div>
+        
+                  <!-- Card Body -->
+                  <div class="class-card-body">
+                    <div class="card-row">
+                      <div class="class-card-field">
+                        <span class="class-card-label">🏫 Department</span>
+                        <span class="class-card-value">
+                          <span class="department-badge">{{classItem.department}}</span>
+                        </span>
+                      </div>
+                    </div>
+          
+                    <div class="card-row">
+                      <div class="class-card-field">
+                        <span class="class-card-label">👨‍🏫 Teacher</span>
+                        <span class="class-card-value">{{classItem.teacherName}}</span>
+                      </div>
+                    </div>
+          
+                    <div class="card-row">
+                      <div class="class-card-field">
+                        <span class="class-card-label">📚 Credits</span>
+                        <span class="class-card-value">{{classItem.credits}} credits</span>
+                      </div>
+                      <div class="class-card-field">
+                        <span class="class-card-label">📅 Semester</span>
+                        <span class="class-card-value">{{classItem.semester}} {{classItem.year}}</span>
+                      </div>
+                    </div>
+          
+                    <div class="card-row">
+                      <div class="class-card-field full-width">
+                        <span class="class-card-label">👥 Enrollment</span>
+                        <div class="capacity-info-mobile">
+                          <span class="capacity-numbers">{{classItem.enrolledStudents}}/{{classItem.maxStudents}} students</span>
+                          <div class="capacity-bar-mobile">
+                            <div class="capacity-fill-mobile" 
+                                 [ngClass]="getCapacityClass(classItem)"
+                                 [style.width.%]="getCapacityPercentage(classItem)"></div>
+                          </div>
+                          <small class="enrollment-status">{{getEnrollmentStatus(classItem)}}</small>
+                        </div>
+                      </div>
+                    </div>
+          
+                    <div class="card-row">
+                      <div class="class-card-field full-width">
+                        <span class="class-card-label">🕒 Schedule</span>
+                        <div class="schedule-mobile">
+                          <div *ngFor="let sched of classItem.schedule" class="schedule-item-mobile">
+                            <span class="schedule-day">{{sched.day}}</span>
+                            <span class="schedule-time">{{sched.startTime}}-{{sched.endTime}}</span>
+                            <span class="schedule-room">{{sched.room}}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+          
+                    <div class="card-row" *ngIf="classItem.prerequisites && classItem.prerequisites.length > 0">
+                      <div class="class-card-field full-width">
+                        <span class="class-card-label">📋 Prerequisites</span>
+                        <span class="class-card-value">{{formatPrerequisites(classItem.prerequisites)}}</span>
+                      </div>
+                    </div>
+                  </div>
+        
+                  <!-- Card Actions -->
+                  <div class="class-card-actions">
+                    <button class="card-action-btn primary" 
+                            (click)="viewClass(classItem); $event.stopPropagation()" 
+                            title="View Details">
+                      <span class="btn-icon">👁️</span>
+                      <span class="btn-text">View</span>
+                    </button>
+                    <button class="card-action-btn secondary" 
+                            (click)="manageEnrollment(classItem); $event.stopPropagation()" 
+                            title="Manage Enrollment">
+                      <span class="btn-icon">👥</span>
+                      <span class="btn-text">Enrollment</span>
+                    </button>
+                    <button class="card-action-btn tertiary" 
+                            (click)="viewSchedule(classItem); $event.stopPropagation()" 
+                            title="Schedule">
+                      <span class="btn-icon">📅</span>
+                      <span class="btn-text">Schedule</span>
+                    </button>
+                    <button class="card-action-btn quaternary" 
+                            (click)="duplicateClass(classItem); $event.stopPropagation()" 
+                            title="Duplicate Class">
+                      <span class="btn-icon">📋</span>
+                      <span class="btn-text">Duplicate</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Load More Button for Performance -->
+                <div class="load-more-section" *ngIf="filteredClasses.length > displayLimit">
+                  <button class="btn btn-outline load-more-btn" (click)="loadMoreClasses()">
+                    <span class="btn-icon">⬇️</span>
+                    Load More Classes ({{filteredClasses.length - displayLimit}} remaining)
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="filteredClasses.length === 0" class="no-classes">
+                <div class="empty-state">
+                  <h3>📚 No Classes Found</h3>
+                  <p>No classes match your current search criteria.</p>
+                  <div class="empty-actions">
+                    <button class="btn btn-secondary" (click)="clearFilters()">Clear Filters</button>
+                    <button class="btn btn-primary" (click)="addClass()">Add New Class</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          
-          <div class="card-row">
-            <div class="class-card-field full-width">
-              <span class="class-card-label">🕒 Schedule</span>
-              <div class="schedule-mobile">
-                <div *ngFor="let sched of class.schedule" class="schedule-item-mobile">
-                  <span class="schedule-day">{{sched.day}}</span>
-                  <span class="schedule-time">{{sched.startTime}}-{{sched.endTime}}</span>
-                  <span class="schedule-room">{{sched.room}}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="card-row" *ngIf="class.prerequisites && class.prerequisites.length > 0">
-            <div class="class-card-field full-width">
-              <span class="class-card-label">📋 Prerequisites</span>
-              <span class="class-card-value">{{formatPrerequisites(class.prerequisites)}}</span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Card Actions -->
-        <div class="class-card-actions">
-          <button class="card-action-btn primary" 
-                  (click)="viewClass(class); $event.stopPropagation()" 
-                  title="View Details">
-            <span class="btn-icon">👁️</span>
-            <span class="btn-text">View</span>
-          </button>
-          <button class="card-action-btn secondary" 
-                  (click)="manageEnrollment(class); $event.stopPropagation()" 
-                  title="Manage Enrollment">
-            <span class="btn-icon">👥</span>
-            <span class="btn-text">Enrollment</span>
-          </button>
-          <button class="card-action-btn tertiary" 
-                  (click)="viewSchedule(class); $event.stopPropagation()" 
-                  title="Schedule">
-            <span class="btn-icon">📅</span>
-            <span class="btn-text">Schedule</span>
-          </button>
-          <button class="card-action-btn quaternary" 
-                  (click)="duplicateClass(class); $event.stopPropagation()" 
-                  title="Duplicate Class">
-            <span class="btn-icon">📋</span>
-            <span class="btn-text">Duplicate</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Load More Button for Performance -->
-      <div class="load-more-section" *ngIf="filteredClasses.length > displayLimit">
-        <button class="btn btn-outline load-more-btn" (click)="loadMoreClasses()">
-          <span class="btn-icon">⬇️</span>
-          Load More Classes ({{filteredClasses.length - displayLimit}} remaining)
-        </button>
-      </div>
-    </div>
-
-    <div *ngIf="filteredClasses.length === 0" class="no-classes">
-      <div class="empty-state">
-        <h3>📚 No Classes Found</h3>
-        <p>No classes match your current search criteria.</p>
-        <div class="empty-actions">
-          <button class="btn btn-secondary" (click)="clearFilters()">Clear Filters</button>
-          <button class="btn btn-primary" (click)="addClass()">Add New Class</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>

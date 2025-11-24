@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService } from '../../core/services/mock-data.service';
+import { MaterialModule } from '../../core/material.module';
 
 @Component({
   selector: 'app-attendance',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MaterialModule],
   styleUrls: ['./attendance.scss'],
   template: `
     <div class="students-container">
@@ -16,21 +17,27 @@ import { MockDataService } from '../../core/services/mock-data.service';
       </div>
 
       <div class="filters-section attendance-form">
-        <label class="filter-group">Student
-          <select class="form-select" [(ngModel)]="newStudentId">
-            <option *ngFor="let s of students" [value]="s.id">{{s.firstName}} {{s.lastName}}</option>
-          </select>
-        </label>
-        <label class="filter-group">Date
-          <input class="form-input" type="date" [(ngModel)]="newDate" />
-        </label>
-        <label class="filter-group">Status
-          <select class="form-select" [(ngModel)]="newStatus">
-            <option value="present">Present</option>
-            <option value="absent">Absent</option>
-          </select>
-        </label>
-        <div class="filter-actions"><button class="btn btn-primary" (click)="addAttendance()">Mark</button></div>
+        <mat-form-field appearance="outline" class="filter-group">
+          <mat-label>Student</mat-label>
+          <mat-select [(ngModel)]="newStudentId">
+            <mat-option *ngFor="let s of students" [value]="s.id">{{s.firstName}} {{s.lastName}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-group">
+          <mat-label>Date</mat-label>
+          <input matInput type="date" [(ngModel)]="newDate" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-group">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="newStatus">
+            <mat-option value="present">Present</mat-option>
+            <mat-option value="absent">Absent</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="filter-actions"><button mat-raised-button color="primary" (click)="addAttendance()">Mark</button></div>
       </div>
 
       <div class="students-table-container">
@@ -44,7 +51,7 @@ import { MockDataService } from '../../core/services/mock-data.service';
                 <td>{{a.date}}</td>
                 <td><span class="status-badge" [ngClass]="{'status-present': a.status==='present','status-absent': a.status==='absent'}">{{a.status}}</span></td>
                 <td>
-                  <button class="btn" (click)="toggleStatus(a)">Toggle</button>
+                  <button mat-stroked-button (click)="toggleStatus(a)">Toggle</button>
                 </td>
               </tr>
             </tbody>

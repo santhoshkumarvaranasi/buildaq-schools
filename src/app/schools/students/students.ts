@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TenantService } from '../../core/services/tenant.service';
 import { MockDataService, MockStudent } from '../../core/services/mock-data.service';
+import { MaterialModule } from '../../core/material.module';
 
 export interface Student {
   id: number;
@@ -42,7 +43,7 @@ export interface SortConfig {
   templateUrl: './students.html',
   styleUrls: ['./students.scss'],
   // allow template directives and ngModel in this component
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MaterialModule],
 })
 export class StudentsComponent implements OnInit {
   students: Student[] = [];
