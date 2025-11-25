@@ -110,6 +110,19 @@ export interface HealthIncident {
   notifiedParent?: boolean;
 }
 
+export interface AssetItem {
+  id: string;
+  name: string;
+  category: string;
+  status: 'available' | 'assigned' | 'maintenance';
+  assignedTo?: string;
+  assignedType?: 'student' | 'staff';
+  location?: string;
+  dueDate?: string;
+  lastService?: string;
+  vendor?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -212,6 +225,13 @@ export class MockDataService {
     { id: 1, studentId: 1, studentName: 'Jane Doe', date: '2025-11-20', symptom: 'Asthma flare', actionTaken: 'Inhaler administered', notifiedParent: true },
     { id: 2, studentId: 2, studentName: 'John Smith', date: '2025-11-18', symptom: 'Fever', actionTaken: 'Sent home', notifiedParent: true },
     { id: 3, studentId: 3, studentName: 'Priya Kumar', date: '2025-11-10', symptom: 'Headache', actionTaken: 'Rested in clinic', notifiedParent: false }
+  ];
+
+  assets: AssetItem[] = [
+    { id: 'IT-001', name: 'Chromebook A', category: 'IT', status: 'assigned', assignedTo: 'Jane Doe', assignedType: 'student', dueDate: '2025-12-05', location: 'Lab 1', lastService: '2025-10-01' },
+    { id: 'IT-002', name: 'Projector', category: 'IT', status: 'maintenance', location: 'Audiovisual', vendor: 'AV Works', lastService: '2025-11-10' },
+    { id: 'SCI-010', name: 'Microscope', category: 'Lab', status: 'available', location: 'Science Lab' },
+    { id: 'LIB-100', name: 'Kindle', category: 'Library Device', status: 'assigned', assignedTo: 'John Smith', assignedType: 'student', dueDate: '2025-11-30', location: 'Library' }
   ];
 
   getStudents() { return this.students; }
@@ -327,6 +347,24 @@ export class MockDataService {
       notifiedParent: !!entry.notifiedParent
     });
     this.healthIncidents.unshift(created);
+    return created;
+  }
+  getAssets() { return this.assets; }
+  updateAsset(id: string, changes: Partial<AssetItem>) {
+    const idx = this.assets.findIndex(a => a.id === id);
+    if (idx === -1) return null;
+    this.assets[idx] = Object.assign({}, this.assets[idx], changes);
+    return this.assets[idx];
+  }
+  addAsset(entry: Partial<AssetItem>) {
+    const created: AssetItem = Object.assign({
+      id: `AST-${(this.assets.length + 1).toString().padStart(3,'0')}`,
+      name: 'New Asset',
+      category: 'General',
+      status: 'available',
+      location: 'Store'
+    }, entry);
+    this.assets.unshift(created);
     return created;
   }
   addDiscount(entry: any) {

@@ -15,6 +15,7 @@ import { TransportComponent } from './features/transport/transport';
 import { ClubsComponent } from './features/clubs/clubs';
 import { ParentsComponent } from './features/parents/parents';
 import { HealthComponent } from './features/health/health';
+import { AssetsComponent } from './features/assets/assets';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
@@ -34,5 +35,6 @@ export const routes: Routes = [
   { path: 'clubs', component: ClubsComponent },
   { path: 'parents', component: ParentsComponent },
   { path: 'health', component: HealthComponent },
+  { path: 'assets', component: AssetsComponent },
   { path: '**', redirectTo: '' }
 ];

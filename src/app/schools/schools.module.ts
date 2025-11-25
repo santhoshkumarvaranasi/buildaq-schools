@@ -28,6 +28,7 @@ import { TransportComponent } from '../features/transport/transport';
 import { ClubsComponent } from '../features/clubs/clubs';
 import { ParentsComponent } from '../features/parents/parents';
 import { HealthComponent } from '../features/health/health';
+import { AssetsComponent } from '../features/assets/assets';
 
 // Define routes for the schools module
 const routes: Routes = [
@@ -56,6 +57,7 @@ const routes: Routes = [
   { path: 'clubs', component: ClubsComponent },
   { path: 'parents', component: ParentsComponent },
   { path: 'health', component: HealthComponent },
+  { path: 'assets', component: AssetsComponent },
   { path: 'timetable', component: TimetableComponent },
   { path: 'exams', component: ExamsComponent }
 ];
@@ -87,6 +89,7 @@ const routes: Routes = [
     ClubsComponent,
     ParentsComponent,
     HealthComponent,
+    AssetsComponent,
     TimetableComponent,
     ExamsComponent
   ],
