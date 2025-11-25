@@ -80,6 +80,17 @@ export interface Club {
   category?: string;
 }
 
+export interface ParentContact {
+  id: number;
+  name: string;
+  studentIds: number[];
+  email: string;
+  phone?: string;
+  preferredChannel?: 'email' | 'sms';
+  lastContact?: string;
+  notes?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -166,6 +177,12 @@ export class MockDataService {
     { id: 4, name: 'Eco Club', advisor: 'Carlos Ruiz', members: 15, meetingDay: 'Thu', nextEvent: 'Campus cleanup', category: 'Community' }
   ];
 
+  parents: ParentContact[] = [
+    { id: 1, name: 'Anita Doe', studentIds: [1], email: 'anita.doe@example.com', phone: '+1-555-0101', preferredChannel: 'email', lastContact: '2025-11-15', notes: 'Prefers morning calls' },
+    { id: 2, name: 'Michael Smith', studentIds: [2], email: 'm.smith@example.com', phone: '+1-555-0102', preferredChannel: 'sms', lastContact: '2025-11-10', notes: 'Works night shifts' },
+    { id: 3, name: 'Priya Nair', studentIds: [3], email: 'priya.nair@example.com', phone: '+1-555-0103', preferredChannel: 'email', lastContact: '2025-11-18' }
+  ];
+
   getStudents() { return this.students; }
   getStaff() { return this.staff; }
   getClasses() { return this.classes; }
@@ -250,6 +267,19 @@ export class MockDataService {
       category: 'General'
     }, entry);
     this.clubs.unshift(created);
+    return created;
+  }
+  getParents() { return this.parents; }
+  addParent(entry: Partial<ParentContact>) {
+    const nextId = (this.parents.reduce((m, p) => Math.max(m, p.id), 0) || 0) + 1;
+    const created: ParentContact = Object.assign({
+      id: nextId,
+      name: 'New Parent',
+      studentIds: [],
+      email: '',
+      preferredChannel: 'email'
+    }, entry);
+    this.parents.unshift(created);
     return created;
   }
   addDiscount(entry: any) {

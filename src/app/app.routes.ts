@@ -13,6 +13,7 @@ import { AnnouncementsComponent } from './features/announcements/announcements';
 import { LibraryComponent } from './features/library/library';
 import { TransportComponent } from './features/transport/transport';
 import { ClubsComponent } from './features/clubs/clubs';
+import { ParentsComponent } from './features/parents/parents';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
@@ -30,5 +31,6 @@ export const routes: Routes = [
   { path: 'library', component: LibraryComponent },
   { path: 'transport', component: TransportComponent },
   { path: 'clubs', component: ClubsComponent },
+  { path: 'parents', component: ParentsComponent },
   { path: '**', redirectTo: '' }
 ];
