@@ -12,6 +12,7 @@ import { BehaviorComponent } from './features/behavior/behavior';
 import { AnnouncementsComponent } from './features/announcements/announcements';
 import { LibraryComponent } from './features/library/library';
 import { TransportComponent } from './features/transport/transport';
+import { ClubsComponent } from './features/clubs/clubs';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
@@ -28,5 +29,6 @@ export const routes: Routes = [
   { path: 'announcements', component: AnnouncementsComponent },
   { path: 'library', component: LibraryComponent },
   { path: 'transport', component: TransportComponent },
+  { path: 'clubs', component: ClubsComponent },
   { path: '**', redirectTo: '' }
 ];

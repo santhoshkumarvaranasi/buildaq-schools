@@ -81,6 +81,9 @@ table {
   color: #5f6472;
 }
 
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+
 .chip-tight {
   height: 26px;
   line-height: 26px;

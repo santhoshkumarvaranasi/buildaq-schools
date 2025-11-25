@@ -70,6 +70,16 @@ export interface TransportRoute {
   notes?: string;
 }
 
+export interface Club {
+  id: number;
+  name: string;
+  advisor: string;
+  members: number;
+  meetingDay: string;
+  nextEvent?: string;
+  category?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -149,6 +159,13 @@ export class MockDataService {
     { id: 4, routeName: 'Route D - West', driver: 'Sofia Lee', capacity: 30, assigned: 18, status: 'maintenance', departure: '—', returnTime: '—', notes: 'Bus in service bay' }
   ];
 
+  clubs: Club[] = [
+    { id: 1, name: 'Robotics Club', advisor: 'Alice Brown', members: 24, meetingDay: 'Wed', nextEvent: 'Regional qualifier', category: 'STEM' },
+    { id: 2, name: 'Drama Society', advisor: 'Robert Green', members: 18, meetingDay: 'Fri', nextEvent: 'Winter play auditions', category: 'Arts' },
+    { id: 3, name: 'Debate Team', advisor: 'Emily Davis', members: 12, meetingDay: 'Tue', nextEvent: 'Inter-school debate', category: 'Academics' },
+    { id: 4, name: 'Eco Club', advisor: 'Carlos Ruiz', members: 15, meetingDay: 'Thu', nextEvent: 'Campus cleanup', category: 'Community' }
+  ];
+
   getStudents() { return this.students; }
   getStaff() { return this.staff; }
   getClasses() { return this.classes; }
@@ -220,6 +237,20 @@ export class MockDataService {
     if (!route) return null;
     route.status = status;
     return route;
+  }
+  getClubs() { return this.clubs; }
+  addClub(entry: Partial<Club>) {
+    const nextId = (this.clubs.reduce((m, c) => Math.max(m, c.id), 0) || 0) + 1;
+    const created: Club = Object.assign({
+      id: nextId,
+      name: 'New Club',
+      advisor: 'Advisor',
+      members: 0,
+      meetingDay: 'Mon',
+      category: 'General'
+    }, entry);
+    this.clubs.unshift(created);
+    return created;
   }
   addDiscount(entry: any) {
     const created = Object.assign({ id: `D-${(this.discounts.length + 1).toString().padStart(3,'0')}`, status: 'active' }, entry);

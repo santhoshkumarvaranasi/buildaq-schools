@@ -24,3 +24,11 @@
   background: rgba(0,0,0,0.08);
 }
 
+/* Clubs desktop/mobile toggle (global safety net) */
+.clubs-page .desktop-only { display: block; }
+.clubs-page .mobile-only { display: none; }
+@media (max-width: 768px) {
+  .clubs-page .desktop-only { display: none; }
+  .clubs-page .mobile-only { display: grid; gap: 12px; }
+}
+
