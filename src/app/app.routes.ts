@@ -19,6 +19,7 @@ import { AssetsComponent } from './features/assets/assets';
 import { EventsComponent } from './features/events/events';
 import { ResourcesComponent } from './features/resources/resources';
 import { PerformanceComponent } from './features/performance/performance';
+import { AnalyticsComponent } from './features/analytics/analytics';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
@@ -42,5 +43,6 @@ export const routes: Routes = [
   { path: 'events', component: EventsComponent },
   { path: 'resources', component: ResourcesComponent },
   { path: 'performance', component: PerformanceComponent },
+  { path: 'analytics', component: AnalyticsComponent },
   { path: '**', redirectTo: '' }
 ];

@@ -1,0 +1,182 @@
+.analytics-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.fees-toolbar {
+  border-radius: 12px;
+  background: linear-gradient(120deg, #3949ab, #1e88e5);
+  color: #fff;
+  padding: 12px 16px;
+}
+
+.toolbar-left .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.toolbar-left .title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.chart-card {
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.bar-chart {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  height: 180px;
+}
+
+.bar {
+  flex: 1;
+  min-width: 50px;
+  border-radius: 8px 8px 0 0;
+  background: #6366f1;
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding-top: 8px;
+}
+
+.bar-label {
+  position: absolute;
+  bottom: -22px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.bar-value {
+  font-weight: 700;
+  color: #fff;
+}
+
+.bar-chart.horizontal {
+  flex-direction: column;
+  height: auto;
+}
+
+.bar.horizontal {
+  height: 32px;
+  border-radius: 8px;
+  justify-content: flex-start;
+  padding-left: 12px;
+}
+
+.donut {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.donut svg {
+  width: 120px;
+  height: 120px;
+}
+
+.donut .bg {
+  fill: none;
+  stroke: #e2e8f0;
+  stroke-width: 3.8;
+}
+
+.donut .slice {
+  fill: none;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.donut-legend {
+  display: grid;
+  gap: 4px;
+}
+
+.legend-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 6px;
+  align-items: center;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-value {
+  font-weight: 600;
+}
+
+.gauge {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+}
+
+.gauge svg {
+  width: 140px;
+  height: 70px;
+}
+
+.gauge-bg {
+  fill: none;
+  stroke: #e2e8f0;
+  stroke-width: 3;
+}
+
+.gauge-fill {
+  fill: none;
+  stroke: #22c55e;
+  stroke-width: 3;
+}
+
+.gauge-value {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+.mobile-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  display: grid;
+  gap: 6px;
+}
+.mobile-card .card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mobile-card .cell-sub {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}

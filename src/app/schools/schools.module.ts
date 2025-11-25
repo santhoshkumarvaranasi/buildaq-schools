@@ -32,6 +32,7 @@ import { AssetsComponent } from '../features/assets/assets';
 import { EventsComponent } from '../features/events/events';
 import { ResourcesComponent } from '../features/resources/resources';
 import { PerformanceComponent } from '../features/performance/performance';
+import { AnalyticsComponent } from '../features/analytics/analytics';
 
 // Define routes for the schools module
 const routes: Routes = [
@@ -64,6 +65,7 @@ const routes: Routes = [
   { path: 'events', component: EventsComponent },
   { path: 'resources', component: ResourcesComponent },
   { path: 'performance', component: PerformanceComponent },
+  { path: 'analytics', component: AnalyticsComponent },
   { path: 'timetable', component: TimetableComponent },
   { path: 'exams', component: ExamsComponent }
 ];
@@ -99,6 +101,7 @@ const routes: Routes = [
     EventsComponent,
     ResourcesComponent,
     PerformanceComponent,
+    AnalyticsComponent,
     TimetableComponent,
     ExamsComponent
   ],
