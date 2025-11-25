@@ -27,6 +27,7 @@ import { LibraryComponent } from '../features/library/library';
 import { TransportComponent } from '../features/transport/transport';
 import { ClubsComponent } from '../features/clubs/clubs';
 import { ParentsComponent } from '../features/parents/parents';
+import { HealthComponent } from '../features/health/health';
 
 // Define routes for the schools module
 const routes: Routes = [
@@ -54,6 +55,7 @@ const routes: Routes = [
   { path: 'transport', component: TransportComponent },
   { path: 'clubs', component: ClubsComponent },
   { path: 'parents', component: ParentsComponent },
+  { path: 'health', component: HealthComponent },
   { path: 'timetable', component: TimetableComponent },
   { path: 'exams', component: ExamsComponent }
 ];
@@ -84,6 +86,7 @@ const routes: Routes = [
     TransportComponent,
     ClubsComponent,
     ParentsComponent,
+    HealthComponent,
     TimetableComponent,
     ExamsComponent
   ],

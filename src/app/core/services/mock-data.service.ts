@@ -91,6 +91,25 @@ export interface ParentContact {
   notes?: string;
 }
 
+export interface HealthProfile {
+  studentId: number;
+  allergies?: string;
+  medications?: string;
+  conditions?: string;
+  doctor?: string;
+  emergencyContact?: string;
+}
+
+export interface HealthIncident {
+  id: number;
+  studentId: number;
+  studentName: string;
+  date: string;
+  symptom: string;
+  actionTaken: string;
+  notifiedParent?: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -181,6 +200,18 @@ export class MockDataService {
     { id: 1, name: 'Anita Doe', studentIds: [1], email: 'anita.doe@example.com', phone: '+1-555-0101', preferredChannel: 'email', lastContact: '2025-11-15', notes: 'Prefers morning calls' },
     { id: 2, name: 'Michael Smith', studentIds: [2], email: 'm.smith@example.com', phone: '+1-555-0102', preferredChannel: 'sms', lastContact: '2025-11-10', notes: 'Works night shifts' },
     { id: 3, name: 'Priya Nair', studentIds: [3], email: 'priya.nair@example.com', phone: '+1-555-0103', preferredChannel: 'email', lastContact: '2025-11-18' }
+  ];
+
+  healthProfiles: HealthProfile[] = [
+    { studentId: 1, allergies: 'Peanuts', medications: 'EpiPen', conditions: 'Asthma', doctor: 'Dr. Lee', emergencyContact: 'Anita Doe (+1-555-0101)' },
+    { studentId: 2, allergies: 'None', medications: 'None', conditions: '', doctor: 'Dr. Patel', emergencyContact: 'Michael Smith (+1-555-0102)' },
+    { studentId: 3, allergies: 'Dust', medications: 'Antihistamine', conditions: 'Allergic rhinitis', doctor: 'Dr. Rao', emergencyContact: 'Priya Nair (+1-555-0103)' }
+  ];
+
+  healthIncidents: HealthIncident[] = [
+    { id: 1, studentId: 1, studentName: 'Jane Doe', date: '2025-11-20', symptom: 'Asthma flare', actionTaken: 'Inhaler administered', notifiedParent: true },
+    { id: 2, studentId: 2, studentName: 'John Smith', date: '2025-11-18', symptom: 'Fever', actionTaken: 'Sent home', notifiedParent: true },
+    { id: 3, studentId: 3, studentName: 'Priya Kumar', date: '2025-11-10', symptom: 'Headache', actionTaken: 'Rested in clinic', notifiedParent: false }
   ];
 
   getStudents() { return this.students; }
@@ -280,6 +311,22 @@ export class MockDataService {
       preferredChannel: 'email'
     }, entry);
     this.parents.unshift(created);
+    return created;
+  }
+  getHealthProfiles() { return this.healthProfiles; }
+  getHealthIncidents() { return this.healthIncidents; }
+  addHealthIncident(entry: Partial<HealthIncident>) {
+    const nextId = (this.healthIncidents.reduce((m, h) => Math.max(m, h.id), 0) || 0) + 1;
+    const created: HealthIncident = Object.assign({
+      id: nextId,
+      studentId: entry.studentId || 0,
+      studentName: entry.studentName || 'Student',
+      date: entry.date || new Date().toISOString().slice(0,10),
+      symptom: entry.symptom || 'Symptom',
+      actionTaken: entry.actionTaken || 'Logged',
+      notifiedParent: !!entry.notifiedParent
+    });
+    this.healthIncidents.unshift(created);
     return created;
   }
   addDiscount(entry: any) {
