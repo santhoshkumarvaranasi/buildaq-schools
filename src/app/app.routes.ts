@@ -17,6 +17,7 @@ import { ParentsComponent } from './features/parents/parents';
 import { HealthComponent } from './features/health/health';
 import { AssetsComponent } from './features/assets/assets';
 import { EventsComponent } from './features/events/events';
+import { ResourcesComponent } from './features/resources/resources';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
@@ -38,5 +39,6 @@ export const routes: Routes = [
   { path: 'health', component: HealthComponent },
   { path: 'assets', component: AssetsComponent },
   { path: 'events', component: EventsComponent },
+  { path: 'resources', component: ResourcesComponent },
   { path: '**', redirectTo: '' }
 ];

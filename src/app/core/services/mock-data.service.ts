@@ -135,6 +135,28 @@ export interface EventItem {
   rsvps?: { name: string; role: string; response: 'yes' | 'no' | 'pending' }[];
 }
 
+export interface ResourceItem {
+  id: number;
+  name: string;
+  type: 'room' | 'lab' | 'ground';
+  capacity: number;
+  equipment?: string;
+  status?: 'available' | 'in-use' | 'maintenance';
+}
+
+export interface BookingItem {
+  id: number;
+  resourceId: number;
+  resourceName: string;
+  requester: string;
+  purpose: string;
+  date: string;
+  start: string;
+  end: string;
+  status: 'approved' | 'pending';
+  conflict?: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -250,6 +272,18 @@ export class MockDataService {
     { id: 1, title: 'PTA Meeting', date: '2025-12-05', time: '16:00', location: 'Auditorium', audience: 'parents', category: 'PTA', status: 'upcoming', rsvps: [{ name: 'Anita Doe', role: 'Parent', response: 'yes' }] },
     { id: 2, title: 'Science Fair', date: '2025-12-12', time: '10:00', location: 'Hall A', audience: 'students', category: 'Academics', status: 'upcoming', rsvps: [{ name: 'Jane Doe', role: 'Student', response: 'pending' }] },
     { id: 3, title: 'Teacher Workshop', date: '2025-11-30', time: '14:00', location: 'Lab 2', audience: 'teachers', category: 'Training', status: 'upcoming', rsvps: [{ name: 'Alice Brown', role: 'Teacher', response: 'yes' }] }
+  ];
+
+  resources: ResourceItem[] = [
+    { id: 1, name: 'Room 101', type: 'room', capacity: 30, equipment: 'Projector', status: 'available' },
+    { id: 2, name: 'Physics Lab', type: 'lab', capacity: 24, equipment: 'Lab benches, microscopes', status: 'available' },
+    { id: 3, name: 'Soccer Ground', type: 'ground', capacity: 200, equipment: 'Scoreboard', status: 'in-use' }
+  ];
+
+  bookings: BookingItem[] = [
+    { id: 1, resourceId: 1, resourceName: 'Room 101', requester: 'Alice Brown', purpose: 'PTA Prep', date: '2025-12-04', start: '14:00', end: '15:30', status: 'approved', conflict: false },
+    { id: 2, resourceId: 2, resourceName: 'Physics Lab', requester: 'Science Club', purpose: 'Demo', date: '2025-12-04', start: '10:00', end: '12:00', status: 'pending', conflict: false },
+    { id: 3, resourceId: 1, resourceName: 'Room 101', requester: 'Math Dept', purpose: 'Workshop', date: '2025-12-04', start: '15:00', end: '16:00', status: 'pending', conflict: true }
   ];
 
   getStudents() { return this.students; }
@@ -398,6 +432,31 @@ export class MockDataService {
     }, entry);
     this.events.unshift(created);
     return created;
+  }
+  getResources() { return this.resources; }
+  getBookings() { return this.bookings; }
+  addBooking(entry: Partial<BookingItem>) {
+    const nextId = (this.bookings.reduce((m, b) => Math.max(m, b.id), 0) || 0) + 1;
+    const created: BookingItem = Object.assign({
+      id: nextId,
+      resourceId: entry.resourceId || 0,
+      resourceName: entry.resourceName || 'Resource',
+      requester: entry.requester || 'Requester',
+      purpose: entry.purpose || 'Purpose',
+      date: entry.date || new Date().toISOString().slice(0, 10),
+      start: entry.start || '09:00',
+      end: entry.end || '10:00',
+      status: entry.status || 'pending',
+      conflict: !!entry.conflict
+    });
+    this.bookings.unshift(created);
+    return created;
+  }
+  updateBooking(id: number, changes: Partial<BookingItem>) {
+    const idx = this.bookings.findIndex(b => b.id === id);
+    if (idx === -1) return null;
+    this.bookings[idx] = Object.assign({}, this.bookings[idx], changes);
+    return this.bookings[idx];
   }
   addDiscount(entry: any) {
     const created = Object.assign({ id: `D-${(this.discounts.length + 1).toString().padStart(3,'0')}`, status: 'active' }, entry);
