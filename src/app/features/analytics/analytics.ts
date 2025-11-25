@@ -82,6 +82,26 @@ type ChartPoint = { label: string; value: number; color?: string };
             </div>
           </div>
         </mat-card>
+
+        <mat-card class="chart-card mat-elevation-z2">
+          <mat-card-title>PD hours by teacher</mat-card-title>
+          <div class="bar-chart horizontal">
+            <div class="bar horizontal" *ngFor="let p of pdHours" [style.width.%]="p.value" [style.background]="p.color">
+              <span class="bar-label">{{ p.label }}</span>
+              <span class="bar-value">{{ p.value }}h</span>
+            </div>
+          </div>
+        </mat-card>
+
+        <mat-card class="chart-card mat-elevation-z2">
+          <mat-card-title>Resource status</mat-card-title>
+          <div class="bar-chart horizontal">
+            <div class="bar horizontal" *ngFor="let p of resourceStatus" [style.width.%]="p.value" [style.background]="p.color">
+              <span class="bar-label">{{ p.label }}</span>
+              <span class="bar-value">{{ p.count }}</span>
+            </div>
+          </div>
+        </mat-card>
       </div>
     </div>
   `
@@ -94,6 +114,8 @@ export class AnalyticsComponent {
   incidentTypes: ChartPoint[] = [];
   examAverages: ChartPoint[] = [];
   gaugePath = '';
+  pdHours: (ChartPoint & { value: number })[] = [];
+  resourceStatus: (ChartPoint & { count: number })[] = [];
 
   constructor(private mock: MockDataService) {
     this.computeStudentStatus();
@@ -101,6 +123,8 @@ export class AnalyticsComponent {
     this.computeAttendance();
     this.computeIncidents();
     this.computeExams();
+    this.computePd();
+    this.computeResources();
     this.buildGauge();
   }
 
@@ -163,6 +187,29 @@ export class AnalyticsComponent {
       const avg = marks.length ? Math.round(marks.reduce((s: number, m: any) => s + (m.marks || 0), 0) / marks.length) : 0;
       return { label: e.title || `Exam ${idx + 1}`, value: avg, color: ['#6366f1', '#22c55e', '#f97316'][idx % 3] };
     });
+  }
+
+  private computePd() {
+    const pd = this.mock.getTeacherPd?.() || [];
+    this.pdHours = pd.map((p, idx) => ({
+      label: p.teacherName || `Teacher ${idx + 1}`,
+      value: p.hours || 0,
+      color: ['#10b981', '#3b82f6', '#a855f7', '#f97316'][idx % 4]
+    }));
+  }
+
+  private computeResources() {
+    const resources = this.mock.getResources?.() || [];
+    const statusCount: Record<string, number> = {};
+    resources.forEach(r => { statusCount[r.status || 'available'] = (statusCount[r.status || 'available'] || 0) + 1; });
+    const total = resources.length || 1;
+    const colors = { 'available': '#22c55e', 'in-use': '#3b82f6', 'maintenance': '#f97316' } as any;
+    this.resourceStatus = Object.entries(statusCount).map(([label, count]) => ({
+      label,
+      count,
+      value: Math.round((count / total) * 100),
+      color: colors[label] || '#6b7280'
+    }));
   }
 
   private buildGauge() {
