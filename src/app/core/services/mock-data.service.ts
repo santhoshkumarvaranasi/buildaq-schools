@@ -157,6 +157,35 @@ export interface BookingItem {
   conflict?: boolean;
 }
 
+export interface TeacherGoal {
+  id: number;
+  teacherId: number;
+  teacherName: string;
+  title: string;
+  dueDate: string;
+  status: 'on-track' | 'at-risk' | 'completed';
+}
+
+export interface TeacherFeedback {
+  id: number;
+  teacherId: number;
+  teacherName: string;
+  date: string;
+  observer: string;
+  summary: string;
+  score?: number;
+}
+
+export interface TeacherPd {
+  id: number;
+  teacherId: number;
+  teacherName: string;
+  title: string;
+  hours: number;
+  status: 'planned' | 'in-progress' | 'completed';
+  date?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -284,6 +313,21 @@ export class MockDataService {
     { id: 1, resourceId: 1, resourceName: 'Room 101', requester: 'Alice Brown', purpose: 'PTA Prep', date: '2025-12-04', start: '14:00', end: '15:30', status: 'approved', conflict: false },
     { id: 2, resourceId: 2, resourceName: 'Physics Lab', requester: 'Science Club', purpose: 'Demo', date: '2025-12-04', start: '10:00', end: '12:00', status: 'pending', conflict: false },
     { id: 3, resourceId: 1, resourceName: 'Room 101', requester: 'Math Dept', purpose: 'Workshop', date: '2025-12-04', start: '15:00', end: '16:00', status: 'pending', conflict: true }
+  ];
+
+  teacherGoals: TeacherGoal[] = [
+    { id: 1, teacherId: 1, teacherName: 'Alice Brown', title: 'Improve math outcomes by 5%', dueDate: '2025-12-31', status: 'on-track' },
+    { id: 2, teacherId: 2, teacherName: 'Robert Green', title: 'Integrate project-based learning', dueDate: '2025-11-30', status: 'at-risk' }
+  ];
+
+  teacherFeedback: TeacherFeedback[] = [
+    { id: 1, teacherId: 1, teacherName: 'Alice Brown', date: '2025-11-15', observer: 'Principal', summary: 'Engaged class, good pacing', score: 4.5 },
+    { id: 2, teacherId: 2, teacherName: 'Robert Green', date: '2025-11-10', observer: 'Vice Principal', summary: 'Needs more checks for understanding', score: 3.5 }
+  ];
+
+  teacherPd: TeacherPd[] = [
+    { id: 1, teacherId: 1, teacherName: 'Alice Brown', title: 'STEM Workshop', hours: 6, status: 'completed', date: '2025-11-05' },
+    { id: 2, teacherId: 2, teacherName: 'Robert Green', title: 'Classroom management', hours: 4, status: 'in-progress' }
   ];
 
   getStudents() { return this.students; }
@@ -458,6 +502,9 @@ export class MockDataService {
     this.bookings[idx] = Object.assign({}, this.bookings[idx], changes);
     return this.bookings[idx];
   }
+  getTeacherGoals() { return this.teacherGoals; }
+  getTeacherFeedback() { return this.teacherFeedback; }
+  getTeacherPd() { return this.teacherPd; }
   addDiscount(entry: any) {
     const created = Object.assign({ id: `D-${(this.discounts.length + 1).toString().padStart(3,'0')}`, status: 'active' }, entry);
     this.discounts.unshift(created);

@@ -18,6 +18,7 @@ import { HealthComponent } from './features/health/health';
 import { AssetsComponent } from './features/assets/assets';
 import { EventsComponent } from './features/events/events';
 import { ResourcesComponent } from './features/resources/resources';
+import { PerformanceComponent } from './features/performance/performance';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
@@ -40,5 +41,6 @@ export const routes: Routes = [
   { path: 'assets', component: AssetsComponent },
   { path: 'events', component: EventsComponent },
   { path: 'resources', component: ResourcesComponent },
+  { path: 'performance', component: PerformanceComponent },
   { path: '**', redirectTo: '' }
 ];

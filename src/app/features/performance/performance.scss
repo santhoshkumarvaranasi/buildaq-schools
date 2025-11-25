@@ -1,0 +1,65 @@
+.performance-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.fees-toolbar {
+  border-radius: 12px;
+  background: linear-gradient(120deg, #3949ab, #1e88e5);
+  color: #fff;
+  padding: 12px 16px;
+}
+
+.toolbar-left .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.toolbar-left .title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.cell-strong { font-weight: 700; }
+.cell-sub { color: #6b7280; font-size: 0.85rem; }
+
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+.mobile-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  display: grid;
+  gap: 6px;
+}
+.mobile-card .card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mobile-card .cell-sub {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: grid; gap: 12px; }
+}
