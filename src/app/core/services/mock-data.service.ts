@@ -123,6 +123,18 @@ export interface AssetItem {
   vendor?: string;
 }
 
+export interface EventItem {
+  id: number;
+  title: string;
+  date: string;
+  time?: string;
+  location?: string;
+  audience: 'all' | 'students' | 'teachers' | 'parents';
+  category?: string;
+  status?: 'upcoming' | 'completed';
+  rsvps?: { name: string; role: string; response: 'yes' | 'no' | 'pending' }[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -232,6 +244,12 @@ export class MockDataService {
     { id: 'IT-002', name: 'Projector', category: 'IT', status: 'maintenance', location: 'Audiovisual', vendor: 'AV Works', lastService: '2025-11-10' },
     { id: 'SCI-010', name: 'Microscope', category: 'Lab', status: 'available', location: 'Science Lab' },
     { id: 'LIB-100', name: 'Kindle', category: 'Library Device', status: 'assigned', assignedTo: 'John Smith', assignedType: 'student', dueDate: '2025-11-30', location: 'Library' }
+  ];
+
+  events: EventItem[] = [
+    { id: 1, title: 'PTA Meeting', date: '2025-12-05', time: '16:00', location: 'Auditorium', audience: 'parents', category: 'PTA', status: 'upcoming', rsvps: [{ name: 'Anita Doe', role: 'Parent', response: 'yes' }] },
+    { id: 2, title: 'Science Fair', date: '2025-12-12', time: '10:00', location: 'Hall A', audience: 'students', category: 'Academics', status: 'upcoming', rsvps: [{ name: 'Jane Doe', role: 'Student', response: 'pending' }] },
+    { id: 3, title: 'Teacher Workshop', date: '2025-11-30', time: '14:00', location: 'Lab 2', audience: 'teachers', category: 'Training', status: 'upcoming', rsvps: [{ name: 'Alice Brown', role: 'Teacher', response: 'yes' }] }
   ];
 
   getStudents() { return this.students; }
@@ -365,6 +383,20 @@ export class MockDataService {
       location: 'Store'
     }, entry);
     this.assets.unshift(created);
+    return created;
+  }
+  getEvents() { return this.events; }
+  addEvent(entry: Partial<EventItem>) {
+    const nextId = (this.events.reduce((m, e) => Math.max(m, e.id), 0) || 0) + 1;
+    const created: EventItem = Object.assign({
+      id: nextId,
+      title: 'New Event',
+      date: new Date().toISOString().slice(0,10),
+      audience: 'all',
+      status: 'upcoming',
+      rsvps: []
+    }, entry);
+    this.events.unshift(created);
     return created;
   }
   addDiscount(entry: any) {
