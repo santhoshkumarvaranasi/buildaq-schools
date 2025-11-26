@@ -50,6 +50,11 @@
   align-items: center;
 }
 
+.filter-grid.compact {
+  grid-template-columns: 2fr 1fr auto auto;
+  align-items: center;
+}
+
 .status-chip-wrap {
   display: flex;
   align-items: center;
@@ -103,11 +108,14 @@
 .fees-table tr:hover td { background: #f2f6ff; }
 .fees-table td, .fees-table th { padding: 10px; }
 th.mat-header-cell { border-bottom: 1px solid #e5e7eb; }
+.fees-table td.status-cell { width: 120px; }
+.fees-table td.enrolled-cell { width: 140px; text-align: right; }
 
 .action-row {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .students-page .mat-mdc-form-field { min-width: 180px; }
@@ -138,6 +146,15 @@ th.mat-header-cell { border-bottom: 1px solid #e5e7eb; }
 @media (max-width: 768px) {
   .students-page .summary-grid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .filters-card { padding: 10px; }
+  .filter-grid,
+  .filter-grid.compact {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .export-wrap {
+    justify-content: flex-start;
   }
   .students-page .table-wrap {
     margin: 0 -12px;
