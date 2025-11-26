@@ -1,8 +1,15 @@
 @use './styles/_material-theme' as *;
 @use './styles/_compact' as *;
 @use './styles/_panels';
+@use './styles/_custom-theme';
 
 /* Improve select dropdown readability */
+.mat-icon {
+  font-family: 'Material Icons', 'Material Symbols Outlined', 'Material Symbols Rounded', 'Material Symbols Sharp', sans-serif !important;
+  font-weight: 400;
+  font-style: normal;
+}
+
 .cdk-overlay-pane .mat-mdc-select-panel {
   background: #fff !important;
   color: #111 !important;

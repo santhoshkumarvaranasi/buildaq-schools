@@ -1,52 +1,77 @@
 <div class="dashboard-container">
   <div class="hero mat-elevation-z2">
-    <div>
+    <div class="hero-text">
       <div class="eyebrow">School Management</div>
       <h1>{{ tenant?.displayName || 'School Management System' }}</h1>
-    </div>
-    <div class="quick-links">
-      <button *ngFor="let link of quickLinks" mat-stroked-button color="primary" [routerLink]="getLink(link.path)">{{ link.label }}</button>
-    </div>
-  </div>
-
-  <div class="metrics">
-    <mat-card class="metric-card mat-elevation-z2">
-      <div class="metric-label">Students</div>
-      <div class="metric-value">{{ metrics.students }}</div>
-    </mat-card>
-    <mat-card class="metric-card mat-elevation-z2">
-      <div class="metric-label">Active</div>
-      <div class="metric-value">{{ metrics.activeStudents }}</div>
-    </mat-card>
-    <mat-card class="metric-card mat-elevation-z2">
-      <div class="metric-label">Teachers</div>
-      <div class="metric-value">{{ metrics.teachers }}</div>
-    </mat-card>
-    <mat-card class="metric-card mat-elevation-z2">
-      <div class="metric-label">Present today</div>
-      <div class="metric-value">{{ metrics.attendanceToday }}</div>
-    </mat-card>
-    <mat-card class="metric-card mat-elevation-z2">
-      <div class="metric-label">Fees outstanding</div>
-      <div class="metric-value">{{ metrics.feesOutstanding | currency }}</div>
-    </mat-card>
-    <mat-card class="metric-card mat-elevation-z2">
-      <div class="metric-label">Behavior follow-ups</div>
-      <div class="metric-value">{{ metrics.behaviorFollowUps }}</div>
-    </mat-card>
-    <mat-card class="metric-card mat-elevation-z2">
-      <div class="metric-label">Incidents this month</div>
-      <div class="metric-value">{{ metrics.behaviorThisMonth }}</div>
-    </mat-card>
-  </div>
-
-  <mat-card class="top-causes mat-elevation-z1" *ngIf="metrics.behaviorTopCauses.length">
-    <mat-card-title>Top behavior causes</mat-card-title>
-    <div class="causes-list">
-      <div *ngFor="let cause of metrics.behaviorTopCauses" class="cause-row">
-        <span>{{ cause.type }}</span>
-        <span class="pill">{{ cause.count }}</span>
+      <p class="subtitle">Everything you need to run admissions, academics, and operations in one view.</p>
+      <div class="quick-links">
+        <button *ngFor="let link of quickLinks" mat-stroked-button color="primary" [routerLink]="getLink(link.path)">{{ link.label }}</button>
       </div>
     </div>
-  </mat-card>
+    <div class="hero-visual">
+      <div class="blob"></div>
+      <span class="emoji-icon hero-icon" aria-hidden="true">🎓</span>
+      <div class="hero-badges">
+        <div class="hero-chip">
+          <span class="emoji-icon">👥</span>
+          {{ metrics.students }} students
+        </div>
+        <div class="hero-chip">
+          <span class="emoji-icon">💳</span>
+          {{ metrics.feesOutstanding | currency }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-chips">
+    <div class="status-chip" *ngFor="let chip of statusChips" [ngClass]="chip.tone">
+      <span class="emoji-icon" aria-hidden="true">{{ chip.icon }}</span>
+      <div>
+        <div class="status-label">{{ chip.label }}</div>
+        <div class="status-value">{{ chip.value }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-grid">
+    <mat-card class="feature-card mat-elevation-z2" *ngFor="let tile of featureTiles" [routerLink]="getLink(tile.path)">
+      <div class="accent-bar" [ngClass]="tile.tone"></div>
+      <div class="feature-top">
+        <div class="icon-wrap" [ngClass]="tile.tone"><span class="emoji-icon" aria-hidden="true">{{ tile.icon }}</span></div>
+        <div class="metric">{{ tile.metric }}</div>
+      </div>
+      <div class="feature-title">{{ tile.title }}</div>
+      <div class="feature-desc">{{ tile.desc }}</div>
+      <button mat-button color="primary" class="feature-cta">Open</button>
+    </mat-card>
+  </div>
+
+  <div class="lower-grid">
+    <mat-card class="top-causes mat-elevation-z2" *ngIf="metrics.behaviorTopCauses.length">
+      <mat-card-title>Behavior insights</mat-card-title>
+      <mat-card-subtitle>Top causes this month</mat-card-subtitle>
+      <div class="causes-list">
+        <div *ngFor="let cause of metrics.behaviorTopCauses" class="cause-row">
+          <span>{{ cause.type }}</span>
+          <span class="pill">{{ cause.count }}</span>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="events-card mat-elevation-z2" *ngIf="upcomingEvents.length">
+      <mat-card-title>Upcoming events</mat-card-title>
+      <div class="event-row" *ngFor="let ev of upcomingEvents">
+        <div class="event-date">
+          <div class="date">{{ ev.date }}</div>
+          <div class="category">{{ ev.category || 'Event' }}</div>
+        </div>
+        <div class="event-info">
+          <div class="event-title">{{ ev.title }}</div>
+          <div class="event-sub">{{ ev.location || 'Campus' }}</div>
+        </div>
+        <button mat-stroked-button color="primary" [routerLink]="getLink('events')">View</button>
+      </div>
+    </mat-card>
+  </div>
 </div>
