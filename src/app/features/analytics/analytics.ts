@@ -19,6 +19,15 @@ type ChartPoint = { label: string; value: number; color?: string };
         </div>
       </mat-toolbar>
 
+      <mat-card class="stats-row mat-elevation-z2">
+        <mat-chip-set>
+          <mat-chip color="primary" selected>Students: {{ stats.totalStudents }}</mat-chip>
+          <mat-chip color="accent" selected>Active: {{ stats.activeStudents }}</mat-chip>
+          <mat-chip color="warn" selected>Outstanding: {{ stats.outstanding | currency }}</mat-chip>
+          <mat-chip color="primary" selected>Events: {{ stats.upcomingEvents }}</mat-chip>
+        </mat-chip-set>
+      </mat-card>
+
       <div class="charts-grid">
         <mat-card class="chart-card mat-elevation-z2">
           <mat-card-title>Students status</mat-card-title>
@@ -66,9 +75,11 @@ type ChartPoint = { label: string; value: number; color?: string };
         <mat-card class="chart-card mat-elevation-z2">
           <mat-card-title>Incidents by type</mat-card-title>
           <div class="bar-chart horizontal">
-            <div class="bar horizontal" *ngFor="let p of incidentTypes" [style.width.%]="p.value" [style.background]="p.color">
-              <span class="bar-label">{{ p.label }}</span>
-              <span class="bar-value">{{ p.value }}</span>
+            <div class="bar-row" *ngFor="let p of incidentTypes">
+              <div class="bar horizontal" [style.width.%]="p.value" [style.background]="p.color">
+                <span class="bar-label">{{ p.label }}</span>
+              </div>
+              <span class="bar-val">{{ p.value }}</span>
             </div>
           </div>
         </mat-card>
@@ -86,9 +97,11 @@ type ChartPoint = { label: string; value: number; color?: string };
         <mat-card class="chart-card mat-elevation-z2">
           <mat-card-title>PD hours by teacher</mat-card-title>
           <div class="bar-chart horizontal">
-            <div class="bar horizontal" *ngFor="let p of pdHours" [style.width.%]="p.value" [style.background]="p.color">
-              <span class="bar-label">{{ p.label }}</span>
-              <span class="bar-value">{{ p.value }}h</span>
+            <div class="bar-row" *ngFor="let p of pdHours">
+              <div class="bar horizontal" [style.width.%]="p.value" [style.background]="p.color">
+                <span class="bar-label">{{ p.label }}</span>
+              </div>
+              <span class="bar-val">{{ p.value }}h</span>
             </div>
           </div>
         </mat-card>
@@ -96,9 +109,35 @@ type ChartPoint = { label: string; value: number; color?: string };
         <mat-card class="chart-card mat-elevation-z2">
           <mat-card-title>Resource status</mat-card-title>
           <div class="bar-chart horizontal">
-            <div class="bar horizontal" *ngFor="let p of resourceStatus" [style.width.%]="p.value" [style.background]="p.color">
-              <span class="bar-label">{{ p.label }}</span>
-              <span class="bar-value">{{ p.count }}</span>
+            <div class="bar-row" *ngFor="let p of resourceStatus">
+              <div class="bar horizontal" [style.width.%]="p.value" [style.background]="p.color">
+                <span class="bar-label">{{ p.label }}</span>
+              </div>
+              <span class="bar-val">{{ p.count }}</span>
+            </div>
+          </div>
+        </mat-card>
+
+        <mat-card class="chart-card mat-elevation-z2">
+          <mat-card-title>Timetable conflicts</mat-card-title>
+          <div class="bar-chart horizontal">
+            <div class="bar-row" *ngFor="let p of conflicts">
+              <div class="bar horizontal" [style.width.%]="p.value" [style.background]="p.color">
+                <span class="bar-label">{{ p.label }}</span>
+              </div>
+              <span class="bar-val">{{ p.count }}</span>
+            </div>
+          </div>
+        </mat-card>
+
+        <mat-card class="chart-card mat-elevation-z2">
+          <mat-card-title>Admissions status</mat-card-title>
+          <div class="bar-chart horizontal">
+            <div class="bar-row" *ngFor="let p of admissions">
+              <div class="bar horizontal" [style.width.%]="p.value" [style.background]="p.color">
+                <span class="bar-label">{{ p.label }}</span>
+              </div>
+              <span class="bar-val">{{ p.count }}</span>
             </div>
           </div>
         </mat-card>
@@ -116,6 +155,9 @@ export class AnalyticsComponent {
   gaugePath = '';
   pdHours: (ChartPoint & { value: number })[] = [];
   resourceStatus: (ChartPoint & { count: number })[] = [];
+  conflicts: (ChartPoint & { count: number })[] = [];
+  admissions: (ChartPoint & { count: number })[] = [];
+  stats = { totalStudents: 0, activeStudents: 0, outstanding: 0, upcomingEvents: 0 };
 
   constructor(private mock: MockDataService) {
     this.computeStudentStatus();
@@ -125,6 +167,9 @@ export class AnalyticsComponent {
     this.computeExams();
     this.computePd();
     this.computeResources();
+    this.computeConflicts();
+    this.computeAdmissions();
+    this.computeStats();
     this.buildGauge();
   }
 
@@ -210,6 +255,42 @@ export class AnalyticsComponent {
       value: Math.round((count / total) * 100),
       color: colors[label] || '#6b7280'
     }));
+  }
+
+  private computeConflicts() {
+    const timetable = this.mock.getTimetable?.() || [];
+    const conflictCount = timetable.filter((t: any) => t.conflict).length;
+    const okCount = timetable.length - conflictCount;
+    const total = timetable.length || 1;
+    this.conflicts = [
+      { label: 'Conflicts', count: conflictCount, value: Math.round((conflictCount / total) * 100), color: '#f97316' },
+      { label: 'OK', count: okCount, value: Math.round((okCount / total) * 100), color: '#22c55e' }
+    ];
+  }
+
+  private computeAdmissions() {
+    const admissions = this.mock.getAdmissions?.() || [];
+    const byStatus: Record<string, number> = {};
+    admissions.forEach((a: any) => { byStatus[a.status || 'new'] = (byStatus[a.status || 'new'] || 0) + 1; });
+    const total = admissions.length || 1;
+    const colors = ['#6366f1', '#22c55e', '#f97316', '#0ea5e9'];
+    let idx = 0;
+    this.admissions = Object.entries(byStatus).map(([label, count]) => ({
+      label,
+      count,
+      value: Math.round((count / total) * 100),
+      color: colors[idx++ % colors.length]
+    }));
+  }
+
+  private computeStats() {
+    const students = this.mock.getStudents() || [];
+    const fees = this.mock.getFees() || [];
+    const events = this.mock.getEvents?.() || [];
+    this.stats.totalStudents = students.length;
+    this.stats.activeStudents = students.filter(s => (s.status || '').toLowerCase() === 'active').length;
+    this.stats.outstanding = fees.reduce((s, f) => s + (Number(f.balance) || 0), 0);
+    this.stats.upcomingEvents = events.length;
   }
 
   private buildGauge() {

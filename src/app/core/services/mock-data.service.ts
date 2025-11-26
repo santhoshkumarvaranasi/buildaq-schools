@@ -191,41 +191,55 @@ export class MockDataService {
   students: MockStudent[] = [
     { id: 1, firstName: 'Jane', lastName: 'Doe', email: 'jane.doe@example.com', grade: '10', section: 'A', class: '10A', enrollmentDate: '2023-06-01', status: 'active' },
     { id: 2, firstName: 'John', lastName: 'Smith', email: 'john.smith@example.com', grade: '9', section: 'B', class: '9B', enrollmentDate: '2022-08-15', status: 'active' },
-    { id: 3, firstName: 'Priya', lastName: 'Kumar', email: 'priya.kumar@example.com', grade: '11', section: 'A', class: '11A', enrollmentDate: '2021-04-10', status: 'inactive' }
+    { id: 3, firstName: 'Priya', lastName: 'Kumar', email: 'priya.kumar@example.com', grade: '11', section: 'A', class: '11A', enrollmentDate: '2021-04-10', status: 'inactive' },
+    { id: 4, firstName: 'Carlos', lastName: 'Mendez', email: 'carlos.mendez@example.com', grade: '8', section: 'C', class: '8C', enrollmentDate: '2024-02-01', status: 'active' },
+    { id: 5, firstName: 'Sara', lastName: 'Lee', email: 'sara.lee@example.com', grade: '9', section: 'A', class: '9A', enrollmentDate: '2024-03-12', status: 'active' }
   ];
 
   staff: MockStaff[] = [
     { id: 1, name: 'Alice Brown', role: 'Teacher', email: 'alice.brown@example.com', phone: '+1-555-1001' },
-    { id: 2, name: 'Robert Green', role: 'Accountant', email: 'robert.green@example.com' }
+    { id: 2, name: 'Robert Green', role: 'Accountant', email: 'robert.green@example.com' },
+    { id: 3, name: 'Emily Davis', role: 'Counselor', email: 'emily.davis@example.com' },
+    { id: 4, name: 'Daniel Carter', role: 'PE Teacher', email: 'daniel.carter@example.com' }
   ];
 
   classes = [
     { id: '10A', name: 'Class 10 A', capacity: 40, teacher: 'Alice Brown' },
-    { id: '9B', name: 'Class 9 B', capacity: 38, teacher: 'Robert Green' }
+    { id: '9B', name: 'Class 9 B', capacity: 38, teacher: 'Robert Green' },
+    { id: '8C', name: 'Class 8 C', capacity: 35, teacher: 'Emily Davis' }
   ];
 
   fees = [
     { studentId: 1, balance: 1200, lastPaid: '2025-03-15' },
-    { studentId: 2, balance: 0, lastPaid: '2025-06-01' }
+    { studentId: 2, balance: 0, lastPaid: '2025-06-01' },
+    { studentId: 3, balance: 450, lastPaid: '2025-05-20' },
+    { studentId: 4, balance: 0, lastPaid: '2025-06-10' },
+    { studentId: 5, balance: 300, lastPaid: '2025-06-05' }
   ];
   discounts = [
     { id: 'D-001', studentId: 1, studentName: 'Jane Doe', type: 'Scholarship', amount: 200, reason: 'Merit', validUntil: '2025-12-31', status: 'active' },
-    { id: 'D-002', studentId: 2, studentName: 'John Smith', type: 'Sibling', amount: 150, reason: 'Sibling concession', validUntil: '2025-09-30', status: 'active' }
+    { id: 'D-002', studentId: 2, studentName: 'John Smith', type: 'Sibling', amount: 150, reason: 'Sibling concession', validUntil: '2025-09-30', status: 'active' },
+    { id: 'D-003', studentId: 3, studentName: 'Priya Kumar', type: 'Need-based', amount: 250, reason: 'Financial aid', validUntil: '2025-08-31', status: 'active' }
   ];
   receipts = [
     { id: 'R-1001', studentId: 1, studentName: 'Jane Doe', date: '2025-06-01', amount: 1200, method: 'Online' },
-    { id: 'R-1002', studentId: 2, studentName: 'John Smith', date: '2025-06-02', amount: 800, method: 'Cash' }
+    { id: 'R-1002', studentId: 2, studentName: 'John Smith', date: '2025-06-02', amount: 800, method: 'Cash' },
+    { id: 'R-1003', studentId: 4, studentName: 'Carlos Mendez', date: '2025-06-11', amount: 500, method: 'Online' }
   ];
 
   attendance = [
     { id: 1, studentId: 1, date: '2025-11-20', status: 'present' },
-    { id: 2, studentId: 2, date: '2025-11-20', status: 'absent' }
+    { id: 2, studentId: 2, date: '2025-11-20', status: 'absent' },
+    { id: 3, studentId: 4, date: '2025-11-20', status: 'present' },
+    { id: 4, studentId: 5, date: '2025-11-20', status: 'present' }
   ];
 
   // Timetable entries
   timetable = [
     { id: 1, classId: '10A', subject: 'Mathematics', teacher: 'Alice Brown', day: 'Mon', time: '09:00' },
-    { id: 2, classId: '9B', subject: 'Science', teacher: 'Robert Green', day: 'Tue', time: '10:00' }
+    { id: 2, classId: '9B', subject: 'Science', teacher: 'Robert Green', day: 'Tue', time: '10:00' },
+    { id: 3, classId: '8C', subject: 'English', teacher: 'Emily Davis', day: 'Wed', time: '11:00', conflict: false },
+    { id: 4, classId: '10A', subject: 'Physics', teacher: 'Daniel Carter', day: 'Mon', time: '09:30', conflict: true, conflictReason: 'Overlaps with Mathematics' }
   ];
 
   // Exams and marks
@@ -235,14 +249,16 @@ export class MockDataService {
 
   admissions = [
     { id: 1, name: 'Ravi Patel', class: '8A', status: 'new', submitted: '2025-06-10', notes: 'Needs guardian contact' },
-    { id: 2, name: 'Sara Lee', class: '9B', status: 'verified', submitted: '2025-06-05', notes: 'All docs uploaded' }
+    { id: 2, name: 'Sara Lee', class: '9B', status: 'verified', submitted: '2025-06-05', notes: 'All docs uploaded' },
+    { id: 3, name: 'Mark Chen', class: '10A', status: 'rejected', submitted: '2025-06-08', notes: 'Incomplete transcript' }
   ];
 
   behaviorIncidents: BehaviorIncident[] = [
     { id: 1, studentId: 1, studentName: 'Jane Doe', class: '10A', date: '2025-11-10', type: 'Late submission', severity: 'low', actionTaken: 'Reminder sent', staff: 'Alice Brown', followUpDate: '2025-11-20', parentNotified: false },
     { id: 2, studentId: 1, studentName: 'Jane Doe', class: '10A', date: '2025-11-18', type: 'Class disruption', severity: 'medium', actionTaken: 'Counseling scheduled', staff: 'Alice Brown', followUpDate: '2025-11-25', parentNotified: true },
     { id: 3, studentId: 2, studentName: 'John Smith', class: '9B', date: '2025-11-05', type: 'Absence', severity: 'low', actionTaken: 'Called guardian', staff: 'Robert Green', followUpDate: '2025-11-12', parentNotified: true },
-    { id: 4, studentId: 3, studentName: 'Priya Kumar', class: '11A', date: '2025-10-28', type: 'Cheating', severity: 'high', actionTaken: 'Incident report filed', staff: 'Robert Green', followUpDate: '2025-11-05', parentNotified: true }
+    { id: 4, studentId: 3, studentName: 'Priya Kumar', class: '11A', date: '2025-10-28', type: 'Cheating', severity: 'high', actionTaken: 'Incident report filed', staff: 'Robert Green', followUpDate: '2025-11-05', parentNotified: true },
+    { id: 5, studentId: 4, studentName: 'Carlos Mendez', class: '8C', date: '2025-11-12', type: 'Bullying', severity: 'medium', actionTaken: 'Parent meeting scheduled', staff: 'Emily Davis', followUpDate: '2025-11-22', parentNotified: true }
   ];
 
   announcements: Announcement[] = [
@@ -275,59 +291,69 @@ export class MockDataService {
   parents: ParentContact[] = [
     { id: 1, name: 'Anita Doe', studentIds: [1], email: 'anita.doe@example.com', phone: '+1-555-0101', preferredChannel: 'email', lastContact: '2025-11-15', notes: 'Prefers morning calls' },
     { id: 2, name: 'Michael Smith', studentIds: [2], email: 'm.smith@example.com', phone: '+1-555-0102', preferredChannel: 'sms', lastContact: '2025-11-10', notes: 'Works night shifts' },
-    { id: 3, name: 'Priya Nair', studentIds: [3], email: 'priya.nair@example.com', phone: '+1-555-0103', preferredChannel: 'email', lastContact: '2025-11-18' }
+    { id: 3, name: 'Priya Nair', studentIds: [3], email: 'priya.nair@example.com', phone: '+1-555-0103', preferredChannel: 'email', lastContact: '2025-11-18' },
+    { id: 4, name: 'Lucia Mendez', studentIds: [4], email: 'lucia.mendez@example.com', phone: '+1-555-0104', preferredChannel: 'email', lastContact: '2025-11-12' }
   ];
 
   healthProfiles: HealthProfile[] = [
     { studentId: 1, allergies: 'Peanuts', medications: 'EpiPen', conditions: 'Asthma', doctor: 'Dr. Lee', emergencyContact: 'Anita Doe (+1-555-0101)' },
     { studentId: 2, allergies: 'None', medications: 'None', conditions: '', doctor: 'Dr. Patel', emergencyContact: 'Michael Smith (+1-555-0102)' },
-    { studentId: 3, allergies: 'Dust', medications: 'Antihistamine', conditions: 'Allergic rhinitis', doctor: 'Dr. Rao', emergencyContact: 'Priya Nair (+1-555-0103)' }
+    { studentId: 3, allergies: 'Dust', medications: 'Antihistamine', conditions: 'Allergic rhinitis', doctor: 'Dr. Rao', emergencyContact: 'Priya Nair (+1-555-0103)' },
+    { studentId: 4, allergies: 'None', medications: 'None', conditions: 'None', doctor: 'Dr. Lee', emergencyContact: 'Lucia Mendez (+1-555-0104)' }
   ];
 
   healthIncidents: HealthIncident[] = [
     { id: 1, studentId: 1, studentName: 'Jane Doe', date: '2025-11-20', symptom: 'Asthma flare', actionTaken: 'Inhaler administered', notifiedParent: true },
     { id: 2, studentId: 2, studentName: 'John Smith', date: '2025-11-18', symptom: 'Fever', actionTaken: 'Sent home', notifiedParent: true },
-    { id: 3, studentId: 3, studentName: 'Priya Kumar', date: '2025-11-10', symptom: 'Headache', actionTaken: 'Rested in clinic', notifiedParent: false }
+    { id: 3, studentId: 3, studentName: 'Priya Kumar', date: '2025-11-10', symptom: 'Headache', actionTaken: 'Rested in clinic', notifiedParent: false },
+    { id: 4, studentId: 4, studentName: 'Carlos Mendez', date: '2025-11-08', symptom: 'Sprained ankle', actionTaken: 'Ice and rest', notifiedParent: true }
   ];
 
   assets: AssetItem[] = [
     { id: 'IT-001', name: 'Chromebook A', category: 'IT', status: 'assigned', assignedTo: 'Jane Doe', assignedType: 'student', dueDate: '2025-12-05', location: 'Lab 1', lastService: '2025-10-01' },
     { id: 'IT-002', name: 'Projector', category: 'IT', status: 'maintenance', location: 'Audiovisual', vendor: 'AV Works', lastService: '2025-11-10' },
     { id: 'SCI-010', name: 'Microscope', category: 'Lab', status: 'available', location: 'Science Lab' },
-    { id: 'LIB-100', name: 'Kindle', category: 'Library Device', status: 'assigned', assignedTo: 'John Smith', assignedType: 'student', dueDate: '2025-11-30', location: 'Library' }
+    { id: 'LIB-100', name: 'Kindle', category: 'Library Device', status: 'assigned', assignedTo: 'John Smith', assignedType: 'student', dueDate: '2025-11-30', location: 'Library' },
+    { id: 'RM-201', name: 'Smart Board', category: 'IT', status: 'available', location: 'Room 201', lastService: '2025-09-15' }
   ];
 
   events: EventItem[] = [
     { id: 1, title: 'PTA Meeting', date: '2025-12-05', time: '16:00', location: 'Auditorium', audience: 'parents', category: 'PTA', status: 'upcoming', rsvps: [{ name: 'Anita Doe', role: 'Parent', response: 'yes' }] },
     { id: 2, title: 'Science Fair', date: '2025-12-12', time: '10:00', location: 'Hall A', audience: 'students', category: 'Academics', status: 'upcoming', rsvps: [{ name: 'Jane Doe', role: 'Student', response: 'pending' }] },
-    { id: 3, title: 'Teacher Workshop', date: '2025-11-30', time: '14:00', location: 'Lab 2', audience: 'teachers', category: 'Training', status: 'upcoming', rsvps: [{ name: 'Alice Brown', role: 'Teacher', response: 'yes' }] }
+    { id: 3, title: 'Teacher Workshop', date: '2025-11-30', time: '14:00', location: 'Lab 2', audience: 'teachers', category: 'Training', status: 'upcoming', rsvps: [{ name: 'Alice Brown', role: 'Teacher', response: 'yes' }] },
+    { id: 4, title: 'Sports Day', date: '2025-12-20', time: '09:00', location: 'Ground', audience: 'students', category: 'Sports', status: 'upcoming', rsvps: [{ name: 'Carlos Mendez', role: 'Student', response: 'yes' }] }
   ];
 
   resources: ResourceItem[] = [
     { id: 1, name: 'Room 101', type: 'room', capacity: 30, equipment: 'Projector', status: 'available' },
     { id: 2, name: 'Physics Lab', type: 'lab', capacity: 24, equipment: 'Lab benches, microscopes', status: 'available' },
-    { id: 3, name: 'Soccer Ground', type: 'ground', capacity: 200, equipment: 'Scoreboard', status: 'in-use' }
+    { id: 3, name: 'Soccer Ground', type: 'ground', capacity: 200, equipment: 'Scoreboard', status: 'in-use' },
+    { id: 4, name: 'Chemistry Lab', type: 'lab', capacity: 20, equipment: 'Fume hoods', status: 'maintenance' }
   ];
 
   bookings: BookingItem[] = [
     { id: 1, resourceId: 1, resourceName: 'Room 101', requester: 'Alice Brown', purpose: 'PTA Prep', date: '2025-12-04', start: '14:00', end: '15:30', status: 'approved', conflict: false },
     { id: 2, resourceId: 2, resourceName: 'Physics Lab', requester: 'Science Club', purpose: 'Demo', date: '2025-12-04', start: '10:00', end: '12:00', status: 'pending', conflict: false },
-    { id: 3, resourceId: 1, resourceName: 'Room 101', requester: 'Math Dept', purpose: 'Workshop', date: '2025-12-04', start: '15:00', end: '16:00', status: 'pending', conflict: true }
+    { id: 3, resourceId: 1, resourceName: 'Room 101', requester: 'Math Dept', purpose: 'Workshop', date: '2025-12-04', start: '15:00', end: '16:00', status: 'pending', conflict: true },
+    { id: 4, resourceId: 4, resourceName: 'Chemistry Lab', requester: 'Science Dept', purpose: 'Lab prep', date: '2025-12-05', start: '09:00', end: '11:00', status: 'approved', conflict: false }
   ];
 
   teacherGoals: TeacherGoal[] = [
     { id: 1, teacherId: 1, teacherName: 'Alice Brown', title: 'Improve math outcomes by 5%', dueDate: '2025-12-31', status: 'on-track' },
-    { id: 2, teacherId: 2, teacherName: 'Robert Green', title: 'Integrate project-based learning', dueDate: '2025-11-30', status: 'at-risk' }
+    { id: 2, teacherId: 2, teacherName: 'Robert Green', title: 'Integrate project-based learning', dueDate: '2025-11-30', status: 'at-risk' },
+    { id: 3, teacherId: 3, teacherName: 'Emily Davis', title: 'Increase parent touchpoints', dueDate: '2025-12-15', status: 'on-track' }
   ];
 
   teacherFeedback: TeacherFeedback[] = [
     { id: 1, teacherId: 1, teacherName: 'Alice Brown', date: '2025-11-15', observer: 'Principal', summary: 'Engaged class, good pacing', score: 4.5 },
-    { id: 2, teacherId: 2, teacherName: 'Robert Green', date: '2025-11-10', observer: 'Vice Principal', summary: 'Needs more checks for understanding', score: 3.5 }
+    { id: 2, teacherId: 2, teacherName: 'Robert Green', date: '2025-11-10', observer: 'Vice Principal', summary: 'Needs more checks for understanding', score: 3.5 },
+    { id: 3, teacherId: 3, teacherName: 'Emily Davis', date: '2025-11-12', observer: 'Principal', summary: 'Great rapport with students', score: 4.7 }
   ];
 
   teacherPd: TeacherPd[] = [
     { id: 1, teacherId: 1, teacherName: 'Alice Brown', title: 'STEM Workshop', hours: 6, status: 'completed', date: '2025-11-05' },
-    { id: 2, teacherId: 2, teacherName: 'Robert Green', title: 'Classroom management', hours: 4, status: 'in-progress' }
+    { id: 2, teacherId: 2, teacherName: 'Robert Green', title: 'Classroom management', hours: 4, status: 'in-progress' },
+    { id: 3, teacherId: 3, teacherName: 'Emily Davis', title: 'Counseling best practices', hours: 5, status: 'planned' }
   ];
 
   getStudents() { return this.students; }
