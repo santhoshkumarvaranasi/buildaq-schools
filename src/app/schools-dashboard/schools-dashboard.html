@@ -38,12 +38,89 @@
     <mat-card class="feature-card mat-elevation-z2" *ngFor="let tile of featureTiles" [routerLink]="getLink(tile.path)">
       <div class="accent-bar" [ngClass]="tile.tone"></div>
       <div class="feature-top">
-        <div class="icon-wrap" [ngClass]="tile.tone"><span class="emoji-icon" aria-hidden="true">{{ tile.icon }}</span></div>
+        <div class="icon-wrap" [ngClass]="tile.tone" [innerHTML]="safeIcons[tile.iconKey]"></div>
         <div class="metric">{{ tile.metric }}</div>
       </div>
       <div class="feature-title">{{ tile.title }}</div>
       <div class="feature-desc">{{ tile.desc }}</div>
       <button mat-button color="primary" class="feature-cta">Open</button>
+    </mat-card>
+  </div>
+
+  <div class="insights-grid">
+    <mat-card class="insight-card mat-elevation-z2">
+      <div class="insight-title">Attendance trend</div>
+      <div class="sparkline" *ngIf="attendanceSpark.length">
+        <div class="spark-bar" *ngFor="let pt of attendanceSpark" [style.height.%]="pt.rate" [matTooltip]="pt.date + ': ' + pt.rate + '%'"></div>
+      </div>
+      <div class="spark-labels">
+        <span *ngFor="let pt of attendanceSpark">{{ pt.date }}</span>
+      </div>
+    </mat-card>
+
+    <mat-card class="insight-card mat-elevation-z2">
+      <div class="insight-title">Fees</div>
+      <div class="donut-wrap">
+        <div class="donut" [style.background]="
+          'conic-gradient(#14b8a6 ' + feePaidPercent + '%, #f59e0b 0)'
+        "></div>
+        <div class="donut-center">
+          <div class="donut-value">${{ feeBreakdown.outstanding + feeBreakdown.paid }}</div>
+          <div class="donut-label">Total</div>
+        </div>
+      </div>
+      <div class="legend">
+        <span class="dot teal"></span> Paid ${{ feeBreakdown.paid | number:'1.0-0' }}
+        <span class="dot gold"></span> Outstanding ${{ feeBreakdown.outstanding | number:'1.0-0' }}
+      </div>
+    </mat-card>
+
+    <mat-card class="insight-card mat-elevation-z2">
+      <div class="insight-title">Incidents by type</div>
+      <div class="bar-list">
+        <div class="bar-row" *ngFor="let b of behaviorByType">
+          <span>{{ b.type }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width.%]="(b.count || 0) * 25"></div>
+          </div>
+          <span class="bar-count">{{ b.count }}</span>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="insight-card mat-elevation-z2">
+      <div class="insight-title">Admissions pipeline</div>
+      <div class="pipeline">
+        <div class="pipe-segment" *ngFor="let a of admissionsPipeline">
+          <div class="pipe-value">{{ a.count }}</div>
+          <div class="pipe-label">{{ a.stage | titlecase }}</div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="alerts-feed">
+    <div class="alerts" *ngIf="alerts.length">
+      <div class="alert-chip" *ngFor="let a of alerts" [ngClass]="a.tone">
+        <span class="alert-icon" [innerHTML]="a.tone === 'warn' ? safeIcons['alertWarn'] : safeIcons['alertInfo']"></span>
+        <div class="alert-text">
+          <div class="alert-label">{{ a.label }}</div>
+          <div class="alert-detail">{{ a.detail }}</div>
+        </div>
+        <button mat-stroked-button color="primary" class="alert-cta" *ngIf="a.label === 'Fees due'" [routerLink]="getLink('fees/collect')">Collect</button>
+        <button mat-stroked-button color="primary" class="alert-cta" *ngIf="a.label === 'Behavior follow-ups'" [routerLink]="getLink('behavior')">Review</button>
+      </div>
+    </div>
+
+    <mat-card class="recent-card mat-elevation-z2" *ngIf="recent.length">
+      <mat-card-title>Recent activity</mat-card-title>
+      <div class="recent-list">
+        <div class="recent-row" *ngFor="let r of recent">
+          <div class="recent-pill">{{ r.label }}</div>
+          <div class="recent-detail">{{ r.detail }}</div>
+          <div class="recent-date">{{ r.date }}</div>
+        </div>
+      </div>
     </mat-card>
   </div>
 
