@@ -17,14 +17,15 @@ Write-Host "Launched frontend (logs -> $log)"
 
 # npx ng build --configuration=development
 
+# cd C:\DEV\buildaq-schools
 # ng build --configuration=production --base-href=https://schools.buildaq.com/ --output-path=dist/buildaq-schools-ghp  
 # cd C:\DEV\buildaq-schools\dist\buildaq-schools-ghp\browser
 # copy index.html 404.html
 # npx angular-cli-ghpages --dir=. --branch=gh-pages --cname=schools.buildaq.com
 
 
-# cd C:\DEV\buildaq-schools
+# cd C:\DEV\buildaq-shell
 # ng build --configuration=production --base-href=https://shell.buildaq.com/ --output-path=dist/buildaq-shell-ghp  
-# cd C:\DEV\buildaq-schools\dist\buildaq-shell-ghp\browser
+# cd C:\DEV\buildaq-shell\dist\buildaq-shell-ghp\browser
 # copy index.html 404.html
 # npx angular-cli-ghpages --dir=. --branch=gh-pages --cname=shell.buildaq.com

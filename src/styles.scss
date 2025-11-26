@@ -1,5 +1,6 @@
 @use './styles/_material-theme' as *;
 @use './styles/_compact' as *;
+@use './styles/_panels';
 
 /* Improve select dropdown readability */
 .cdk-overlay-pane .mat-mdc-select-panel {
