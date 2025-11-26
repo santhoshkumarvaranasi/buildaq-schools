@@ -197,6 +197,17 @@ export interface CoverageRequest {
   substitute?: string;
 }
 
+export interface NotificationItem {
+  id: number;
+  type: 'fee' | 'attendance' | 'behavior' | 'coverage' | 'event';
+  title: string;
+  message: string;
+  date: string;
+  unread?: boolean;
+  link?: string;
+  priority?: 'low' | 'normal' | 'high';
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -371,6 +382,14 @@ export class MockDataService {
     { id: 1, date: '2025-12-02', classId: '10A', period: '09:00-10:00', subject: 'Math', requester: 'Alice Brown', status: 'open' },
     { id: 2, date: '2025-12-02', classId: '9B', period: '11:00-12:00', subject: 'Science', requester: 'Robert Green', status: 'assigned', substitute: 'Emily Davis' },
     { id: 3, date: '2025-12-03', classId: '8C', period: '10:00-11:00', subject: 'English', requester: 'Emily Davis', status: 'open' }
+  ];
+
+  notifications: NotificationItem[] = [
+    { id: 1, type: 'fee', title: 'Overdue fee', message: 'Jane Doe has $1,200 outstanding', date: '2025-11-25', unread: true, priority: 'high', link: '/fees' },
+    { id: 2, type: 'attendance', title: 'Absence recorded', message: 'John Smith absent today', date: '2025-11-26', unread: true, priority: 'normal', link: '/attendance' },
+    { id: 3, type: 'behavior', title: 'Follow-up due', message: 'Asthma flare follow-up for Jane Doe', date: '2025-11-27', unread: false, priority: 'high', link: '/behavior' },
+    { id: 4, type: 'coverage', title: 'Coverage needed', message: '8C English needs substitute', date: '2025-11-28', unread: true, priority: 'high', link: '/resources' },
+    { id: 5, type: 'event', title: 'PTA Meeting', message: 'PTA meeting on 2025-12-05', date: '2025-11-29', unread: false, priority: 'low', link: '/events' }
   ];
 
   getStudents() { return this.students; }
@@ -554,6 +573,13 @@ export class MockDataService {
     if (idx === -1) return null;
     this.coverageRequests[idx] = Object.assign({}, this.coverageRequests[idx], changes);
     return this.coverageRequests[idx];
+  }
+  getNotifications() { return this.notifications; }
+  updateNotification(id: number, changes: Partial<NotificationItem>) {
+    const idx = this.notifications.findIndex(n => n.id === id);
+    if (idx === -1) return null;
+    this.notifications[idx] = Object.assign({}, this.notifications[idx], changes);
+    return this.notifications[idx];
   }
   addDiscount(entry: any) {
     const created = Object.assign({ id: `D-${(this.discounts.length + 1).toString().padStart(3,'0')}`, status: 'active' }, entry);

@@ -34,6 +34,7 @@ import { ResourcesComponent } from '../features/resources/resources';
 import { PerformanceComponent } from '../features/performance/performance';
 import { AnalyticsComponent } from '../features/analytics/analytics';
 import { StaffingComponent } from '../features/staffing/staffing';
+import { NotificationsComponent } from '../features/notifications/notifications';
 
 // Define routes for the schools module
 const routes: Routes = [
@@ -68,6 +69,7 @@ const routes: Routes = [
   { path: 'performance', component: PerformanceComponent },
   { path: 'analytics', component: AnalyticsComponent },
   { path: 'staffing', component: StaffingComponent },
+  { path: 'notifications', component: NotificationsComponent },
   { path: 'timetable', component: TimetableComponent },
   { path: 'exams', component: ExamsComponent }
 ];
@@ -105,6 +107,7 @@ const routes: Routes = [
     PerformanceComponent,
     AnalyticsComponent,
     StaffingComponent,
+    NotificationsComponent,
     TimetableComponent,
     ExamsComponent
   ],

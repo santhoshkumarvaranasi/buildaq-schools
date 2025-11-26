@@ -21,6 +21,7 @@ import { ResourcesComponent } from './features/resources/resources';
 import { PerformanceComponent } from './features/performance/performance';
 import { AnalyticsComponent } from './features/analytics/analytics';
 import { StaffingComponent } from './features/staffing/staffing';
+import { NotificationsComponent } from './features/notifications/notifications';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
@@ -46,5 +47,6 @@ export const routes: Routes = [
   { path: 'performance', component: PerformanceComponent },
   { path: 'analytics', component: AnalyticsComponent },
   { path: 'staffing', component: StaffingComponent },
+  { path: 'notifications', component: NotificationsComponent },
   { path: '**', redirectTo: '' }
 ];
