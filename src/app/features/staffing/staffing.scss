@@ -1,0 +1,83 @@
+.staffing-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.fees-toolbar {
+  border-radius: 12px;
+  background: linear-gradient(120deg, #3949ab, #1e88e5);
+  color: #fff;
+  padding: 12px 16px;
+}
+
+.toolbar-left .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.toolbar-left .title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.staff-card {
+  padding: 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.staff-card.fade-in {
+  animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.staff-name { font-weight: 700; font-size: 1rem; }
+.staff-role { color: #6b7280; font-size: 0.9rem; }
+.card-meta { color: #475569; font-size: 0.9rem; margin-top: 6px; }
+
+.table-wrap { overflow-x: auto; }
+
+.cell-strong { font-weight: 700; }
+.cell-sub { font-size: 0.85rem; color: #6b7280; }
+
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+.mobile-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  display: grid;
+  gap: 6px;
+}
+.mobile-card .card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mobile-card .cell-sub {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: grid; gap: 12px; }
+}

@@ -186,6 +186,17 @@ export interface TeacherPd {
   date?: string;
 }
 
+export interface CoverageRequest {
+  id: number;
+  date: string;
+  classId: string;
+  period: string;
+  subject: string;
+  requester: string;
+  status: 'open' | 'assigned' | 'closed';
+  substitute?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
@@ -354,6 +365,12 @@ export class MockDataService {
     { id: 1, teacherId: 1, teacherName: 'Alice Brown', title: 'STEM Workshop', hours: 6, status: 'completed', date: '2025-11-05' },
     { id: 2, teacherId: 2, teacherName: 'Robert Green', title: 'Classroom management', hours: 4, status: 'in-progress' },
     { id: 3, teacherId: 3, teacherName: 'Emily Davis', title: 'Counseling best practices', hours: 5, status: 'planned' }
+  ];
+
+  coverageRequests: CoverageRequest[] = [
+    { id: 1, date: '2025-12-02', classId: '10A', period: '09:00-10:00', subject: 'Math', requester: 'Alice Brown', status: 'open' },
+    { id: 2, date: '2025-12-02', classId: '9B', period: '11:00-12:00', subject: 'Science', requester: 'Robert Green', status: 'assigned', substitute: 'Emily Davis' },
+    { id: 3, date: '2025-12-03', classId: '8C', period: '10:00-11:00', subject: 'English', requester: 'Emily Davis', status: 'open' }
   ];
 
   getStudents() { return this.students; }
@@ -531,6 +548,13 @@ export class MockDataService {
   getTeacherGoals() { return this.teacherGoals; }
   getTeacherFeedback() { return this.teacherFeedback; }
   getTeacherPd() { return this.teacherPd; }
+  getCoverageRequests() { return this.coverageRequests; }
+  updateCoverage(id: number, changes: Partial<CoverageRequest>) {
+    const idx = this.coverageRequests.findIndex(c => c.id === id);
+    if (idx === -1) return null;
+    this.coverageRequests[idx] = Object.assign({}, this.coverageRequests[idx], changes);
+    return this.coverageRequests[idx];
+  }
   addDiscount(entry: any) {
     const created = Object.assign({ id: `D-${(this.discounts.length + 1).toString().padStart(3,'0')}`, status: 'active' }, entry);
     this.discounts.unshift(created);

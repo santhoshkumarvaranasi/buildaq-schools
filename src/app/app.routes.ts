@@ -20,6 +20,7 @@ import { EventsComponent } from './features/events/events';
 import { ResourcesComponent } from './features/resources/resources';
 import { PerformanceComponent } from './features/performance/performance';
 import { AnalyticsComponent } from './features/analytics/analytics';
+import { StaffingComponent } from './features/staffing/staffing';
 
 export const routes: Routes = [
   { path: '', component: SchoolsDashboardComponent },
@@ -44,5 +45,6 @@ export const routes: Routes = [
   { path: 'resources', component: ResourcesComponent },
   { path: 'performance', component: PerformanceComponent },
   { path: 'analytics', component: AnalyticsComponent },
+  { path: 'staffing', component: StaffingComponent },
   { path: '**', redirectTo: '' }
 ];
