@@ -89,9 +89,13 @@ type AttendanceRow = {
             <mat-chip-option value="absent">Absent</mat-chip-option>
           </mat-chip-listbox>
 
-          <button mat-stroked-button color="primary" class="ghost-button" (click)="exportCsv()">
-            Export CSV
-          </button>
+          <div class="export-wrap">
+            <button mat-flat-button color="primary" class="ghost-button" (click)="exportCsv()">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 19h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Export CSV
+            </button>
+            <button mat-stroked-button color="accent" class="ghost-button" (click)="addAttendance()">Add Entry</button>
+          </div>
         </div>
       </mat-card>
 
@@ -145,7 +149,7 @@ type AttendanceRow = {
 
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef>Status</th>
-              <td mat-cell *matCellDef="let row">
+              <td mat-cell *matCellDef="let row" class="status-cell">
                 <mat-chip class="status-chip" [color]="row.status === 'present' ? 'primary' : 'warn'">
                   {{ row.status }}
                 </mat-chip>
@@ -155,9 +159,11 @@ type AttendanceRow = {
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>Actions</th>
               <td mat-cell *matCellDef="let row">
-                <button mat-stroked-button color="accent" class="ghost-button" (click)="toggleStatus(row)">
-                  Toggle
-                </button>
+                <div class="action-row">
+                  <button mat-icon-button color="primary" matTooltip="Toggle status" (click)="toggleStatus(row)">
+                    <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h12l-3-3m3 3-3 3M20 17H8l3-3m-3 3 3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
               </td>
             </ng-container>
 
