@@ -5,10 +5,10 @@ import { provideHttpClient } from '@angular/common/http';
 
 // Import standalone components
 import { SchoolsDashboardComponent } from '../schools-dashboard/schools-dashboard';
-import { StudentsComponent } from './students/students';
-import { TeachersComponent } from './teachers/teachers';
-import { ClassesComponent } from './classes/classes';
-import { AttendanceComponent } from '../features/attendance/attendance';
+import { StudentsComponent } from '../features/students/students';
+import { TeachersComponent } from '../features/teachers/teachers';
+import { ClassesComponent } from '../features/classes/classes';
+import { AttendanceComponent } from '../features/attendance/attendance.component';
 import { FeesComponent } from '../features/fees/fees';
 import { FeeCategoriesComponent } from '../features/fees/fee-categories/fee-categories';
 import { FeeStructureComponent } from '../features/fees/fee-structure/fee-structure';

@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 import { SchoolsDashboardComponent } from './schools-dashboard/schools-dashboard';
-import { StudentsComponent } from './schools/students/students';
-import { TeachersComponent } from './schools/teachers/teachers';
-import { ClassesComponent } from './schools/classes/classes';
-import { AttendanceComponent } from './features/attendance/attendance';
+import { StudentsComponent } from './features/students/students';
+import { TeachersComponent } from './features/teachers/teachers';
+import { ClassesComponent } from './features/classes/classes';
+import { AttendanceComponent } from './features/attendance/attendance.component';
 import { FeesComponent } from './features/fees/fees';
 import { TimetableComponent } from './features/timetable/timetable';
 import { ExamsComponent } from './features/exams/exams';
