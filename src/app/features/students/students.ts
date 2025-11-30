@@ -130,7 +130,39 @@ export class StudentsComponent implements AfterViewInit {
   }
 
   editStudent(row: StudentRow) {
-    alert(`Edit student ${row.name}`);
+    const dialogRef = this.dialog.open(AddStudentDialogComponent, {
+      width: '520px',
+      data: {
+        classes: this.classes,
+        student: {
+          firstName: row.name?.split(' ')[0] || '',
+          lastName: row.name?.split(' ').slice(1).join(' ') || '',
+          class: row.class,
+          section: row.section,
+          rollNo: row.rollNo,
+          email: row.email,
+          status: row.status,
+          enrollmentDate: row.enrollmentDate
+        },
+        mode: 'edit'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+      const [firstName, ...rest] = (result.name || '').split(' ');
+      this.mock.updateStudent(row.id, {
+        firstName,
+        lastName: rest.join(' '),
+        class: result.class,
+        section: result.section,
+        rollNo: result.rollNo,
+        email: result.email,
+        status: result.status,
+        enrollmentDate: result.enrollmentDate
+      });
+      this.loadRows();
+    });
   }
 
   deleteStudent(row: StudentRow) {

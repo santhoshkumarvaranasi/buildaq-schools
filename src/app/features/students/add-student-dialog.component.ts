@@ -4,12 +4,18 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from '../../core/material.module';
 
+export interface StudentDialogData {
+  classes: string[];
+  student?: any;
+  mode?: 'add' | 'edit';
+}
+
 @Component({
   selector: 'app-add-student-dialog',
   standalone: true,
   imports: [CommonModule, FormsModule, MaterialModule],
   template: `
-    <h2 mat-dialog-title>Add Student</h2>
+    <h2 mat-dialog-title>{{ data.mode === 'edit' ? 'Edit Student' : 'Add Student' }}</h2>
     <mat-dialog-content class="dialog-body">
       <div class="form-grid">
         <mat-form-field appearance="fill">
@@ -50,7 +56,7 @@ import { MaterialModule } from '../../core/material.module';
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button (click)="close()">Cancel</button>
-      <button mat-flat-button color="primary" (click)="save()" [disabled]="!form.name">Save</button>
+      <button mat-flat-button color="primary" (click)="save()" [disabled]="!form.name?.trim()">Save</button>
     </mat-dialog-actions>
   `,
   styles: [`
@@ -64,20 +70,26 @@ import { MaterialModule } from '../../core/material.module';
   `]
 })
 export class AddStudentDialogComponent {
-  form: any = {
-    name: '',
-    class: '',
-    section: '',
-    rollNo: '',
-    email: '',
-    status: 'active',
-    enrollmentDate: new Date().toISOString().slice(0,10)
-  };
+  form: any;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: StudentDialogData,
     private dialogRef: MatDialogRef<AddStudentDialogComponent>
-  ) {}
+  ) {
+    this.form = Object.assign({
+      class: '',
+      section: '',
+      rollNo: '',
+      email: '',
+      status: 'active',
+      enrollmentDate: new Date().toISOString().slice(0, 10)
+    }, data.student || {});
+    if (data.student) {
+      this.form.name = `${data.student.firstName || ''} ${data.student.lastName || ''}`.trim() || this.form.name;
+    } else {
+      this.form.name = this.form.name || '';
+    }
+  }
 
   save() {
     if (!this.form.name?.trim()) return;
