@@ -1,30 +1,42 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { AttendanceRecord } from './attendance.model';
+
+export interface AttendanceRecord {
+  id: number;
+  studentId: number;
+  studentName: string;
+  classId: number;
+  className: string;
+  date: string;
+  status: 'present' | 'absent' | 'late' | 'excused';
+  notes?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AttendanceService {
+    getRecordsForClass(classId: number, date: string): AttendanceRecord[] {
+      return this.records.filter(r => r.classId === classId && r.date === date);
+    }
   private records: AttendanceRecord[] = [];
-  private records$ = new BehaviorSubject<AttendanceRecord[]>([]);
 
-  getAttendanceRecords() {
-    return this.records$.asObservable();
+  getAttendanceRecords(): AttendanceRecord[] {
+    return [...this.records];
   }
 
   addRecord(record: AttendanceRecord) {
-    this.records.push(record);
-    this.records$.next(this.records);
+    this.records.unshift({ ...record, id: Date.now() });
   }
 
   updateRecord(id: number, update: Partial<AttendanceRecord>) {
     const idx = this.records.findIndex(r => r.id === id);
     if (idx > -1) {
       this.records[idx] = { ...this.records[idx], ...update };
-      this.records$.next(this.records);
     }
   }
 
-  getRecordsForClass(classId: number, date: string) {
-    return this.records.filter(r => r.classId === classId && r.date === date);
+  deleteRecord(id: number) {
+    const idx = this.records.findIndex(r => r.id === id);
+    if (idx > -1) {
+      this.records.splice(idx, 1);
+    }
   }
 }

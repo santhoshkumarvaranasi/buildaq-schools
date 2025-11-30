@@ -1,69 +1,237 @@
-import { Component, Input, OnInit } from '@angular/core';
-
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AttendanceService } from './attendance.service';
-import { AttendanceRecord } from './attendance.model';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MaterialModule } from '../../core/material.module';
+import { MockDataService } from '../../core/services/mock-data.service';
+
+type AttendanceRow = {
+  id: number;
+  studentId: number;
+  studentName: string;
+  className: string;
+  date: string;
+  status: 'present' | 'absent' | 'late' | 'excused';
+};
 
 @Component({
   selector: 'app-attendance',
   standalone: true,
   imports: [CommonModule, FormsModule, MaterialModule],
-  template: `
-    <div class="attendance-container">
-      <h2>Attendance for {{ className }} ({{ date }})</h2>
-      <table class="attendance-table">
-        <thead>
-          <tr>
-            <th>Student</th>
-            <th>Status</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let record of records">
-            <td>{{ record.studentName }}</td>
-            <td>
-              <select [(ngModel)]="record.status" (change)="updateStatus(record)">
-                <option value="present">Present</option>
-                <option value="absent">Absent</option>
-                <option value="late">Late</option>
-                <option value="excused">Excused</option>
-              </select>
-            </td>
-            <td>
-              <input [(ngModel)]="record.notes" (blur)="updateStatus(record)" placeholder="Notes..." />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  `,
-  styles: [`
-    .attendance-container { padding: 1rem; }
-    .attendance-table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #e4e9f0; padding: 0.5rem; }
-    th { background: #f8f9fa; }
-    select, input { width: 100%; }
-  `]
+  templateUrl: './attendance.html',
+  styleUrls: ['../fees/fees.scss', './attendance.scss']
 })
-export class AttendanceComponent implements OnInit {
-  @Input() classId!: number;
-  @Input() className!: string;
-  @Input() date!: string;
-  records: AttendanceRecord[] = [];
+export class AttendanceComponent implements AfterViewInit {
+  paginatedStudents: any[] = [];
+  pageIndex = 0;
+  pageSize = 10;
 
-  constructor(private attendanceService: AttendanceService) {}
+  displayedColumns = ['studentName', 'className', 'date', 'status', 'actions'];
+  dataSource = new MatTableDataSource<AttendanceRow>([]);
+
+  students: any[] = [];
+  attendance: any[] = [];
+  rows: AttendanceRow[] = [];
+  filtered: AttendanceRow[] = [];
+
+  metrics = { total: 0, present: 0, absent: 0 };
+
+  search = '';
+  statusFilter: 'all' | 'present' | 'absent' | 'late' | 'excused' = 'all';
+  selectedDate: string = new Date().toISOString().slice(0, 10);
+  classFilter = '';
+
+  classOptions: string[] = [];
+  statusChips = ['present', 'absent', 'late', 'excused'];
+
+  newEntry = {
+    studentId: null as number | null,
+    status: 'present' as 'present' | 'absent' | 'late' | 'excused',
+    date: this.selectedDate
+  };
+
+  filteredStudents: any[] = [];
 
   ngOnInit() {
-    this.records = this.attendanceService.getRecordsForClass(this.classId, this.date);
+    this.updateFilteredStudents();
+    this.updatePaginatedStudents();
   }
 
-  updateStatus(record: AttendanceRecord) {
-    this.attendanceService.updateRecord(record.id, {
-      status: record.status,
-      notes: record.notes
+  updateFilteredStudents() {
+    // If 'All' is selected or no class is selected, show all students
+    if (!this.classFilter || this.classFilter === 'All') {
+      this.filteredStudents = this.students.map(s => {
+        const record = this.attendance.find(r => r.studentId === s.id && r.date === this.selectedDate);
+        return { ...s, present: record ? record.status === 'present' : true };
+      });
+      this.updatePaginatedStudents();
+      return;
+    }
+    // Otherwise, show students for the selected class
+    this.filteredStudents = this.students
+      .filter(s => s.class === this.classFilter)
+      .map(s => {
+        const record = this.attendance.find(r => r.studentId === s.id && r.date === this.selectedDate);
+        return { ...s, present: record ? record.status === 'present' : true };
+      });
+    this.updatePaginatedStudents();
+  }
+
+  updatePaginatedStudents() {
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.paginatedStudents = this.filteredStudents.slice(start, end);
+  }
+
+  onPageChange(event: any) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePaginatedStudents();
+  }
+
+  getAttendanceStatus(studentId: number): string {
+    const record = this.attendance.find(r => r.studentId === studentId && r.date === this.selectedDate);
+    return record ? record.status : 'absent';
+  }
+
+  markAttendance(student: any) {
+    // Toggle present/absent on click
+    const newStatus = student.present ? 'absent' : 'present';
+    this.mock.setAttendance(student.id, this.selectedDate, newStatus);
+    this.attendance = this.mock.getAttendance();
+    this.updateFilteredStudents();
+    this.updatePaginatedStudents();
+    this.loadRows();
+  }
+
+  markAll(present: boolean) {
+    if (!this.classFilter) return;
+    this.filteredStudents.forEach(student => {
+      this.mock.setAttendance(student.id, this.selectedDate, present ? 'present' : 'absent');
     });
+    this.attendance = this.mock.getAttendance();
+    this.updateFilteredStudents();
+    this.loadRows();
+  }
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(private mock: MockDataService) {
+    this.students = this.mock.getStudents() || [];
+    this.attendance = this.mock.getAttendance() || [];
+    this.classOptions = Array.from(new Set(this.students.map(s => s.class).filter(Boolean))) as string[];
+    if (this.students.length) this.newEntry.studentId = this.students[0].id;
+    this.loadRows();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  private loadRows() {
+    const studentMap = new Map(this.students.map(s => [s.id, s]));
+    let rows: AttendanceRow[] = [];
+    // If a class is selected, show all students for that class and date
+    if (this.classFilter) {
+      const studentsInClass = this.students.filter(s => s.class === this.classFilter);
+      rows = studentsInClass.map(student => {
+        const record = this.attendance.find(r => r.studentId === student.id && r.date === this.selectedDate);
+        return {
+          id: record ? record.id : 0,
+          studentId: student.id,
+          studentName: `${student.firstName} ${student.lastName}`,
+          className: student.class || '--',
+          date: this.selectedDate,
+          status: record ? (record.status as AttendanceRow['status']) : 'present'
+        };
+      });
+    } else {
+      // Otherwise, show all attendance records for the selected date
+      rows = this.attendance.filter(r => r.date === this.selectedDate).map(record => {
+        const student = studentMap.get(record.studentId);
+        return {
+          id: record.id,
+          studentId: record.studentId,
+          studentName: student ? `${student.firstName} ${student.lastName}` : `Student ${record.studentId}`,
+          className: student?.class || '--',
+          date: record.date || this.selectedDate,
+          status: (record.status || 'present') as AttendanceRow['status']
+        };
+      });
+    }
+    this.rows = rows;
+    this.applyFilters();
+    this.refreshMetrics();
+  }
+
+  applyFilters() {
+    const term = this.search.trim().toLowerCase();
+    this.filtered = this.rows.filter(r => {
+      const matchesTerm = !term || r.studentName.toLowerCase().includes(term) || String(r.studentId).includes(term);
+      const matchesStatus = this.statusFilter === 'all' || r.status === this.statusFilter;
+      const matchesDate = !this.selectedDate || r.date === this.selectedDate;
+      const matchesClass = !this.classFilter || r.className === this.classFilter;
+      return matchesTerm && matchesStatus && matchesDate && matchesClass;
+    });
+    this.dataSource.data = this.filtered;
+    if (this.paginator) this.paginator.firstPage();
+  }
+
+  clearSearch() { this.search = ''; this.applyFilters(); }
+  onStatusChange(event: any) { this.statusFilter = event.value || 'all'; this.applyFilters(); }
+  // Update filtered students when class changes
+  onClassChange(value: string) {
+    this.classFilter = value || '';
+    this.applyFilters();
+    this.updateFilteredStudents();
+  }
+  onDateChange(value: string) { this.selectedDate = value; this.applyFilters(); }
+
+  refreshMetrics() {
+    this.metrics.total = this.rows.length;
+    this.metrics.present = this.rows.filter(r => r.status === 'present').length;
+    this.metrics.absent = this.rows.filter(r => r.status === 'absent').length;
+  }
+
+  addEntry() {
+    if (!this.newEntry.studentId) return;
+    this.mock.addAttendance(this.newEntry.studentId, this.newEntry.date, this.newEntry.status);
+    this.attendance = this.mock.getAttendance();
+    this.loadRows();
+  }
+
+  editAttendance(row: AttendanceRow) {
+    const next: AttendanceRow['status'] = row.status === 'present' ? 'absent' : 'present';
+    this.mock.updateAttendanceStatus(row.id, next);
+    this.attendance = this.mock.getAttendance();
+    this.loadRows();
+  }
+
+  deleteAttendance(row: AttendanceRow) {
+    this.attendance = this.attendance.filter(r => r.id !== row.id);
+    this.loadRows();
+  }
+
+  exportCsv() {
+    const headers = ['Id', 'Student', 'Class', 'Date', 'Status'];
+    const lines = this.filtered.map(r => [
+      r.id,
+      `"${(r.studentName || '').replace(/"/g, '""')}"`,
+      r.className,
+      r.date,
+      r.status
+    ].join(','));
+    const csv = [headers.join(','), ...lines].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'attendance.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 }

@@ -211,11 +211,20 @@ export interface NotificationItem {
 @Injectable({ providedIn: 'root' })
 export class MockDataService {
   students: MockStudent[] = [
-    { id: 1, firstName: 'Jane', lastName: 'Doe', email: 'jane.doe@example.com', grade: '10', section: 'A', class: '10A', enrollmentDate: '2023-06-01', status: 'active' },
-    { id: 2, firstName: 'John', lastName: 'Smith', email: 'john.smith@example.com', grade: '9', section: 'B', class: '9B', enrollmentDate: '2022-08-15', status: 'active' },
-    { id: 3, firstName: 'Priya', lastName: 'Kumar', email: 'priya.kumar@example.com', grade: '11', section: 'A', class: '11A', enrollmentDate: '2021-04-10', status: 'inactive' },
-    { id: 4, firstName: 'Carlos', lastName: 'Mendez', email: 'carlos.mendez@example.com', grade: '8', section: 'C', class: '8C', enrollmentDate: '2024-02-01', status: 'active' },
-    { id: 5, firstName: 'Sara', lastName: 'Lee', email: 'sara.lee@example.com', grade: '9', section: 'A', class: '9A', enrollmentDate: '2024-03-12', status: 'active' }
+     { id: 1, firstName: 'Jane', lastName: 'Doe', email: 'jane.doe@example.com', grade: '10', section: 'A', class: '10A', enrollmentDate: '2023-06-01', status: 'active' },
+     { id: 6, firstName: 'Amit', lastName: 'Sharma', email: 'amit.sharma@example.com', grade: '10', section: 'A', class: '10A', enrollmentDate: '2023-07-15', status: 'active' },
+     { id: 7, firstName: 'Emily', lastName: 'Nguyen', email: 'emily.nguyen@example.com', grade: '10', section: 'A', class: '10A', enrollmentDate: '2023-08-10', status: 'active' },
+     { id: 8, firstName: 'Mohammed', lastName: 'Ali', email: 'mohammed.ali@example.com', grade: '10', section: 'A', class: '10A', enrollmentDate: '2023-09-05', status: 'inactive' },
+     { id: 2, firstName: 'John', lastName: 'Smith', email: 'john.smith@example.com', grade: '9', section: 'B', class: '9B', enrollmentDate: '2022-08-15', status: 'active' },
+     { id: 9, firstName: 'Sophia', lastName: 'Garcia', email: 'sophia.garcia@example.com', grade: '9', section: 'B', class: '9B', enrollmentDate: '2022-09-20', status: 'active' },
+     { id: 10, firstName: 'Liam', lastName: 'Wang', email: 'liam.wang@example.com', grade: '9', section: 'B', class: '9B', enrollmentDate: '2022-10-12', status: 'inactive' },
+     { id: 11, firstName: 'Olivia', lastName: 'Kim', email: 'olivia.kim@example.com', grade: '9', section: 'B', class: '9B', enrollmentDate: '2022-11-03', status: 'active' },
+     { id: 4, firstName: 'Carlos', lastName: 'Mendez', email: 'carlos.mendez@example.com', grade: '8', section: 'C', class: '8C', enrollmentDate: '2024-02-01', status: 'active' },
+     { id: 12, firstName: 'Lucas', lastName: 'Martinez', email: 'lucas.martinez@example.com', grade: '8', section: 'C', class: '8C', enrollmentDate: '2024-03-18', status: 'active' },
+     { id: 13, firstName: 'Mia', lastName: 'Singh', email: 'mia.singh@example.com', grade: '8', section: 'C', class: '8C', enrollmentDate: '2024-04-22', status: 'inactive' },
+     { id: 14, firstName: 'Noah', lastName: 'Brown', email: 'noah.brown@example.com', grade: '8', section: 'C', class: '8C', enrollmentDate: '2024-05-10', status: 'active' },
+     { id: 3, firstName: 'Priya', lastName: 'Kumar', email: 'priya.kumar@example.com', grade: '11', section: 'A', class: '11A', enrollmentDate: '2021-04-10', status: 'inactive' },
+     { id: 5, firstName: 'Sara', lastName: 'Lee', email: 'sara.lee@example.com', grade: '9', section: 'A', class: '9A', enrollmentDate: '2024-03-12', status: 'active' }
   ];
 
   staff: MockStaff[] = [
@@ -657,6 +666,16 @@ export class MockDataService {
     this.attendance.unshift(entry);
     return entry;
   }
+
+    // Set attendance for a student and date (used for toggles)
+    setAttendance(studentId: number, date: string, status: string) {
+      let entry = this.attendance.find(a => a.studentId === studentId && a.date === date);
+      if (entry) {
+        entry.status = status;
+      } else {
+        this.addAttendance(studentId, date, status);
+      }
+    }
 
   updateAttendanceStatus(id: number, status: string) {
     const idx = this.attendance.findIndex(a => a.id === id);
