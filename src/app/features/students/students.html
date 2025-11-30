@@ -19,7 +19,6 @@
         <svg class="icon" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm-7 9v-1a6 6 0 0 1 12 0v1H5z" fill="currentColor"/></svg>
       </div>
       <div class="metric-body">
-        <div class="metric-label">Total</div>
         <div class="metric-value">{{ metrics.total }}</div>
         <div class="metric-hint">Students</div>
       </div>
@@ -29,19 +28,8 @@
         <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 14-4-4 1.41-1.41L11 13.17l5.59-5.58L18 9l-7 7z" fill="currentColor"/></svg>
       </div>
       <div class="metric-body">
-        <div class="metric-label">Active</div>
         <div class="metric-value">{{ metrics.active }}</div>
-        <div class="metric-hint">Currently enrolled</div>
-      </div>
-    </mat-card>
-    <mat-card class="metric-card mat-elevation-z2">
-      <div class="metric-icon warn">
-        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 9h-2V7h2v4zm0 4h-2v-2h2v2z" fill="currentColor"/></svg>
-      </div>
-      <div class="metric-body">
-        <div class="metric-label">Inactive</div>
-        <div class="metric-value warn-text">{{ metrics.inactive }}</div>
-        <div class="metric-hint">Need attention</div>
+        <div class="metric-hint">Available</div>
       </div>
     </mat-card>
   </div>
@@ -68,11 +56,11 @@
       </mat-form-field>
 
       <div class="status-chip-wrap">
-        <mat-chip-listbox class="status-chips" [value]="statusFilter" (selectionChange)="onStatusChange($event)">
-          <mat-chip-option value="all">All</mat-chip-option>
-          <mat-chip-option value="active">Active</mat-chip-option>
-          <mat-chip-option value="inactive">Inactive</mat-chip-option>
-          <mat-chip-option value="transferred">Transferred</mat-chip-option>
+        <mat-chip-listbox class="status-chips" [value]="statusFilter">
+          <mat-chip-option value="all" (click)="onStatusChange({ value: 'all' })">All</mat-chip-option>
+          <mat-chip-option value="active" (click)="onStatusChange({ value: 'active' })">Active</mat-chip-option>
+          <mat-chip-option value="inactive" (click)="onStatusChange({ value: 'inactive' })">Inactive</mat-chip-option>
+          <mat-chip-option value="transferred" (click)="onStatusChange({ value: 'transferred' })">Transferred</mat-chip-option>
         </mat-chip-listbox>
       </div>
 
@@ -81,7 +69,6 @@
           <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 19h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Export CSV
         </button>
-        <button mat-stroked-button color="accent" class="ghost-button" (click)="addStudent()">Add Student</button>
       </div>
     </div>
   </mat-card>
@@ -183,4 +170,3 @@
     <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
   </mat-card>
 </div>
-

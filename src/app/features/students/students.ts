@@ -9,6 +9,7 @@ import { MaterialModule } from '../../core/material.module';
 import { MockDataService, MockStudent } from '../../core/services/mock-data.service';
 import { TenantService } from '../../core/services/tenant.service';
 import { AddStudentDialogComponent } from './add-student-dialog.component';
+import { DeleteStudentConfirmDialog } from './delete-student-confirm-dialog.component';
 
 interface StudentRow {
   id: number;
@@ -36,7 +37,7 @@ export class StudentsComponent implements AfterViewInit {
   search = '';
   classFilter = '';
   statusFilter: 'all' | 'active' | 'inactive' | 'transferred' = 'all';
-  metrics = { total: 0, active: 0, inactive: 0 };
+  metrics = { total: 0, active: 0, inactive: 0, transferred: 0 };
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -69,7 +70,8 @@ export class StudentsComponent implements AfterViewInit {
   refreshMetrics() {
     this.metrics.total = this.rows.length;
     this.metrics.active = this.rows.filter(r => (r.status || '').toLowerCase() === 'active').length;
-    this.metrics.inactive = this.rows.length - this.metrics.active;
+    this.metrics.transferred = this.rows.filter(r => (r.status || '').toLowerCase() === 'transferred').length;
+    this.metrics.inactive = this.rows.length - this.metrics.active - this.metrics.transferred;
   }
 
   applyFilters() {
@@ -166,9 +168,15 @@ export class StudentsComponent implements AfterViewInit {
   }
 
   deleteStudent(row: StudentRow) {
-    if (!confirm('Delete this student?')) return;
-    this.mock.deleteStudent(row.id);
-    this.loadRows();
+    const dialogRef = this.dialog.open(DeleteStudentConfirmDialog, {
+      width: '340px',
+      data: { name: row.name }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== true) return;
+      this.mock.deleteStudent(row.id);
+      this.loadRows();
+    });
   }
 
   toggleTransfer(row: StudentRow) {

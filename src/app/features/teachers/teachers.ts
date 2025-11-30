@@ -52,7 +52,7 @@ export class TeachersComponent implements AfterViewInit {
       email: s.email,
       phone: s.phone,
       classes: '',
-      status: 'active'
+      status: Math.random() < 0.7 ? 'active' : 'inactive' // 70% active, 30% inactive
     }));
     this.refreshMetrics();
     this.applyFilters();

@@ -1,12 +1,50 @@
 .students-page {
-  padding: 0;
-  background: radial-gradient(circle at 15% 10%, rgba(37, 99, 235, 0.05), transparent 45%), #f7f9fb;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(17, 38, 146, 0.06);
+  padding: 10px 14px;
+  gap: 12px;
 }
 
-.summary-grid {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(37,99,235,0.12);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
+  place-items: center;
+  color: #1e88e5;
+  }
+  .students-page table {
+    min-width: 640px;
+  font-size: 0;
+    justify-content: flex-end;
+  }
+  font-weight: 700;
+  font-size: 18px;
+  .mobile-card {
+    border: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 11px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    display: grid;
+    gap: 6px;
+  }
+  .mobile-card .card-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .mobile-card .cell-meta {
+    color: #6b7280;
+    font-size: 12px;
+  }
+}
 }
 
 .metric-card {
@@ -30,6 +68,7 @@
 }
 .metric-icon.success { background: rgba(20,184,166,0.14); color: #0f766e; }
 .metric-icon.warn { background: rgba(245,158,11,0.16); color: #b45309; }
+.metric-icon .icon { width: 20px; height: 20px; }
 
 .metric-body .metric-label { font-size: 12px; text-transform: uppercase; color: #6b7280; }
 .metric-body .metric-value { font-weight: 800; font-size: 20px; }
