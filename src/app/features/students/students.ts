@@ -4,9 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from '../../core/material.module';
 import { MockDataService, MockStudent } from '../../core/services/mock-data.service';
 import { TenantService } from '../../core/services/tenant.service';
+import { AddStudentDialogComponent } from './add-student-dialog.component';
 
 interface StudentRow {
   id: number;
@@ -39,7 +41,7 @@ export class StudentsComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private mock: MockDataService, private tenantService: TenantService) {
+  constructor(private mock: MockDataService, private tenantService: TenantService, private dialog: MatDialog) {
     this.loadRows();
   }
 
@@ -104,8 +106,27 @@ export class StudentsComponent implements AfterViewInit {
   }
 
   addStudent() {
-    // hook into existing add form if needed
-    alert('Implement add student flow');
+    const dialogRef = this.dialog.open(AddStudentDialogComponent, {
+      width: '520px',
+      data: { classes: this.classes }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+      const [firstName, ...rest] = (result.name || '').trim().split(' ');
+      const lastName = rest.join(' ');
+      this.mock.createStudent({
+        firstName,
+        lastName,
+        class: result.class,
+        section: result.section,
+        rollNo: result.rollNo,
+        email: result.email,
+        enrollmentDate: result.enrollmentDate,
+        status: result.status || 'active'
+      });
+      this.loadRows();
+    });
   }
 
   editStudent(row: StudentRow) {
