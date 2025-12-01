@@ -40,3 +40,21 @@
   .clubs-page .mobile-only { display: grid; gap: 12px; }
 }
 
+.attendance-snack {
+  background: rgba(15, 23, 42, 0.92) !important;
+  color: #fff !important;
+  backdrop-filter: blur(6px);
+  border-radius: 12px !important;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.35) !important;
+  font-size: 14px;
+}
+
+.attendance-snack .mdc-snackbar__label {
+  color: #fff !important;
+}
+
+.attendance-snack .mdc-button__label {
+  color: #facc15 !important;
+  font-weight: 600;
+}
+

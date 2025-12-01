@@ -34,6 +34,7 @@ export class AttendanceComponent implements AfterViewInit {
       this.updateFilteredStudents();
       this.updatePaginatedStudents();
       this.loadRows();
+      this.openSnack(`All students marked ${status}.`);
     }
   paginatedStudents: any[] = [];
   pageIndex = 0;
@@ -106,7 +107,12 @@ export class AttendanceComponent implements AfterViewInit {
     this.updateFilteredStudents();
     this.updatePaginatedStudents();
     this.loadRows();
-    this.snackBar.open(`Attendance marked as ${status} for ${student.firstName} ${student.lastName}`, 'Close', { duration: 2000 });
+    this.openSnack(`Attendance marked as ${status} for ${student.firstName} ${student.lastName}`);
+  }
+
+  toggleFromControl(event: Event, student: any) {
+    event.stopPropagation();
+    this.markAttendance(student);
   }
 
   markAll(present: boolean) {
@@ -117,6 +123,7 @@ export class AttendanceComponent implements AfterViewInit {
     this.attendance = this.mock.getAttendance();
     this.updateFilteredStudents();
     this.loadRows();
+    this.openSnack(`All students marked as ${present ? 'present' : 'absent'}.`);
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -204,7 +211,9 @@ export class AttendanceComponent implements AfterViewInit {
     this.mock.addAttendance(this.newEntry.studentId, this.newEntry.date, this.newEntry.status);
     this.attendance = this.mock.getAttendance();
     this.loadRows();
-    this.snackBar.open(`All students marked as ${status}`, 'Close', { duration: 2000 });
+    const student = this.students.find(s => s.id === this.newEntry.studentId);
+    const name = student ? `${student.firstName} ${student.lastName}` : 'student';
+    this.openSnack(`Attendance entry added for ${name}.`);
   }
 
   editAttendance(row: AttendanceRow) {
@@ -217,6 +226,15 @@ export class AttendanceComponent implements AfterViewInit {
   deleteAttendance(row: AttendanceRow) {
     this.attendance = this.attendance.filter(r => r.id !== row.id);
     this.loadRows();
+  }
+
+  private openSnack(message: string) {
+    this.snackBar.open(message, 'Close', {
+      duration: 2500,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['attendance-snack']
+    });
   }
 
   exportCsv() {
