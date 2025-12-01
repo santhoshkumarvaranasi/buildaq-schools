@@ -72,23 +72,13 @@ export class AttendanceComponent implements AfterViewInit {
   }
 
   updateFilteredStudents() {
-    // If 'All' is selected or no class is selected, show all students
-    if (!this.classFilter || this.classFilter === 'All') {
-      this.filteredStudents = this.students.map(s => {
-        const record = this.attendance.find(r => r.studentId === s.id && r.date === this.selectedDate);
-        return { ...s, present: record ? record.status === 'present' : true };
-      });
-      this.updatePaginatedStudents();
-      return;
-    }
-    // Otherwise, show students for the selected class
-    this.filteredStudents = this.students
-      .filter(s => s.class === this.classFilter)
-      .map(s => {
-        const record = this.attendance.find(r => r.studentId === s.id && r.date === this.selectedDate);
-        return { ...s, present: record ? record.status === 'present' : true };
-      });
-    this.updatePaginatedStudents();
+    const hasClass = !!(this.classFilter && this.classFilter !== 'All');
+    const studentsToMap = hasClass ? this.students.filter(s => s.class === this.classFilter) : this.students;
+    this.filteredStudents = studentsToMap.map(s => {
+      const record = this.attendance.find(r => r.studentId === s.id && r.date === this.selectedDate);
+      return { ...s, present: record ? record.status === 'present' : true };
+    });
+    this.resetPaginator();
   }
 
   updatePaginatedStudents() {
@@ -148,38 +138,31 @@ export class AttendanceComponent implements AfterViewInit {
     this.updatePaginatedStudents();
   }
 
-  private loadRows() {
-    const studentMap = new Map(this.students.map(s => [s.id, s]));
-    let rows: AttendanceRow[] = [];
-    // If a class is selected, show all students for that class and date
-    if (this.classFilter) {
-      const studentsInClass = this.students.filter(s => s.class === this.classFilter);
-      rows = studentsInClass.map(student => {
-        const record = this.attendance.find(r => r.studentId === student.id && r.date === this.selectedDate);
-        return {
-          id: record ? record.id : 0,
-          studentId: student.id,
-          studentName: `${student.firstName} ${student.lastName}`,
-          className: student.class || '--',
-          date: this.selectedDate,
-          status: record ? (record.status as AttendanceRow['status']) : 'present'
-        };
-      });
-    } else {
-      // Otherwise, show all attendance records for the selected date
-      rows = this.attendance.filter(r => r.date === this.selectedDate).map(record => {
-        const student = studentMap.get(record.studentId);
-        return {
-          id: record.id,
-          studentId: record.studentId,
-          studentName: student ? `${student.firstName} ${student.lastName}` : `Student ${record.studentId}`,
-          className: student?.class || '--',
-          date: record.date || this.selectedDate,
-          status: (record.status || 'present') as AttendanceRow['status']
-        };
-      });
+  private buildRow(student: any): AttendanceRow {
+    const record = this.attendance.find(r => r.studentId === student.id && r.date === this.selectedDate);
+    return {
+      id: record ? record.id : 0,
+      studentId: student.id,
+      studentName: `${student.firstName} ${student.lastName}`,
+      className: student.class || '--',
+      date: record?.date || this.selectedDate,
+      status: (record?.status as AttendanceRow['status']) || 'present'
+    };
+  }
+
+  private resetPaginator() {
+    this.pageIndex = 0;
+    this.updatePaginatedStudents();
+    if (this.paginator) {
+      this.paginator.firstPage();
     }
-    this.rows = rows;
+  }
+
+  private loadRows() {
+    const targetStudents = this.classFilter
+      ? this.students.filter(s => s.class === this.classFilter)
+      : this.students;
+    this.rows = targetStudents.map(student => this.buildRow(student));
     this.applyFilters();
     this.refreshMetrics();
   }
@@ -201,10 +184,14 @@ export class AttendanceComponent implements AfterViewInit {
   // Update filtered students when class changes
   onClassChange(value: string) {
     this.classFilter = value || '';
-    this.applyFilters();
+    this.loadRows();
     this.updateFilteredStudents();
   }
-  onDateChange(value: string) { this.selectedDate = value; this.applyFilters(); }
+  onDateChange(value: string) {
+    this.selectedDate = value;
+    this.loadRows();
+    this.updateFilteredStudents();
+  }
 
   refreshMetrics() {
     this.metrics.total = this.rows.length;
