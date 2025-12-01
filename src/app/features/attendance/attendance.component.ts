@@ -1,4 +1,5 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -24,6 +25,16 @@ type AttendanceRow = {
   styleUrls: ['../fees/fees.scss', './attendance.scss']
 })
 export class AttendanceComponent implements AfterViewInit {
+      loading = false;
+    bulkMark(status: 'present' | 'absent' | 'late' | 'excused') {
+      this.filteredStudents.forEach(student => {
+        this.mock.setAttendance(student.id, this.selectedDate, status);
+      });
+      this.attendance = this.mock.getAttendance();
+      this.updateFilteredStudents();
+      this.updatePaginatedStudents();
+      this.loadRows();
+    }
   paginatedStudents: any[] = [];
   pageIndex = 0;
   pageSize = 10;
@@ -55,6 +66,7 @@ export class AttendanceComponent implements AfterViewInit {
   filteredStudents: any[] = [];
 
   ngOnInit() {
+    this.loadRows();
     this.updateFilteredStudents();
     this.updatePaginatedStudents();
   }
@@ -98,12 +110,13 @@ export class AttendanceComponent implements AfterViewInit {
 
   markAttendance(student: any) {
     // Toggle present/absent on click
-    const newStatus = student.present ? 'absent' : 'present';
-    this.mock.setAttendance(student.id, this.selectedDate, newStatus);
+    const status = student.present ? 'absent' : 'present';
+    this.mock.setAttendance(student.id, this.selectedDate, status);
     this.attendance = this.mock.getAttendance();
     this.updateFilteredStudents();
     this.updatePaginatedStudents();
     this.loadRows();
+    this.snackBar.open(`Attendance marked as ${status} for ${student.firstName} ${student.lastName}`, 'Close', { duration: 2000 });
   }
 
   markAll(present: boolean) {
@@ -119,17 +132,20 @@ export class AttendanceComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private mock: MockDataService) {
+  constructor(private mock: MockDataService, private snackBar: MatSnackBar) {
     this.students = this.mock.getStudents() || [];
     this.attendance = this.mock.getAttendance() || [];
     this.classOptions = Array.from(new Set(this.students.map(s => s.class).filter(Boolean))) as string[];
     if (this.students.length) this.newEntry.studentId = this.students[0].id;
     this.loadRows();
+    this.updateFilteredStudents();
+    this.updatePaginatedStudents();
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.updatePaginatedStudents();
   }
 
   private loadRows() {
@@ -178,7 +194,6 @@ export class AttendanceComponent implements AfterViewInit {
       return matchesTerm && matchesStatus && matchesDate && matchesClass;
     });
     this.dataSource.data = this.filtered;
-    if (this.paginator) this.paginator.firstPage();
   }
 
   clearSearch() { this.search = ''; this.applyFilters(); }
@@ -202,6 +217,7 @@ export class AttendanceComponent implements AfterViewInit {
     this.mock.addAttendance(this.newEntry.studentId, this.newEntry.date, this.newEntry.status);
     this.attendance = this.mock.getAttendance();
     this.loadRows();
+    this.snackBar.open(`All students marked as ${status}`, 'Close', { duration: 2000 });
   }
 
   editAttendance(row: AttendanceRow) {

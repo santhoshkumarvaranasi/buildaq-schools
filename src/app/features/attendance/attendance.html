@@ -90,6 +90,7 @@
 
   <mat-card class="entry mat-elevation-z2">
     <div class="attendance-entry-list">
+      <mat-progress-bar *ngIf="loading" mode="indeterminate" color="accent"></mat-progress-bar>
       <!-- filteredStudents section removed as requested -->
     </div>
   </mat-card>
@@ -97,7 +98,7 @@
   <mat-card class="table-card mat-elevation-z2">
     <mat-card-title>Attendance log</mat-card-title>
     <mat-card-subtitle>All attendance records for selected date.</mat-card-subtitle>
-    <div class="table-wrap desktop-only">
+    <div class="table-wrap desktop-only mobile-scroll">
       <table mat-table [dataSource]="paginatedStudents" class="fees-table">
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef>Name</th>
@@ -113,7 +114,10 @@
         <ng-container matColumnDef="attendance">
           <th mat-header-cell *matHeaderCellDef>Present</th>
           <td mat-cell *matCellDef="let student">
-            <mat-slide-toggle [checked]="student.present" (change)="markAttendance(student)"></mat-slide-toggle>
+            <mat-slide-toggle [checked]="student.present" (change)="markAttendance(student)"
+              [color]="student.present ? 'primary' : 'warn'">
+              {{ student.present ? 'Present' : 'Absent' }}
+            </mat-slide-toggle>
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="['name','rollNo','attendance']"></tr>
@@ -125,15 +129,22 @@
       <div class="mobile-card" *ngFor="let student of paginatedStudents">
         <div class="card-row">
           <div class="cell-title">{{ student.firstName }} {{ student.lastName }}</div>
-          <mat-slide-toggle [checked]="student.present" (change)="markAttendance(student)"></mat-slide-toggle>
+          <mat-slide-toggle [checked]="student.present" (change)="markAttendance(student)"
+            [color]="student.present ? 'primary' : 'warn'">
+            {{ student.present ? 'Present' : 'Absent' }}
+          </mat-slide-toggle>
         </div>
         <div class="cell-meta">ID #{{ student.id }} · Roll {{ student.rollNo || '--' }}</div>
       </div>
       <mat-paginator [length]="filteredStudents.length" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" (page)="onPageChange($event)"></mat-paginator>
     </div>
     <div class="entry-actions">
-      <button mat-flat-button color="primary" (click)="markAll(true)">Mark All Present</button>
-      <button mat-flat-button color="warn" (click)="markAll(false)">Mark All Absent</button>
+      <mat-button-toggle-group name="bulkMark" (change)="bulkMark($event.value)" aria-label="Bulk mark attendance">
+        <mat-button-toggle value="present" color="primary">Mark All Present</mat-button-toggle>
+        <mat-button-toggle value="absent" color="warn">Mark All Absent</mat-button-toggle>
+        <mat-button-toggle value="late" color="accent">Mark All Late</mat-button-toggle>
+        <mat-button-toggle value="excused" color="accent">Mark All Excused</mat-button-toggle>
+      </mat-button-toggle-group>
     </div>
   </mat-card>
 </div>

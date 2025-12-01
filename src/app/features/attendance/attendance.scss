@@ -1,3 +1,13 @@
+@media (max-width: 768px) {
+  .mobile-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+  }
+  .fees-table {
+    min-width: 600px;
+  }
+}
 .export-wrap {
   display: flex;
   gap: 8px;
