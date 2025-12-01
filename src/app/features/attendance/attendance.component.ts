@@ -115,6 +115,12 @@ export class AttendanceComponent implements AfterViewInit {
     this.markAttendance(student);
   }
 
+  // Toggle attendance from button click (used in template)
+  toggleFromButton(event: Event, student: any) {
+    event.preventDefault();
+    this.markAttendance(student);
+  }
+
   markAll(present: boolean) {
     if (!this.classFilter) return;
     this.filteredStudents.forEach(student => {
