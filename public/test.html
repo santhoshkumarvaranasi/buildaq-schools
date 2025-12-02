@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diagnostic Test</title>
+</head>
+<body>
+    <h1>JavaScript Test Page</h1>
+    <div id="output"></div>
+    <script type="module">
+        const output = document.getElementById('output');
+        output.innerHTML = '<p style="color: green;">✅ JavaScript is working!</p>';
+        output.innerHTML += '<p>✅ ES Modules are supported</p>';
+        
+        // Test Zone.js
+        try {
+            const script = document.createElement('script');
+            script.src = '/@fs/workspaces/buildaq-schools/.angular/cache/20.3.12/buildaq-schools/vite/deps/zone__js.js?v=0caba3eb';
+            script.onload = () => {
+                output.innerHTML += '<p style="color: green;">✅ Zone.js loaded successfully</p>';
+            };
+            script.onerror = (e) => {
+                output.innerHTML += '<p style="color: red;">❌ Zone.js failed to load: ' + e.message + '</p>';
+            };
+            document.head.appendChild(script);
+        } catch (e) {
+            output.innerHTML += '<p style="color: red;">❌ Error: ' + e.message + '</p>';
+        }
+    </script>
+</body>
+</html>

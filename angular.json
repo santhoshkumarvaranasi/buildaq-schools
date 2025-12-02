@@ -29,12 +29,18 @@
 					"defaultConfiguration": "production"
 				},
 				"serve": {
-					"builder": "@angular-architects/native-federation:build",
+					"builder": "@angular/build:dev-server",
+					"configurations": {
+						"production": {
+							"buildTarget": "buildaq-schools:esbuild:production"
+						},
+						"development": {
+							"buildTarget": "buildaq-schools:esbuild:development"
+						}
+					},
+					"defaultConfiguration": "development",
 					"options": {
-						"target": "buildaq-schools:serve-original:development",
-						"rebuildDelay": 0,
-						"dev": true,
-						"port": 0
+						"port": 4201
 					}
 				},
 				"extract-i18n": {

@@ -19,6 +19,7 @@
         <svg class="icon" viewBox="0 0 24 24"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm-7 9v-1a6 6 0 0 1 12 0v1H5z" fill="currentColor"/></svg>
       </div>
       <div class="metric-body">
+        <div class="metric-label">Total</div>
         <div class="metric-value">{{ metrics.total }}</div>
         <div class="metric-hint">Students</div>
       </div>
@@ -28,6 +29,7 @@
         <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 14-4-4 1.41-1.41L11 13.17l5.59-5.58L18 9l-7 7z" fill="currentColor"/></svg>
       </div>
       <div class="metric-body">
+        <div class="metric-label">Active</div>
         <div class="metric-value">{{ metrics.active }}</div>
         <div class="metric-hint">Available</div>
       </div>
@@ -35,7 +37,7 @@
   </div>
 
   <mat-card class="filters-card mat-elevation-z2">
-    <div class="filter-grid compact">
+    <div class="filter-grid">
       <mat-form-field appearance="fill" class="full-width search-field">
         <mat-label>Search</mat-label>
         <span matPrefix class="icon-wrap">
@@ -47,40 +49,21 @@
         </button>
       </mat-form-field>
 
-      <mat-form-field appearance="fill" class="class-field">
-        <mat-label>Class</mat-label>
-        <mat-select [(ngModel)]="classFilter" (selectionChange)="applyFilters()">
-          <mat-option value="">All</mat-option>
-          <mat-option *ngFor="let c of classes" [value]="c">{{ c }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <mat-chip-listbox class="status-chips" [value]="statusFilter" (selectionChange)="onStatusChange($event)">
+        <mat-chip-option value="all">All</mat-chip-option>
+        <mat-chip-option value="active">Active</mat-chip-option>
+        <mat-chip-option value="inactive">Inactive</mat-chip-option>
+      </mat-chip-listbox>
 
-      <div class="status-chip-wrap">
-        <mat-chip-listbox class="status-chips" [value]="statusFilter">
-          <mat-chip-option value="all" (click)="onStatusChange({ value: 'all' })">All</mat-chip-option>
-          <mat-chip-option value="active" (click)="onStatusChange({ value: 'active' })">Active</mat-chip-option>
-          <mat-chip-option value="inactive" (click)="onStatusChange({ value: 'inactive' })">Inactive</mat-chip-option>
-          <mat-chip-option value="transferred" (click)="onStatusChange({ value: 'transferred' })">Transferred</mat-chip-option>
-        </mat-chip-listbox>
-      </div>
-
-      <div class="export-wrap">
-        <button mat-flat-button color="primary" class="ghost-button" (click)="exportCsv()">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 19h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Export CSV
-        </button>
-      </div>
+      <button mat-stroked-button color="primary" class="ghost-button" (click)="exportCsv()">
+        Export CSV
+      </button>
     </div>
   </mat-card>
 
   <mat-card class="table-card mat-elevation-z2">
-    <div class="table-head">
-      <div>
-        <mat-card-title>Student roster</mat-card-title>
-        <mat-card-subtitle>Full list with class and status.</mat-card-subtitle>
-      </div>
-      <div class="last-updated">Updated just now</div>
-    </div>
+    <mat-card-title>Student roster</mat-card-title>
+    <mat-card-subtitle>Full list with class and status.</mat-card-subtitle>
 
     <div class="table-wrap desktop-only">
       <table mat-table [dataSource]="dataSource" matSort class="fees-table">
@@ -123,15 +106,8 @@
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let row">
             <div class="action-row">
-              <button mat-icon-button color="accent" matTooltip="Edit" (click)="editStudent(row)">
-                <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><path d="M5 19h14M7 14l7.5-7.5a1.06 1.06 0 0 1 1.5 0l1 1a1.06 1.06 0 0 1 0 1.5L9.5 16.5 7 17z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
-              <button mat-icon-button color="primary" matTooltip="Transfer / Restore" (click)="toggleTransfer(row)">
-                <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h12l-3-3m3 3-3 3M20 17H8l3-3m-3 3 3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
-              <button mat-icon-button color="warn" matTooltip="Delete" (click)="deleteStudent(row)">
-                <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><path d="M6 7h12m-9 0v10m6-10v10M9 7l.6-2h4.8l.6 2M10 7v0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
+              <button mat-stroked-button color="accent" class="ghost-button" (click)="editStudent(row)">Edit</button>
+              <button mat-stroked-button color="warn" class="ghost-button" (click)="deleteStudent(row)">Delete</button>
             </div>
           </td>
         </ng-container>
@@ -150,18 +126,12 @@
       <div class="mobile-card" *ngFor="let row of dataSource.data">
         <div class="card-row">
           <div class="cell-title">{{ row.name }}</div>
-          <mat-chip class="status-chip" [color]="(row.status || '').toLowerCase() === 'active' ? 'primary' : 'warn'">
-            {{ row.status || 'unknown' }}
-          </mat-chip>
+          <mat-chip color="primary" selected>{{ row.class || 'Student' }}</mat-chip>
         </div>
-        <div class="cell-meta">ID #{{ row.id }} · Class {{ row.class || '--' }} · Section {{ row.section || '--' }}</div>
-        <div class="cell-meta">Roll {{ row.rollNo || '--' }} · Enrolled {{ row.enrollmentDate || '--' }}</div>
-        <div class="cell-meta">Email: {{ row.email || '--' }}</div>
+        <div class="cell-meta">Roll No: {{ row.rollNo || '--' }}</div>
+        <div class="cell-meta">Section: {{ row.section || '--' }}</div>
         <div class="action-row">
           <button mat-stroked-button color="accent" class="ghost-button" (click)="editStudent(row)">Edit</button>
-          <button mat-stroked-button color="primary" class="ghost-button" (click)="toggleTransfer(row)">
-            {{ (row.status || '').toLowerCase() === 'transferred' ? 'Restore' : 'Transfer' }}
-          </button>
           <button mat-stroked-button color="warn" class="ghost-button" (click)="deleteStudent(row)">Delete</button>
         </div>
       </div>
