@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4201",
+    "start": "npx concurrently \"npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser\" \"node scripts/dev-static-server.js\"",
     "start:local": "ng run buildaq-schools:serve-original:development --port 4201",
     "start:dev": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\start-dev.ps1",
     "start:mf": "node scripts/dev-static-server.js",
-    "start:mf-watch": "npx concurrently \"npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser\" \"npx browser-sync start --server 'dist/buildaq-schools/browser' --files 'dist/buildaq-schools/browser/**/*' --no-ui --no-notify --port 4201 --cors\"",
+    "start:mf-watch": "npx concurrently \"npx ng build --watch --configuration development --output-path=dist/buildaq-schools/browser\" \"npx browser-sync start --server dist/buildaq-schools/browser --files dist/buildaq-schools/browser/**/* --no-ui --no-notify --port 4201 --cors\"",
     "build": "ng build",
     "postbuild": "node scripts/gen-remote-metadata.js",
     "watch": "ng build --watch --configuration development",

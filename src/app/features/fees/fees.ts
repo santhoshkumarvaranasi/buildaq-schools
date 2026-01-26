@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { MockDataService } from '../../core/services/mock-data.service';
 import { MaterialModule } from '../../core/material.module';
 import { MatPaginator } from '@angular/material/paginator';
@@ -21,7 +21,7 @@ type FeeRow = {
 @Component({
   selector: 'app-fees',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MaterialModule],
+  imports: [CommonModule, FormsModule, RouterLink, RouterOutlet, MaterialModule],
   styleUrls: ['./fees.scss'],
   template: `
     <div class="fees-page">
