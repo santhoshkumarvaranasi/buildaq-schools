@@ -7,6 +7,11 @@ const app = express();
 const port = process.env.PORT || 4201;
 
 const distDir = path.join(__dirname, '..', 'dist', 'buildaq-schools', 'browser');
+const nfCacheRoot = path.join(__dirname, '..', 'node_modules', '.cache', 'native-federation');
+const nfCacheDirs = [
+  path.join(nfCacheRoot, 'schools'),
+  nfCacheRoot,
+];
 
 if (!fs.existsSync(distDir)) {
   console.error('Dist folder not found. Run `npm run build` first. Expected:', distDir);
@@ -78,6 +83,30 @@ app.get('/remoteEntry.js', (req, res) => {
   return res.status(404).send('not found');
 });
 
+// Native federation dev runtime may subscribe to this endpoint for rebuild events.
+// Serve a valid SSE stream to avoid MIME/type errors in the browser console.
+app.get('/@angular-architects/native-federation:build-notifications', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders && res.flushHeaders();
+
+  // Initial ping event (shape expected by runtime)
+  res.write(`data: ${JSON.stringify({ type: 'connected', ts: Date.now() })}\n\n`);
+
+  const heartbeat = setInterval(() => {
+    try {
+      res.write(': heartbeat\n\n');
+    } catch (e) {
+      clearInterval(heartbeat);
+    }
+  }, 15000);
+
+  req.on('close', () => {
+    clearInterval(heartbeat);
+  });
+});
+
 // Intercept requests for JS files and map manifest outFileName candidates to the
 // actual hashed files in `dist` when necessary. This handles the case where the
 // manifest lists an outFileName that doesn't match the generated hashed filename.
@@ -90,36 +119,59 @@ app.get(/.*\.js$/, (req, res, next) => {
       return res.sendFile(candidatePath);
     }
 
+    // Serve shared federation bundles from native-federation cache if present
+    for (const cacheDir of nfCacheDirs) {
+      const cachedPath = path.join(cacheDir, requested);
+      if (fs.existsSync(cachedPath)) {
+        return res.sendFile(cachedPath);
+      }
+    }
+
     // If the exact file isn't present, try to match from manifest
     const manifestPath = path.join(distDir, 'remoteEntry.json');
     if (!fs.existsSync(manifestPath)) return next();
     const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-    const files = fs.readdirSync(distDir).filter(f => f.endsWith('.js'));
+    const distFiles = fs.readdirSync(distDir).filter(f => f.endsWith('.js'));
 
-    // Try to find a manifest entry whose outFileName base matches the requested name
-    const match = (manifest.exposes || []).map(e => e.outFileName).find(o => {
+    const exposeFiles = (manifest.exposes || []).map(e => e.outFileName).filter(Boolean);
+    const sharedFiles = (manifest.shared || []).map(s => s.outFileName).filter(Boolean);
+
+    // Try conservative remap for expose/shared files only (avoid remapping random files)
+    const remapCandidates = [...exposeFiles, ...sharedFiles];
+    const match = remapCandidates.find(o => {
       if (!o) return false;
       const base = o.split('-')[0];
-      return requested.startsWith(base) || requested === o;
+      return requested === o || requested.startsWith(base);
     });
+
     if (match) {
-      // find actual file in dist that starts with base
       const base = match.split('-')[0];
-      const found = files.find(f => f.startsWith(base));
-      if (found) {
-        console.warn('[mf-static] remapping requested', requested, '->', found);
-        return res.sendFile(path.join(distDir, found));
+
+      const foundInDist = distFiles.find(f => f === match) || distFiles.find(f => f.startsWith(base));
+      if (foundInDist) {
+        console.warn('[mf-static] remapping requested', requested, '->', foundInDist);
+        return res.sendFile(path.join(distDir, foundInDist));
+      }
+
+      for (const cacheDir of nfCacheDirs) {
+        try {
+          const cacheFiles = fs.existsSync(cacheDir)
+            ? fs.readdirSync(cacheDir).filter(f => f.endsWith('.js'))
+            : [];
+          const foundInCache = cacheFiles.find(f => f === match) || cacheFiles.find(f => f.startsWith(base));
+          if (foundInCache) {
+            console.warn('[mf-static] remapping requested', requested, '->', foundInCache, '(cache)');
+            return res.sendFile(path.join(cacheDir, foundInCache));
+          }
+        } catch (e) {
+          // ignore per-cache read errors
+        }
       }
     }
 
-    // As a last resort, try heuristics (SchoolsModule, Component tokens)
-    const heur = files.find(f => /SchoolsModule|Component|remote-/i.test(f));
-    if (heur) {
-      console.warn('[mf-static] remapping requested', requested, '->', heur);
-      return res.sendFile(path.join(distDir, heur));
-    }
-
-    return next();
+    // For unresolved JS files, return 404 instead of falling back to index.html
+    // to prevent confusing ESM errors (e.g., missing named exports from HTML/other files).
+    return res.status(404).send('not found');
   } catch (e) {
     console.error('[mf-static] error remapping js request', e && e.message);
     return next();
