@@ -1,6 +1,5 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
 import { TenantSwitcherComponent } from './core/components/tenant-switcher/tenant-switcher';
 import { MaterialModule } from './core/material.module';
 
@@ -15,7 +14,6 @@ export class App implements OnInit {
   protected readonly title = signal('buildaq-schools');
 
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   constructor() {}
 
