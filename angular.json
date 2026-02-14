@@ -105,7 +105,7 @@
 									"maximumError": "30kB"
 								}
 							],
-							"baseHref": "/schools/",
+							"baseHref": "/",
 							"outputHashing": "all",
 							"optimization": {
 								"fonts": {
