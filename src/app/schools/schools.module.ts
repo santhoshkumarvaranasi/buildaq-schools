@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
 // Import standalone components
 import { SchoolsDashboardComponent } from '../schools-dashboard/schools-dashboard';
@@ -77,6 +77,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
+    HttpClientModule,
     RouterModule.forChild(routes),
     // Import standalone components
     SchoolsDashboardComponent,
@@ -111,8 +112,6 @@ const routes: Routes = [
     TimetableComponent,
     ExamsComponent
   ],
-  providers: [
-    provideHttpClient()
-  ]
+  providers: []
 })
 export class SchoolsModule { }
